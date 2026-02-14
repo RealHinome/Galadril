@@ -1,6 +1,6 @@
 module(
     name = "galadril",
-    version = "0.0.1",
+    version = "0.1.0",
 )
 
 bazel_dep(name = "rules_multirun", version = "0.13.0")

@@ -1,0 +1,55 @@
+{
+  "namespace": "com.galadril.raw.document",
+  "type": "record",
+  "name": "DocumentMetadata",
+  "doc": "Metadata for unstructured documents (PDF, Docx, TXT) ingested into the Data Lake.",
+  "fields": [
+    {
+      "name": "document_id",
+      "type": "string",
+      "doc": "Internal UUID."
+    },
+    {
+      "name": "original_filename",
+      "type": "string"
+    },
+    {
+      "name": "storage_path",
+      "type": "string",
+      "doc": "S3/MinIO path where the binary file is stored."
+    },
+    {
+      "name": "mime_type",
+      "type": "string",
+      "doc": "e.g., 'application/pdf', 'text/csv' (if kept raw), 'image/jpeg'."
+    },
+    {
+      "name": "file_hash",
+      "type": "string",
+      "doc": "SHA-256 hash of the file content for deduplication."
+    },
+    {
+      "name": "file_size_bytes",
+      "type": "long"
+    },
+    {
+      "name": "ingested_at",
+      "type": { "type": "long", "logicalType": "timestamp-millis" }
+    },
+    {
+      "name": "source_context",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Context: e.g., 'Leaked Panama Papers', 'Internal Audit 2024'."
+    },
+    {
+      "name": "metadata_tags",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Flexible key-value pairs for extra info (e.g., author, department)."
+    }
+  ]
+}

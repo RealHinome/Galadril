@@ -1,0 +1,54 @@
+{
+  "namespace": "com.galadril.raw.financial",
+  "type": "record",
+  "name": "FinancialTransaction",
+  "doc": "Raw financial transaction event ingested from banking partners or crypto exchanges.",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Unique UUID for this event in Galadril."
+    },
+    {
+      "name": "transaction_id",
+      "type": "string",
+      "doc": "ID from the source system."
+    },
+    {
+      "name": "timestamp",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Time when the transaction occurred."
+    },
+    {
+      "name": "sender_account",
+      "type": "string"
+    },
+    {
+      "name": "receiver_account",
+      "type": "string"
+    },
+    {
+      "name": "amount",
+      "type": "double"
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "doc": "ISO 4217 currency code (e.g., USD, EUR, BTC)."
+    },
+    {
+      "name": "transaction_type",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "e.g., TRANSFER, WITHDRAWAL, DEPOSIT."
+    },
+    {
+      "name": "source_system",
+      "type": "string",
+      "doc": "Name of the bank or exchange providing the data."
+    }
+  ]
+}

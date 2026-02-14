@@ -1,0 +1,55 @@
+{
+  "namespace": "com.galadril.raw.satellite",
+  "type": "record",
+  "name": "SatelliteImageMetadata",
+  "doc": "Metadata regarding a new satellite image acquisition.",
+  "fields": [
+    {
+      "name": "image_id",
+      "type": "string",
+      "doc": "Unique identifier for the image asset."
+    },
+    {
+      "name": "storage_path",
+      "type": "string",
+      "doc": "S3/MinIO URI where the GeoTIFF/image is stored."
+    },
+    {
+      "name": "acquisition_date",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "provider",
+      "type": "string",
+      "doc": "e.g., ESA_Sentinel, Maxar, Planet."
+    },
+    {
+      "name": "geometry",
+      "type": {
+        "type": "record",
+        "name": "BoundingBox",
+        "fields": [
+          {"name": "top_left_lat", "type": "double"},
+          {"name": "top_left_lon", "type": "double"},
+          {"name": "bottom_right_lat", "type": "double"},
+          {"name": "bottom_right_lon", "type": "double"}
+        ]
+      },
+      "doc": "Geospatial coverage of the image."
+    },
+    {
+      "name": "resolution_meters",
+      "type": ["null", "float"],
+      "default": null,
+      "doc": "Pixel resolution in meters (e.g., 0.5 for 50cm)."
+    },
+    {
+      "name": "cloud_cover_percentage",
+      "type": ["null", "float"],
+      "default": null
+    }
+  ]
+}

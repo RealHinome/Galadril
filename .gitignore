@@ -2,3 +2,4 @@
 nodes_modules/
 target/
 .venv/
+.DS_Store

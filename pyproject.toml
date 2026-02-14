@@ -1,0 +1,12 @@
+[project]
+name = "galadril-ml"
+version = "0.1.0"
+description = "All Galadril ML services."
+dependencies = []
+requires-python = "==3.13.*"
+
+[tool.uv.workspace]
+members = [
+    "machine-learning/*",
+    "monitoring",
+]

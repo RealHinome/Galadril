@@ -1,0 +1,10 @@
+load("@rules_multirun//:defs.bzl", "multirun")
+
+multirun(
+    name = "all",
+    commands = [
+        "//services/gateway:gateway",
+        "//services/intake:intake",
+    ],
+    jobs = 0,
+)

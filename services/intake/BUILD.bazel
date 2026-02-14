@@ -1,0 +1,9 @@
+load("@rules_rust//rust:defs.bzl", "rust_binary")
+load("@crates//:defs.bzl", "all_crate_deps")
+
+rust_binary(
+    name = "intake",
+    srcs = glob(["src/**/*.rs"]),
+    deps = all_crate_deps(normal = True),
+    visibility = ["//visibility:public"],
+)

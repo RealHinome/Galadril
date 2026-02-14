@@ -1,0 +1,31 @@
+version = 1
+revision = 3
+requires-python = "==3.13.*"
+
+[manifest]
+members = [
+    "feature-store-offline",
+    "galadril-ml",
+    "inference",
+    "training",
+]
+
+[[package]]
+name = "feature-store-offline"
+version = "0.1.0"
+source = { virtual = "machine-learning/feature-store-offline" }
+
+[[package]]
+name = "galadril-ml"
+version = "0.1.0"
+source = { virtual = "." }
+
+[[package]]
+name = "inference"
+version = "0.1.0"
+source = { virtual = "machine-learning/inference" }
+
+[[package]]
+name = "training"
+version = "0.1.0"
+source = { virtual = "machine-learning/training" }

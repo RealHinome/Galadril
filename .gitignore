@@ -1,0 +1,3 @@
+/bazel-*
+nodes_modules/
+target/

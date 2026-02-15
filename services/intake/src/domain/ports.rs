@@ -34,7 +34,11 @@ pub trait EventProducer: Send + Sync {
 #[async_trait]
 pub trait BlobStorage: Send + Sync {
     /// Upload a new file on object storage.
-    async fn upload_file(&self, file_name: &str, data: &[u8]) -> Result<&str>;
+    async fn upload_file(
+        &self,
+        file_name: &str,
+        data: &[u8],
+    ) -> Result<String>;
     /// Get data of a file on object storage.
-    async fn download_file(&self, file_url: &str) -> Result<&[u8]>;
+    async fn download_file(&self, file_url: &str) -> Result<Vec<u8>>;
 }

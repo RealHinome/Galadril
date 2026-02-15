@@ -20,6 +20,7 @@ pub struct IngestionService {
 }
 
 impl IngestionService {
+    /// Create a new [`IngestionService`].
     pub fn new(
         storage: Arc<dyn BlobStorage>,
         producer: Arc<dyn EventProducer>,
@@ -43,12 +44,15 @@ impl IngestionServicePort for IngestionService {
         match source_type {
             DataSourceType::Financial => {
                 let content = self.storage.download_file(&key).await?;
-                CsvFinancialParser::parse_and_publish(content, &self.producer)
-                    .await?;
+                CsvFinancialParser::parse_and_publish(
+                    &content,
+                    &self.producer,
+                )
+                .await?;
             },
             DataSourceType::Osint => {
                 let content = self.storage.download_file(&key).await?;
-                JsonOsintParser::parse_and_publish(content, &self.producer)
+                JsonOsintParser::parse_and_publish(&content, &self.producer)
                     .await?;
             },
             DataSourceType::Satellite => {

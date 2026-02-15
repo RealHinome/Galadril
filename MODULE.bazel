@@ -23,8 +23,8 @@ rust.toolchain(
 crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
 crate.from_cargo(
     name = "crates",
-    cargo_lockfile = "//services/intake:Cargo.lock",
-    manifests = ["//services/intake:Cargo.toml"],
+    cargo_lockfile = "//:Cargo.lock",
+    manifests = ["//:Cargo.toml"],
 )
 use_repo(crate, "crates")
 

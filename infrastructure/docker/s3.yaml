@@ -1,0 +1,36 @@
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_NOTIFY_KAFKA_ENABLE_PRIMARY: "on"
+      MINIO_NOTIFY_KAFKA_BROKERS_PRIMARY: "redpanda:9092"
+      MINIO_NOTIFY_KAFKA_TOPIC_PRIMARY: "s3-events"
+    volumes:
+      - minio-data:/data
+    depends_on:
+      redpanda:
+        condition: service_healthy
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+        sleep 5;
+        mc alias set local http://minio:9000 minioadmin minioadmin;
+        mc mb --ignore-existing local/my-bucket;
+        mc event add local/my-bucket arn:minio:sqs::PRIMARY:kafka --event put;
+        echo 'Notification bucket created';
+      "
+
+volumes:
+  minio-data:

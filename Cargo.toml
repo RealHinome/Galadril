@@ -10,6 +10,7 @@ repository = "https://github.com/RealHinome/Galadril"
 
 [workspace.dependencies]
 tokio = "1"
+serde = "1"
 anyhow = "1"
 
 [profile.release]

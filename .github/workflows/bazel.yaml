@@ -1,0 +1,96 @@
+name: Bazel CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v3
+
+      - name: Mount Bazel cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/bazel-disk
+            ~/.cache/bazel-repo
+          key: bazel-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock') }}
+          restore-keys: |
+            bazel-${{ runner.os }}-
+
+      - name: Build
+        run: bazel build //... --config=ci
+
+      - name: Test
+        run: bazel test //... --config=ci
+
+  coverage:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v3
+
+      - name: Mount Bazel cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/bazel-disk
+            ~/.cache/bazel-repo
+          key: bazel-cov-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock') }}
+          restore-keys: |
+            bazel-cov-${{ runner.os }}-
+
+      - name: Run coverage
+        run: |
+          bazel coverage //... \
+            --config=ci \
+            --combined_report=lcov
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: bazel-out/_coverage/_coverage_report.dat
+          retention-days: 1
+
+      - name: Coverage summary
+        run: |
+          REPORT="bazel-out/_coverage/_coverage_report.dat"
+          if [ ! -f "$REPORT" ]; then
+            echo "::warning::No coverage report generated"
+            exit 0
+          fi
+
+          # Extract headline numbers from LCOV.
+          LINES_HIT=$(grep -c "^DA:.*[^0]$" "$REPORT" || true)
+          LINES_FOUND=$(grep -c "^DA:" "$REPORT" || true)
+
+          if [ "$LINES_FOUND" -gt 0 ]; then
+            PCT=$(awk "BEGIN {printf \"%.2f\", ($LINES_HIT/$LINES_FOUND)*100}")
+          else
+            PCT="N/A"
+          fi
+
+          echo "## 📊 Test Coverage" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Lines hit | $LINES_HIT |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Lines found | $LINES_FOUND |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Coverage** | **${PCT}%** |" >> "$GITHUB_STEP_SUMMARY"

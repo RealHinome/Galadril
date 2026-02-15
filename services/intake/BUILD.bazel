@@ -1,4 +1,4 @@
-load("@rules_rust//rust:defs.bzl", "rust_binary")
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_test")
 load("@crates//:defs.bzl", "aliases", "all_crate_deps")
 
 rust_binary(
@@ -15,4 +15,10 @@ rust_binary(
         proc_macro = True,
     ),
     visibility = ["//visibility:public"],
+)
+
+rust_test(
+    name = "intake_test",
+    crate = ":intake",
+    deps = all_crate_deps(normal_dev = True),
 )

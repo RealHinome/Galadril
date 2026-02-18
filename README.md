@@ -13,93 +13,74 @@ on **elucidation, foresight, and transparency**.
 ## Targeted architecture
 
 ```mermaid
-graph TD
+flowchart TD
+    classDef source fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#0d47a1
+    classDef ingest fill:#ffecb3,stroke:#ff6f00,stroke-width:2px,color:#3e2723
+    classDef stream fill:#d1c4e9,stroke:#512da8,stroke-width:2px,color:#311b92
+    classDef ml fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#880e4f
+    classDef storage fill:#cfd8dc,stroke:#455a64,stroke-width:2px,color:#263238
+    classDef app fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    classDef bus fill:#212121,stroke:#fff,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 
-    classDef rust fill:#dea584,stroke:#000,stroke-width:2px,color:#000;
-    classDef go fill:#00add8,stroke:#000,stroke-width:2px,color:#000;
-    classDef python fill:#3572A5,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef storage fill:#222,stroke:#fff,stroke-width:1px,color:#fff;
-    classDef streaming fill:#ff4500,stroke:#000,stroke-width:1px,color:#fff;
-    classDef interface fill:#f4f4f4,stroke:#333,stroke-width:2px,color:#333;
-
-    subgraph Sources["Data Sources"]
-        Sat[Satellite Imagery]
-        Fin[Financial Flows]
-        Osint[OSINT / News]
+    subgraph Sources ["Multi-Modal Data Sources"]
+        direction TB
+        S1[("Sensors / IoT / SIGINT")]:::source
+        S2[("Financial / ERP Flows")]:::source
+        S3[("Unstructured (OSINT/Docs)")]:::source
+        S4[("3rd Party APIs")]:::source
     end
 
-    subgraph Intake["Ingestion & Contract Enforcement"]
-        IntakeSvc["Rust Intake Services"]:::rust
-        Contract["Schema Validation / Data Contracts"]:::rust
+    subgraph Ingestion ["Gargantua"]
+        Connectors["Smart Connectors"]:::ingest
+        Raw_Bus[("Raw Event Bus (Kafka)")]:::bus
     end
 
-    subgraph Streaming["Streaming Backbone (Multi-tier)"]
-        KafkaRaw["Kafka RAW Topics"]:::streaming
-        FlinkEnrich["Flink Enrichment / Normalization"]:::streaming
-        KafkaCurated["Kafka CURATED Topics"]:::streaming
-        FlinkIntel["Flink Intelligence Processing"]:::streaming
-        KafkaIntel["Kafka INTELLIGENCE Topics"]:::streaming
+    subgraph Processing ["The Vision"]
+        Stream_Engine["Stream Processor"]:::stream
+        
+        subgraph Compute ["Compute Services"]
+            Entity_Res["Entity Resolution"]:::ml
+            Ontology_Map["Ontology Mapper"]:::stream
+            ML_Inf["ML Inference"]:::ml
+        end
+        
+        Feature_Store["Feature Store (Online)"]:::storage
     end
 
-    subgraph Storage["The Mirror (Data Platform)"]
-        Iceberg["Data Lake (Iceberg Tables)"]:::storage
-        GraphDB["Graph Database"]:::storage
-        VectorDB["Vector Database"]:::storage
+    subgraph Knowledge ["The Synapse"]
+        Intel_Bus[("Curated Intel Bus (Kafka)")]:::bus
+        
+        subgraph Databases ["Polyglot Storage"]
+            KG[("Knowledge Graph")]:::storage
+            VecDB[("Vector Index")]:::storage
+            Relational[("Relational Storage")]:::storage
+            ObjStore[("Object Store")]:::storage
+        end
     end
 
-    subgraph FeaturePlatform["Feature Store Platform"]
-        FSOnline["Feature Store Online"]:::go
-        FSOffline["Feature Store Offline"]:::python
+    subgraph Consumption ["Analyst Workspace"]
+        Gateway["Unified Ontology API"]:::app
+        Studio["Investigation Canvas"]:::app
+        Alerts["Operational Alerting"]:::app
     end
 
-    subgraph MLPlatform["The Vision (ML Platform)"]
-        Training["Model Training Pipelines"]:::python
-        Registry["Model Registry / Versioning"]:::python
-        Inference["Realtime Inference Services"]:::python
-        Drift["Drift Detection / Monitoring"]:::python
-    end
+    S1 & S2 & S3 & S4 --> Connectors
+    Connectors --> Raw_Bus
+    Raw_Bus --> Stream_Engine
 
-    subgraph Orchestration["Workflow & Orchestration"]
-        Airflow["Airflow Orchestrator"]:::python
-    end
+    Stream_Engine <--> Ontology_Map
+    Stream_Engine <--> Feature_Store
+    
+    Feature_Store -.-> |"Get Features"| ML_Inf
+    ML_Inf --> Stream_Engine
 
-    subgraph Delivery["Serving & API Layer"]
-        RealtimeAPI["API Gateway & WebSockets (Go)"]:::go
-        Dashboard["Galadril Studio (React / D3)"]:::interface
-    end
+    Entity_Res <--> |"Lookup / Match"| Relational
+    Stream_Engine <--> Entity_Res
 
-    Sat --> IntakeSvc
-    Fin --> IntakeSvc
-    Osint --> IntakeSvc
+    Stream_Engine --> Intel_Bus
+    Intel_Bus --> KG & VecDB & Relational & ObjStore
 
-    IntakeSvc --> Contract
-    Contract --> KafkaRaw
-
-    KafkaRaw --> FlinkEnrich
-    FlinkEnrich --> KafkaCurated
-    KafkaCurated --> FlinkIntel
-    FlinkIntel --> KafkaIntel
-
-    KafkaCurated --> Iceberg
-    KafkaIntel --> GraphDB
-    KafkaIntel --> VectorDB
-
-    Iceberg --> FSOffline
-    KafkaCurated --> FSOnline
-
-    FSOffline --> Training
-    Training --> Registry
-    Registry --> Inference
-
-    FSOnline --> Inference
-    Inference --> Drift
-
-    Airflow --> Training
-    Airflow --> FSOffline
-    Airflow --> Iceberg
-
-    Inference --> RealtimeAPI
-    KafkaIntel --> RealtimeAPI
-
-    RealtimeAPI --> Dashboard
+    KG & VecDB & Relational & ObjStore --> Gateway
+    Gateway <--> Studio
+    Gateway --> Alerts
 ```

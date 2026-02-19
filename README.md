@@ -18,7 +18,7 @@ flowchart TD
     classDef ingest fill:#ffecb3,stroke:#ff6f00,stroke-width:2px,color:#3e2723
     classDef stream fill:#d1c4e9,stroke:#512da8,stroke-width:2px,color:#311b92
     classDef ml fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#880e4f
-    classDef storage fill:#cfd8dc,stroke:#455a64,stroke-width:2px,color:#263238
+    classDef pg fill:#336791,stroke:#000,stroke-width:2px,color:#fff
     classDef app fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
     classDef bus fill:#212121,stroke:#fff,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 
@@ -30,7 +30,7 @@ flowchart TD
         S4[("3rd Party APIs")]:::source
     end
 
-    subgraph Ingestion ["Gargantua"]
+    subgraph Ingestion ["Ingestor"]
         Connectors["Smart Connectors"]:::ingest
         Raw_Bus[("Raw Event Bus (Kafka)")]:::bus
     end
@@ -44,28 +44,33 @@ flowchart TD
             ML_Inf["ML Inference"]:::ml
         end
         
-        Feature_Store["Feature Store (Online)"]:::storage
+        Feature_Store["Feature Store (Online)"]:::pg
     end
 
     subgraph Knowledge ["The Synapse"]
         Intel_Bus[("Curated Intel Bus (Kafka)")]:::bus
         
-        subgraph Databases ["Polyglot Storage"]
-            KG[("Knowledge Graph")]:::storage
-            VecDB[("Vector Index")]:::storage
-            Relational[("Relational Storage")]:::storage
-            ObjStore[("Object Store")]:::storage
+        subgraph PG_Engine ["PostgreSQL"]
+            direction TB
+            KG[("Apache AGE")]:::pg
+            VecDB[("pgvectorscale")]:::pg
+            Relational[("Relational")]:::pg
+            Timescale[("TimescaleDB")]:::pg
         end
+        
+        ObjStore[("Object Store")]:::pg
     end
 
-    subgraph Consumption ["Analyst Workspace"]
+    subgraph Consumption ["Galadril Studio"]
         Gateway["Unified Ontology API"]:::app
-        Studio["Investigation Canvas"]:::app
+        Studio["Investigation Graphs"]:::app
         Alerts["Operational Alerting"]:::app
     end
 
     S1 & S2 & S3 & S4 --> Connectors
     Connectors --> Raw_Bus
+    Connectors -->|Direct Backup| ObjStore
+    
     Raw_Bus --> Stream_Engine
 
     Stream_Engine <--> Ontology_Map
@@ -78,9 +83,10 @@ flowchart TD
     Stream_Engine <--> Entity_Res
 
     Stream_Engine --> Intel_Bus
-    Intel_Bus --> KG & VecDB & Relational & ObjStore
+    Intel_Bus --> PG_Engine
+    %% Note: Intel_Bus --> ObjStore a été retiré
 
-    KG & VecDB & Relational & ObjStore --> Gateway
+    PG_Engine & ObjStore --> Gateway
     Gateway <--> Studio
     Gateway --> Alerts
 ```

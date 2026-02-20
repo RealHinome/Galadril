@@ -1,8 +1,14 @@
 [project]
-name = "galadril-ml"
+name = "galadril"
 version = "0.1.0"
-description = "All Galadril ML services."
-dependencies = []
+description = "All Galadril services."
+dependencies = [
+    "numpy>=2.4.2",
+    "opentelemetry-api>=1.39.1",
+    "opentelemetry-exporter-otlp>=1.39.1",
+    "opentelemetry-sdk>=1.39.1",
+    "structlog>=25.5.0",
+]
 requires-python = "==3.13.*"
 
 [tool.uv.workspace]
@@ -10,3 +16,26 @@ members = [
     "machine-learning/*",
     "monitoring",
 ]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "ruff>=0.15.2",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 80
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+ignore_missing_imports = true

@@ -3,3 +3,5 @@ nodes_modules/
 target/
 .venv/
 .DS_Store
+__pycache__
+artifacts/

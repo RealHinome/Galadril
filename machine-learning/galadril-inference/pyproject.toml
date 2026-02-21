@@ -6,11 +6,6 @@ requires-python = ">=3.13"
 dependencies = [
     "insightface>=0.7.3",
     "onnxruntime>=1.24.2",
-]
-
-[project.optional-dependencies]
-s3 = ["boto3>=1.35"]
-dev = [
     "boto3>=1.35",
     "boto3-stubs[s3]",
     "moto[s3]>=5.0",

@@ -8,13 +8,20 @@ dependencies = [
     "opentelemetry-exporter-otlp>=1.39.1",
     "opentelemetry-sdk>=1.39.1",
     "structlog>=25.5.0",
+    "insightface>=0.7.3",
+    "onnxruntime>=1.24.2",
+    "boto3>=1.35",
+    "boto3-stubs[s3]",
+    "moto[s3]>=5.0",
+    "pytest>=8.0",
+    "pytest-cov>=6.0",
+    "pytest-tmp-files>=0.0.2",
 ]
 requires-python = "==3.13.*"
 
 [tool.uv.workspace]
 members = [
     "machine-learning/*",
-    "monitoring",
 ]
 
 [dependency-groups]

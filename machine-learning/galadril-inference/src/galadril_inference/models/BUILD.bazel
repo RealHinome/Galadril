@@ -1,0 +1,18 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
+py_library(
+    name = "models",
+    srcs = [
+        "__init__.py",
+        "base.py",
+        "face_recognition.py",
+    ],
+    imports = ["../.."],
+    visibility = ["//machine-learning/galadril-inference/src:__subpackages__"],
+    deps = [
+        "//machine-learning/galadril-inference/src/galadril_inference/common",
+        "@pip//insightface",
+        "@pip//numpy",
+        "@pip//structlog",
+    ],
+)

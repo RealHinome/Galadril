@@ -9,7 +9,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any
 
-from galadril_inference.core.types import (
+from galadril_inference.common.types import (
     ModelMeta,
     PredictionRequest,
     PredictionResult,

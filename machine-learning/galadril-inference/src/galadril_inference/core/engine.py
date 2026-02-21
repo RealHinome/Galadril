@@ -10,7 +10,7 @@ from collections.abc import Sequence
 import structlog
 
 import galadril_inference.models as _models_pkg
-from galadril_inference.core.exceptions import (
+from galadril_inference.common.exceptions import (
     ModelLoadError,
     ModelNotReadyError,
 )

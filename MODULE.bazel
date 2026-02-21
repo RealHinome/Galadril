@@ -29,17 +29,24 @@ crate.from_cargo(
 use_repo(crate, "crates")
 
 bazel_dep(name = "rules_python", version = "1.8.4")
+bazel_dep(name = "rules_python_gazelle_plugin", version = "1.8.4")
+bazel_dep(name = "rules_uv", version = "0.89.2")
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
-python.toolchain(
-    python_version = "3.13",
-)
+python.toolchain(python_version = "3.13")
+use_repo(python, "python_3_13")
 
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
-    hub_name = "pypi",
+    hub_name = "pip",
     python_version = "3.13",
     requirements_lock = "//:requirements.txt",
 )
 
-use_repo(pip, "pypi")
+use_repo(pip, "pip")
+
+python_gazelle_extension = use_extension("@rules_python//python/extensions:gazelle.bzl", "python_gazelle_extension")
+python_gazelle_extension.use_pip_repository(
+    name = "pip",
+)
+use_repo(python_gazelle_extension, "python_gazelle_extra")

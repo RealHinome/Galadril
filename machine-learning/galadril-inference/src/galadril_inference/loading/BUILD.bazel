@@ -1,0 +1,11 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
+py_library(
+    name = "loading",
+    srcs = [
+        "__init__.py",
+        "loader.py",
+    ],
+    imports = ["../.."],
+    visibility = ["//machine-learning/galadril-inference/src:__subpackages__"],
+)

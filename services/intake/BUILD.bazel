@@ -1,5 +1,5 @@
-load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_test")
 load("@crates//:defs.bzl", "aliases", "all_crate_deps")
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_test")
 
 rust_binary(
     name = "intake",
@@ -8,13 +8,13 @@ rust_binary(
     compile_data = [
         "//schemas:avro_schema",
     ],
-    deps = all_crate_deps(
-        normal = True,
-    ),
     proc_macro_deps = all_crate_deps(
         proc_macro = True,
     ),
     visibility = ["//visibility:public"],
+    deps = all_crate_deps(
+        normal = True,
+    ),
 )
 
 rust_test(

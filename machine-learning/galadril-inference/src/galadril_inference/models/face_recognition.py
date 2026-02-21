@@ -10,11 +10,11 @@ import numpy as np
 import structlog
 from numpy.typing import NDArray
 
-from galadril_inference.core.exceptions import (
+from galadril_inference.common.exceptions import (
     ModelLoadError,
     SchemaValidationError,
 )
-from galadril_inference.core.types import (
+from galadril_inference.common.types import (
     ModelMeta,
     PredictionRequest,
     PredictionResult,

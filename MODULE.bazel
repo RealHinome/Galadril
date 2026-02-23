@@ -4,7 +4,6 @@ module(
 )
 
 bazel_dep(name = "rules_multirun", version = "0.13.0")
-
 bazel_dep(name = "rules_go", version = "0.60.0")
 bazel_dep(name = "gazelle", version = "0.47.0")
 
@@ -17,7 +16,7 @@ bazel_dep(name = "rules_rust", version = "0.68.1")
 rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
 rust.toolchain(
     edition = "2024",
-    versions = [ "1.93.1" ],
+    versions = ["1.93.1"],
 )
 
 crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
@@ -42,7 +41,6 @@ pip.parse(
     python_version = "3.13",
     requirements_lock = "//:requirements.txt",
 )
-
 use_repo(pip, "pip")
 
 python_gazelle_extension = use_extension("@rules_python//python/extensions:gazelle.bzl", "python_gazelle_extension")
@@ -50,3 +48,11 @@ python_gazelle_extension.use_pip_repository(
     name = "pip",
 )
 use_repo(python_gazelle_extension, "python_gazelle_extra")
+
+# For later, to build containers.
+
+bazel_dep(name = "rules_oci", version = "2.2.7")
+bazel_dep(name = "rules_pkg", version = "1.2.0")
+
+bazel_dep(name = "aspect_bazel_lib", version = "2.22.5")
+bazel_dep(name = "bazel_lib", version = "3.2.1")

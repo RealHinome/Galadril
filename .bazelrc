@@ -2,6 +2,9 @@
 build --jobs=auto
 build --color=yes
 
+# OCI configuration.
+common --repo_env=OCI_GET_TOKEN_ALLOW_FAIL=1
+
 # CI-specific configuration.
 build:ci --disk_cache=~/.cache/bazel-disk
 build:ci --repository_cache=~/.cache/bazel-repo

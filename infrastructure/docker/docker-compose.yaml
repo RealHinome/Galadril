@@ -3,3 +3,4 @@ name: galadril-dev
 include:
   - path: broker.yaml
   - path: s3.yaml
+  - path: database.yaml

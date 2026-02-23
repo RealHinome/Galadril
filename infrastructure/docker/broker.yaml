@@ -12,9 +12,9 @@ services:
       - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
       - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082
     ports:
-      - "19092:19092"
-      - "18082:18082"
-      - "9644:9644"
+      - 19092:19092
+      - 18082:18082
+      - 9644:9644
     healthcheck:
       test: ["CMD", "rpk", "cluster", "health"]
       interval: 10s
@@ -27,6 +27,6 @@ services:
       redpanda:
         condition: service_healthy
     ports:
-      - "8080:8080"
+      - 8080:8080
     environment:
       KAFKA_BROKERS: redpanda:9092

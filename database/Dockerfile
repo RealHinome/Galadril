@@ -22,6 +22,6 @@ FROM timescale/timescaledb-ha:pg18
 COPY --from=build /usr/lib/postgresql/18/lib/age.so /usr/lib/postgresql/18/lib/
 COPY --from=build /usr/share/postgresql/18/extension/age* /usr/share/postgresql/18/extension/
 
-COPY /docker-entrypoint-initdb.d/00-create-extension.sql /docker-entrypoint-initdb.d/00-create-extension.sql
+COPY docker-entrypoint-initdb.d/* /docker-entrypoint-initdb.d/
 
 CMD ["postgres", "-c", "shared_preload_libraries=timescaledb,age"]

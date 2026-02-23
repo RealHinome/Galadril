@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: ghcr.io/realhinome/galadril-database:latest
+    platform: linux/amd64
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=galadril_dev
+      - PGDATA=/home/postgres/pgdata/data
+      - TIMESCALEDB_TELEMETRY=off
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d galadril_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - postgres_data:/home/postgres/pgdata/data
+
+volumes:
+  postgres_data:

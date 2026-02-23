@@ -32,4 +32,4 @@ jobs:
           context: ./database
           push: true
           no-cache: true
-          tags: ghcr.io/realhinome/galadril:database
+          tags: ghcr.io/${{ github.repository_owner }}/galadril-database:latest

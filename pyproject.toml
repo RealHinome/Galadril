@@ -22,6 +22,7 @@ requires-python = "==3.13.*"
 [tool.uv.workspace]
 members = [
     "machine-learning/*",
+    "platform/*",
 ]
 
 [dependency-groups]

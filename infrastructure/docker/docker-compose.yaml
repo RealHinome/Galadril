@@ -4,3 +4,4 @@ include:
   - path: broker.yaml
   - path: s3.yaml
   - path: database.yaml
+  - path: batch.yaml

@@ -1,0 +1,36 @@
+services:
+  spark-master:
+    image: apache/spark:4.0.2
+    user: root
+    container_name: spark-master
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_NO_DAEMONIZE=true
+    ports:
+      - 8080:8080
+      - 7077:7077
+
+  spark-worker:
+    image: apache/spark:4.0.2
+    container_name: spark-worker
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_OPTS=-Dspark.memory.offHeap.enabled=true -Dspark.memory.offHeap.size=1g
+      - SPARK_DAEMON_JAVA_OPTS=-Dspark.sql.shuffle.partitions=4
+        -Dspark.sql.execution.arrow.pyspark.enabled=true
+        -Dspark.sql.adaptive.enabled=true
+        -Dspark.sql.adaptive.coalescePartitions.enabled=true
+        -Dspark.sql.adaptive.skewJoin.enabled=true
+        -Dspark.shuffle.file.buffer=1m
+        -Dspark.reducer.maxSizeInFlight=96m
+        -Dspark.locality.wait=0
+        -Dspark.scheduler.mode=FAIR

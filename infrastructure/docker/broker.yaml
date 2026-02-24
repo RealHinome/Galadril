@@ -27,6 +27,18 @@ services:
       redpanda:
         condition: service_healthy
     ports:
-      - 8080:8080
+      - 8090:8080
     environment:
       KAFKA_BROKERS: redpanda:9092
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:latest
+    container_name: schema-registry
+    depends_on:
+      - redpanda
+    ports:
+      - 8081:8081
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: redpanda:9092
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081

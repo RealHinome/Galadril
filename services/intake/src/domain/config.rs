@@ -8,13 +8,14 @@ pub struct AppConfig {
     pub kafka_brokers: String,
     pub kafka_consumer_group: String,
     pub kafka_notification_topic: String,
-    pub schema_registery: String,
+    pub schema_registry: String,
     pub s3_endpoint: String,
     pub s3_bucket: String,
     pub topic: String,
 }
 
 impl AppConfig {
+    /// Load environnement variables.
     pub fn from_env() -> Result<Self> {
         let _ = required("AWS_ACCESS_KEY_ID");
         let _ = required("AWS_SECRET_ACCESS_KEY");
@@ -30,7 +31,7 @@ impl AppConfig {
                 "KAFKA_TOPIC_NOTIFICATIONS",
                 "s3-bucket-notifications",
             ),
-            schema_registery: required("SCHEMA_REGISTERY")?,
+            schema_registry: required("SCHEMA_REGISTRY")?,
             s3_endpoint: required("S3_ENDPOINT")?,
             s3_bucket: optional("S3_BUCKET", "my-bucket"),
             topic: optional("KAFKA_TOPIC", "raw"),

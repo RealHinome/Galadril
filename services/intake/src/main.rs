@@ -8,14 +8,12 @@ mod domain;
 
 use std::sync::Arc;
 
-use crate::{
-    adapters::spi::{
-        kafka::{KafkaConsumerAdapter, KafkaProducerAdapter},
-        storage::S3Adapter,
-    },
-    application::IngestionService,
-    domain::config::AppConfig,
+use crate::adapters::spi::kafka::{
+    KafkaConsumerAdapter, KafkaProducerAdapter,
 };
+use crate::adapters::spi::storage::S3Adapter;
+use crate::application::IngestionService;
+use crate::domain::config::AppConfig;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -28,7 +26,7 @@ async fn main() -> anyhow::Result<()> {
     let kafka_producer = Arc::new(
         KafkaProducerAdapter::new(
             &config.kafka_brokers,
-            &config.schema_registery,
+            &config.schema_registry,
             &config.topic,
         )
         .await?,

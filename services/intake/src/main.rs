@@ -42,6 +42,6 @@ async fn main() -> anyhow::Result<()> {
         ingestion_service,
     )?;
 
-    println!("Galadril Intake Service starting...");
+    tracing::info!("galadril intake service ready");
     consumer.run().await
 }

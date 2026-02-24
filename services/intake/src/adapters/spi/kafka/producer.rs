@@ -62,6 +62,8 @@ impl KafkaProducerAdapter {
         let schema_names = Self::register_schemas(&sr_settings).await?;
         let encoder = AvroEncoder::new(sr_settings);
 
+        tracing::info!(?brokers, "kafka producer ready");
+
         Ok(Self {
             producer,
             topic: topic.to_string(),
@@ -90,11 +92,18 @@ impl KafkaProducerAdapter {
             Ok(results) => {
                 for result in results {
                     match result {
-                        Ok(t) => println!("Topic {t:?} created successfully."),
+                        Ok(topic) => {
+                            tracing::info!(?topic, "kafka topic created")
+                        },
                         Err((_, RDKafkaErrorCode::TopicAlreadyExists)) => {},
-                        Err((t, err)) => {
+                        Err((topic, err)) => {
+                            tracing::error!(
+                                ?err,
+                                ?topic,
+                                "kafka topic failed"
+                            );
                             return Err(anyhow!(
-                                "Failed to create topic {t}: {err:?}"
+                                "Failed to create topic {topic}: {err:?}"
                             ));
                         },
                     }
@@ -162,6 +171,8 @@ impl KafkaProducerAdapter {
                 .await
                 .context(format!("Failed to register schema for {key}"))?;
 
+            tracing::info!(?record_name, "schema registered as {key:?}");
+
             schema_mapping.insert(key.to_string(), record_name);
         }
 
@@ -196,6 +207,8 @@ impl KafkaProducerAdapter {
             .send(record, Duration::from_secs(5))
             .await
             .map_err(|(err, _)| anyhow!("Kafka send error: {err:?}"))?;
+
+        tracing::debug!(?record_name, "event sent");
 
         Ok(())
     }

@@ -32,6 +32,7 @@ impl CsvFinancialParser {
             let transaction = Self::validate_and_map(record, line_number)?;
             producer.publish_financial(transaction).await?;
         }
+        tracing::debug!(?line_number, "analyzed csv");
 
         Ok(())
     }

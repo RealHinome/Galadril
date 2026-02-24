@@ -68,11 +68,14 @@ impl KafkaConsumerAdapter {
 
         consumer.subscribe(&[topic])?;
 
+        tracing::info!(?brokers, ?group_id, ?topic, "kafka consumer ready");
+
         Ok(Self { consumer, service })
     }
 
     /// Listening loop.
     pub async fn run(&self) -> Result<()> {
+        tracing::info!("listening to kafka events...");
         loop {
             match self.consumer.recv().await {
                 Ok(message) => {
@@ -82,14 +85,15 @@ impl KafkaConsumerAdapter {
 
                     if let Err(err) = self.handle_message(payload).await {
                         // TODO: send to DLQ.
-                        eprintln!(
-                            "Failed to process message at offset {}: {err:?}",
-                            message.offset(),
+                        tracing::error!(
+                            ?err,
+                            offset = message.offset(),
+                            "failed to process message at offset"
                         );
                     }
                 },
                 Err(err) => {
-                    eprintln!("Kafka consumer error: {err:?}");
+                    tracing::error!(?err, "kafka error");
                 },
             }
         }
@@ -108,7 +112,8 @@ impl KafkaConsumerAdapter {
             let bucket = record.s3.bucket.name;
             let key = record.s3.object.key;
 
-            println!("New file detected: s3://{}/{}", bucket, key);
+            let url = format!("s3://{bucket}/{key}");
+            tracing::info!(url, "new file detected");
 
             self.service.process(bucket, key).await?;
         }

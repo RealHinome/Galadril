@@ -1,6 +1,6 @@
 [package]
 name = "intake"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 
 [dependencies]
@@ -17,3 +17,5 @@ chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1.21", features = ["v4"] }
 anyhow = { workspace = true }
 csv = "1.4"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

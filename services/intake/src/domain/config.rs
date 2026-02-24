@@ -17,6 +17,8 @@ pub struct AppConfig {
 impl AppConfig {
     /// Load environnement variables.
     pub fn from_env() -> Result<Self> {
+        tracing::debug!("reading environnement variables");
+
         let _ = required("AWS_ACCESS_KEY_ID");
         let _ = required("AWS_SECRET_ACCESS_KEY");
         let _ = required("AWS_REGION");

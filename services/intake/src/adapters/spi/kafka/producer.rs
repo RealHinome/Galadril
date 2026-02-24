@@ -5,8 +5,10 @@ use std::time::Duration;
 
 use anyhow::{Context, Result, anyhow};
 use async_trait::async_trait;
+use rdkafka::admin::{AdminClient, AdminOptions, NewTopic};
 use rdkafka::config::ClientConfig;
 use rdkafka::producer::{FutureProducer, FutureRecord};
+use rdkafka::types::RDKafkaErrorCode;
 use schema_registry_converter::async_impl::avro::AvroEncoder;
 use schema_registry_converter::async_impl::schema_registry::{
     SrSettings, post_schema,
@@ -43,12 +45,16 @@ impl KafkaProducerAdapter {
         registry_url: &str,
         topic: &str,
     ) -> Result<Self> {
-        let producer: FutureProducer = ClientConfig::new()
+        let config = ClientConfig::new()
             .set("bootstrap.servers", brokers)
             .set("message.timeout.ms", "5000")
             .set("acks", "all")
-            .create()
-            .context("Failed to create Kafka producer")?;
+            .clone();
+
+        Self::create_topics(&config, topic).await?;
+
+        let producer: FutureProducer =
+            config.create().context("Failed to create Kafka producer")?;
 
         let sr_settings = SrSettings::new_builder(registry_url.to_string())
             .build()
@@ -62,6 +68,44 @@ impl KafkaProducerAdapter {
             encoder,
             schema_names,
         })
+    }
+
+    pub async fn create_topics(
+        config: &ClientConfig,
+        topic_name: &str,
+    ) -> Result<()> {
+        let admin_client: AdminClient<_> =
+            config.create().context("Failed to create AdminClient")?;
+
+        let new_topic = NewTopic::new(
+            topic_name,
+            1,
+            rdkafka::admin::TopicReplication::Fixed(1),
+        );
+
+        let options = AdminOptions::new()
+            .operation_timeout(Some(Duration::from_secs(5)));
+
+        match admin_client.create_topics(&[new_topic], &options).await {
+            Ok(results) => {
+                for result in results {
+                    match result {
+                        Ok(t) => println!("Topic {t:?} created successfully."),
+                        Err((_, RDKafkaErrorCode::TopicAlreadyExists)) => {},
+                        Err((t, err)) => {
+                            return Err(anyhow!(
+                                "Failed to create topic {t}: {err:?}"
+                            ));
+                        },
+                    }
+                }
+            },
+            Err(err) => {
+                return Err(anyhow!("Admin operation failed: {err:?}"));
+            },
+        }
+
+        Ok(())
     }
 
     async fn register_schemas(

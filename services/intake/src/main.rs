@@ -25,10 +25,14 @@ async fn main() -> anyhow::Result<()> {
         S3Adapter::new(&config.s3_endpoint, &config.s3_bucket).await?,
     );
 
-    let kafka_producer = Arc::new(KafkaProducerAdapter::new(
-        &config.kafka_brokers,
-        &config.topic,
-    )?);
+    let kafka_producer = Arc::new(
+        KafkaProducerAdapter::new(
+            &config.kafka_brokers,
+            &config.schema_registery,
+            &config.topic,
+        )
+        .await?,
+    );
 
     let ingestion_service =
         Arc::new(IngestionService::new(s3_adapter, kafka_producer));

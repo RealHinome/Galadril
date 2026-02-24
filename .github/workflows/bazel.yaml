@@ -30,11 +30,23 @@ jobs:
           restore-keys: |
             bazel-${{ runner.os }}-
 
-      - name: Build
-        run: bazel build //... --config=ci
-
       - name: Test
-        run: bazel test //... --config=ci
+        run: bazel test //... --config=ci --config=release
+
+      - name: Login to GHCR
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Imagess
+        if: github.ref == 'refs/heads/main'
+        run: |
+          bazel run //:push --config=ci --config=release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   coverage:
     if: github.event_name == 'pull_request'

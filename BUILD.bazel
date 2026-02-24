@@ -52,3 +52,11 @@ multirun(
     ],
     jobs = 0,
 )
+
+multirun(
+    name = "push",
+    commands = [
+        "//services/intake:push",
+    ],
+    jobs = 0,
+)

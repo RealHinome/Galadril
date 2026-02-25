@@ -8,6 +8,8 @@ mod domain;
 
 use std::sync::Arc;
 
+use tracing_subscriber::{EnvFilter, fmt, prelude::*};
+
 use crate::adapters::spi::kafka::{
     KafkaConsumerAdapter, KafkaProducerAdapter,
 };
@@ -17,6 +19,19 @@ use crate::domain::config::AppConfig;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    let level = if cfg!(debug_assertions) {
+        "debug"
+    } else {
+        "info"
+    };
+    tracing_subscriber::registry()
+        .with(
+            EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| EnvFilter::new(level)),
+        )
+        .with(fmt::layer())
+        .init();
+
     let config = AppConfig::from_env()?;
 
     let s3_adapter = Arc::new(

@@ -55,7 +55,8 @@ async fn main() -> anyhow::Result<()> {
         &config.kafka_consumer_group,
         &config.kafka_notification_topic,
         ingestion_service,
-    )?;
+    )
+    .await?;
 
     tracing::info!("galadril intake service ready");
     consumer.run().await

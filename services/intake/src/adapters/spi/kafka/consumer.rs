@@ -53,18 +53,22 @@ pub struct KafkaConsumerAdapter {
 
 impl KafkaConsumerAdapter {
     /// Create a new [`KafkaConsumerAdapter`].
-    pub fn new(
+    pub async fn new(
         brokers: &str,
         group_id: &str,
         topic: &str,
         service: Arc<dyn IngestionServicePort>,
     ) -> Result<Self> {
-        let consumer: StreamConsumer = ClientConfig::new()
+        let config = ClientConfig::new()
             .set("bootstrap.servers", brokers)
             .set("group.id", group_id)
             .set("auto.offset.reset", "earliest")
             .set("enable.auto.commit", "true")
-            .create()?;
+            .clone();
+
+        crate::adapters::spi::kafka::create_topics(&config, topic).await?;
+
+        let consumer: StreamConsumer = config.create()?;
 
         consumer.subscribe(&[topic])?;
 

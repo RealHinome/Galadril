@@ -11,7 +11,7 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
       MINIO_NOTIFY_KAFKA_ENABLE_PRIMARY: on
       MINIO_NOTIFY_KAFKA_BROKERS_PRIMARY: redpanda:9092
-      MINIO_NOTIFY_KAFKA_TOPIC_PRIMARY: s3-events
+      MINIO_NOTIFY_KAFKA_TOPIC_PRIMARY: s3-bucket-notifications
     volumes:
       - minio-data:/data
     depends_on:

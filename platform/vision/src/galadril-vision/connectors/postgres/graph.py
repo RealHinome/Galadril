@@ -53,8 +53,6 @@ class GraphStore:
 
         try:
             async with self._client.connection() as conn:
-                await conn.execute("LOAD 'age'")
-                await conn.execute("SET search_path = ag_catalog, public")
                 await conn.execute(
                     f"""
                     SELECT * FROM cypher('{self._graph_name}', $$
@@ -82,8 +80,6 @@ class GraphStore:
 
         try:
             async with self._client.connection() as conn:
-                await conn.execute("LOAD 'age'")
-                await conn.execute("SET search_path = ag_catalog, public")
                 await conn.execute(
                     f"""
                     SELECT * FROM cypher('{self._graph_name}', $$

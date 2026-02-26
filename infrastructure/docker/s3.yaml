@@ -23,6 +23,7 @@ services:
     container_name: minio-init
     depends_on:
       - minio
+      - redpanda
     entrypoint: >
       /bin/sh -c "
         sleep 5;

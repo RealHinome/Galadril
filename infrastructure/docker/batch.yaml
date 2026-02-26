@@ -42,6 +42,7 @@ services:
     depends_on:
       - redpanda
       - minio
+      - minio-init
     environment:
       - KAFKA_BROKERS=redpanda:9092
       - KAFKA_CONSUMER_GROUP=intake-service

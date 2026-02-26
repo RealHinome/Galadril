@@ -1,7 +1,6 @@
 services:
   postgres:
     image: ghcr.io/realhinome/galadril-database:latest
-    platform: linux/amd64
     container_name: postgres
     ports:
       - 5432:5432

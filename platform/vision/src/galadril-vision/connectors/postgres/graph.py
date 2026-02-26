@@ -58,7 +58,8 @@ class GraphStore:
                 await conn.execute(
                     f"""
                     SELECT * FROM cypher('{self._graph_name}', $$
-                        MERGE (v:{vertex.label.value} $props)
+                        MERGE (v:{vertex.label.value})
+                        SET v += $props
                         RETURN v
                     $$, %s) AS (v agtype)
                     """,
@@ -88,7 +89,8 @@ class GraphStore:
                     SELECT * FROM cypher('{self._graph_name}', $$
                         MATCH (a {{id: $source_id}})
                         MATCH (b {{id: $target_id}})
-                        MERGE (a)-[r:{edge.edge_type} $props]->(b)
+                        MERGE (a)-[r:{edge.edge_type}]->(b)
+                        SET r += $props
                         RETURN r
                     $$, %s) AS (r agtype)
                     """,

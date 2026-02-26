@@ -42,13 +42,12 @@ services:
     depends_on:
       - redpanda
       - minio
-      - schema-registry
     environment:
       - KAFKA_BROKERS=redpanda:9092
       - KAFKA_CONSUMER_GROUP=intake-service
       - KAFKA_TOPIC_NOTIFICATIONS=s3-bucket-notifications
       - KAFKA_TOPIC=raw
-      - SCHEMA_REGISTRY=http://schema-registry:8081
+      - SCHEMA_REGISTRY=http://redpanda:8081
       - S3_ENDPOINT=http://minio:9000
       - AWS_ACCESS_KEY_ID=minioadmin
       - AWS_SECRET_ACCESS_KEY=minioadmin

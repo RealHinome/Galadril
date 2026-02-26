@@ -18,7 +18,10 @@ from galadril_vision.common.types import (
     ProcessingStatus,
 )
 from galadril_vision.connectors.kafka.consumer import KafkaMultiTopicConsumer
-from galadril_vision.connectors.kafka.schemas import InputType, UnifiedInputRecord
+from galadril_vision.connectors.kafka.schemas import (
+    InputType,
+    UnifiedInputRecord,
+)
 from galadril_vision.connectors.postgres.client import PostgresClient
 from galadril_vision.connectors.postgres.graph import GraphStore
 from galadril_vision.connectors.postgres.vector import VectorStore
@@ -90,11 +93,13 @@ class VisionPipeline:
         img_cfg = self._config.image_store
         inf_cfg = self._config.inference
 
-        df = daft.from_pydict({
-            "record_id": [r.record_id for r in records],
-            "storage_path": [r.storage_path for r in records],
-            "input_type": [r.input_type.value for r in records],
-        })
+        df = daft.from_pydict(
+            {
+                "record_id": [r.record_id for r in records],
+                "storage_path": [r.storage_path for r in records],
+                "input_type": [r.input_type.value for r in records],
+            }
+        )
 
         df = df.with_column(
             "image",
@@ -137,23 +142,27 @@ class VisionPipeline:
             error = inference.get("error")
 
             if error:
-                processed.append(ProcessedRecord(
-                    record_id=record_id,
-                    input_type=InputType.SATELLITE_IMAGE.value,
-                    status=ProcessingStatus.FAILED,
-                    error=error,
-                ))
+                processed.append(
+                    ProcessedRecord(
+                        record_id=record_id,
+                        input_type=InputType.SATELLITE_IMAGE.value,
+                        status=ProcessingStatus.FAILED,
+                        error=error,
+                    )
+                )
                 continue
 
             face_records: list[DetectedFaceRecord] = []
             for i, face in enumerate(faces_data):
-                face_records.append(DetectedFaceRecord(
-                    face_id=f"{record_id}_{i}",
-                    image_id=record_id,
-                    bbox=face.get("bbox", []),
-                    confidence=face.get("confidence", 0.0),
-                    embedding=face.get("embedding", []),
-                ))
+                face_records.append(
+                    DetectedFaceRecord(
+                        face_id=f"{record_id}_{i}",
+                        image_id=record_id,
+                        bbox=face.get("bbox", []),
+                        confidence=face.get("confidence", 0.0),
+                        embedding=face.get("embedding", []),
+                    )
+                )
 
             # Identify each face via pgvectorscale similarity search.
             for face in face_records:
@@ -165,13 +174,17 @@ class VisionPipeline:
                 unknown_prefix=self._config.unknown_vertex_prefix,
             )
 
-            processed.append(ProcessedRecord(
-                record_id=record_id,
-                input_type=InputType.SATELLITE_IMAGE.value,
-                status=ProcessingStatus.STORED,
-                faces=face_records,
-                processing_time_ms=inference.get("inference_latency_ms", 0.0),
-            ))
+            processed.append(
+                ProcessedRecord(
+                    record_id=record_id,
+                    input_type=InputType.SATELLITE_IMAGE.value,
+                    status=ProcessingStatus.STORED,
+                    faces=face_records,
+                    processing_time_ms=inference.get(
+                        "inference_latency_ms", 0.0
+                    ),
+                )
+            )
 
         return processed
 
@@ -206,10 +219,9 @@ class VisionPipeline:
         start = time.perf_counter()
         all_processed: list[ProcessedRecord] = []
 
-        image_records = (
-            grouped.get(InputType.SATELLITE_IMAGE, [])
-            + [r for r in grouped.get(InputType.DOCUMENT, []) if r.is_image]
-        )
+        image_records = grouped.get(InputType.SATELLITE_IMAGE, []) + [
+            r for r in grouped.get(InputType.DOCUMENT, []) if r.is_image
+        ]
         if image_records:
             daft_results = self._process_images(image_records)
             all_processed.extend(await self._identify_faces(daft_results))
@@ -221,17 +233,21 @@ class VisionPipeline:
 
         financial_records = grouped.get(InputType.FINANCIAL_TRANSACTION, [])
         if financial_records:
-            all_processed.extend(await self._process_financial(financial_records))
+            all_processed.extend(
+                await self._process_financial(financial_records)
+            )
 
         doc_records = [
             r for r in grouped.get(InputType.DOCUMENT, []) if not r.is_image
         ]
         for r in doc_records:
-            all_processed.append(ProcessedRecord(
-                record_id=r.record_id,
-                input_type=r.input_type.value,
-                status=ProcessingStatus.SKIPPED,
-            ))
+            all_processed.append(
+                ProcessedRecord(
+                    record_id=r.record_id,
+                    input_type=r.input_type.value,
+                    status=ProcessingStatus.SKIPPED,
+                )
+            )
 
         elapsed_ms = (time.perf_counter() - start) * 1000
         logger.info(
@@ -256,7 +272,8 @@ class VisionPipeline:
                     self._kafka_consumer.commit()
 
                     stored = sum(
-                        1 for p in processed
+                        1
+                        for p in processed
                         if p.status == ProcessingStatus.STORED
                     )
                     logger.info(

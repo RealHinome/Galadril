@@ -109,23 +109,27 @@ def run_inference_udf(
                 )
             )
 
-            results.append({
-                "record_id": record_id,
-                "faces": result.prediction.get("faces", []),
-                "model_version": result.model_version,
-                "inference_latency_ms": result.latency_ms,
-                "confidence": result.confidence,
-                "error": None,
-            })
+            results.append(
+                {
+                    "record_id": record_id,
+                    "faces": result.prediction.get("faces", []),
+                    "model_version": result.model_version,
+                    "inference_latency_ms": result.latency_ms,
+                    "confidence": result.confidence,
+                    "error": None,
+                }
+            )
 
         except Exception as exc:
             logger.warning(
                 "inference_failed", record_id=record_id, error=str(exc)
             )
-            results.append({
-                "record_id": record_id,
-                "faces": [],
-                "error": str(exc),
-            })
+            results.append(
+                {
+                    "record_id": record_id,
+                    "faces": [],
+                    "error": str(exc),
+                }
+            )
 
     return results

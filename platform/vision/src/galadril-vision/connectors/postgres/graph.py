@@ -1,9 +1,8 @@
-"""Apache AGE graph operations for multi-entity relationships."""
-
 from __future__ import annotations
 from datetime import datetime
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
+import orjson
 import structlog
 
 from galadril_vision.common.exceptions import GraphOperationError
@@ -23,15 +22,12 @@ logger = structlog.get_logger(__name__)
 
 
 class GraphStore:
-    """Apache AGE graph operations for multi-entity relationships."""
-
     def __init__(self, client: PostgresClient, config: PostgresConfig) -> None:
         self._client = client
         self._config = config
         self._graph_name = config.graph_name
 
     async def initialize(self) -> None:
-        """Ensure the graph exists and search path is set."""
         async with self._client.connection() as conn:
             await conn.execute("LOAD 'age'")
             await conn.execute("SET search_path = ag_catalog, public")
@@ -50,10 +46,10 @@ class GraphStore:
         logger.info("graph_store_initialized", graph=self._graph_name)
 
     async def ensure_vertex(self, vertex: GraphVertex) -> None:
-        """Create or update a vertex."""
         props = vertex.properties.copy()
         props["id"] = vertex.vertex_id
-        props_cypher = ", ".join(f"{k}: {self._cypher_value(v)}" for k, v in props.items())
+
+        params = orjson.dumps({"props": props}).decode()
 
         try:
             async with self._client.connection() as conn:
@@ -62,19 +58,26 @@ class GraphStore:
                 await conn.execute(
                     f"""
                     SELECT * FROM cypher('{self._graph_name}', $$
-                        MERGE (v:{vertex.label.value} {{{props_cypher}}})
+                        MERGE (v:{vertex.label.value} $props)
                         RETURN v
-                    $$) AS (v agtype)
-                    """
+                    $$, %s) AS (v agtype)
+                    """,
+                    (params,),
                 )
-            logger.debug("vertex_ensured", vertex_id=vertex.vertex_id, label=vertex.label)
+            logger.debug(
+                "vertex_ensured", vertex_id=vertex.vertex_id, label=vertex.label
+            )
         except Exception as exc:
             raise GraphOperationError("ensure_vertex", str(exc)) from exc
 
     async def create_edge(self, edge: GraphEdge) -> None:
-        """Create an edge between two vertices."""
-        props_cypher = ", ".join(f"{k}: {self._cypher_value(v)}" for k, v in edge.properties.items())
-        props_str = f"{{{props_cypher}}}" if props_cypher else ""
+        params = orjson.dumps(
+            {
+                "source_id": edge.source_vertex_id,
+                "target_id": edge.target_vertex_id,
+                "props": edge.properties,
+            }
+        ).decode()
 
         try:
             async with self._client.connection() as conn:
@@ -83,12 +86,13 @@ class GraphStore:
                 await conn.execute(
                     f"""
                     SELECT * FROM cypher('{self._graph_name}', $$
-                        MATCH (a {{id: '{edge.source_vertex_id}'}})
-                        MATCH (b {{id: '{edge.target_vertex_id}'}})
-                        MERGE (a)-[r:{edge.edge_type} {props_str}]->(b)
+                        MATCH (a {{id: $source_id}})
+                        MATCH (b {{id: $target_id}})
+                        MERGE (a)-[r:{edge.edge_type} $props]->(b)
                         RETURN r
-                    $$) AS (r agtype)
-                    """
+                    $$, %s) AS (r agtype)
+                    """,
+                    (params,),
                 )
             logger.debug(
                 "edge_created",
@@ -108,12 +112,19 @@ class GraphStore:
         transaction_id: str,
         timestamp: datetime,
     ) -> None:
-        """Create vertices and edge for a financial transaction."""
         await self.ensure_vertex(
-            GraphVertex(vertex_id=sender_id, label=EntityType.ACCOUNT, properties={"account_id": sender_id})
+            GraphVertex(
+                vertex_id=sender_id,
+                label=EntityType.ACCOUNT,
+                properties={"account_id": sender_id},
+            )
         )
         await self.ensure_vertex(
-            GraphVertex(vertex_id=receiver_id, label=EntityType.ACCOUNT, properties={"account_id": receiver_id})
+            GraphVertex(
+                vertex_id=receiver_id,
+                label=EntityType.ACCOUNT,
+                properties={"account_id": receiver_id},
+            )
         )
         await self.create_edge(
             GraphEdge(
@@ -142,7 +153,6 @@ class GraphStore:
         faces: list[DetectedFaceRecord],
         unknown_prefix: str,
     ) -> list[GraphEdge]:
-        """Create APPEARS_WITH relationships between faces in an image."""
         edges_created: list[GraphEdge] = []
         vertex_ids: list[str] = []
 
@@ -154,11 +164,17 @@ class GraphStore:
                 vertex_id = face.identified_person_id
                 props = {"type": "known"}
 
-            await self.ensure_vertex(GraphVertex(vertex_id=vertex_id, label=EntityType.PERSON, properties=props))
+            await self.ensure_vertex(
+                GraphVertex(
+                    vertex_id=vertex_id,
+                    label=EntityType.PERSON,
+                    properties=props,
+                )
+            )
             vertex_ids.append(vertex_id)
 
         for i, source_id in enumerate(vertex_ids):
-            for target_id in vertex_ids[i + 1:]:
+            for target_id in vertex_ids[i + 1 :]:
                 edge = GraphEdge(
                     source_vertex_id=source_id,
                     target_vertex_id=target_id,
@@ -181,7 +197,6 @@ class GraphStore:
         article_id: str,
         entities: list[ExtractedEntity],
     ) -> list[GraphEdge]:
-        """Create MENTIONED_WITH relationships between entities in an article."""
         edges_created: list[GraphEdge] = []
 
         for entity in entities:
@@ -194,9 +209,11 @@ class GraphStore:
                 )
             )
 
-        vertex_ids = [e.resolved_id or f"entity_{e.entity_id}" for e in entities]
+        vertex_ids = [
+            e.resolved_id or f"entity_{e.entity_id}" for e in entities
+        ]
         for i, source_id in enumerate(vertex_ids):
-            for j, target_id in enumerate(vertex_ids[i + 1:], start=i + 1):
+            for j, target_id in enumerate(vertex_ids[i + 1 :], start=i + 1):
                 edge = GraphEdge(
                     source_vertex_id=source_id,
                     target_vertex_id=target_id,
@@ -211,17 +228,3 @@ class GraphStore:
                 edges_created.append(edge)
 
         return edges_created
-
-    @staticmethod
-    def _cypher_value(value: Any) -> str:
-        """Convert Python value to Cypher literal."""
-        if isinstance(value, str):
-            escaped = value.replace("'", "\\'")
-            return f"'{escaped}'"
-        if isinstance(value, bool):
-            return "true" if value else "false"
-        if isinstance(value, (int, float)):
-            return str(value)
-        if value is None:
-            return "null"
-        return f"'{value}'"

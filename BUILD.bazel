@@ -13,6 +13,7 @@ pip_compile(
     name = "generate_requirements_txt",
     args = [
         "--all-extras",
+        "--no-emit-package galadril-inference",
     ],
     requirements_in = "//:pyproject.toml",
     requirements_txt = "//:requirements.txt",

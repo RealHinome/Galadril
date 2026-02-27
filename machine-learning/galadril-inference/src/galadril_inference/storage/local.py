@@ -6,7 +6,7 @@ from pathlib import Path
 
 import structlog
 
-from galadril_inference.core.exceptions import ArtifactResolutionError
+from galadril_inference.common.exceptions import ArtifactResolutionError
 from galadril_inference.loading.loader import ArtifactLoader
 
 logger = structlog.get_logger(__name__)

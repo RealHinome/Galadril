@@ -1,6 +1,6 @@
+load("@crates//:defs.bzl", "aliases", "all_crate_deps")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_push")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
-load("@crates//:defs.bzl", "aliases", "all_crate_deps")
 load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_test")
 
 rust_binary(
@@ -33,8 +33,8 @@ pkg_tar(
 oci_image(
     name = "linux",
     base = "@distroless_cc",
-    tars = [":layer"],
     entrypoint = ["/intake"],
+    tars = [":layer"],
 )
 
 oci_image_index(
@@ -47,9 +47,9 @@ oci_image_index(
 oci_push(
     name = "push",
     image = ":images",
-    repository = "ghcr.io/realhinome/galadril-intake",
     remote_tags = [
         "latest",
     ],
+    repository = "ghcr.io/realhinome/galadril-intake",
     visibility = ["//visibility:public"],
 )

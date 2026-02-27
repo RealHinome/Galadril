@@ -65,3 +65,14 @@ oci.pull(
     tag = "latest",
 )
 use_repo(oci, "distroless_cc", "distroless_cc_linux_amd64", "distroless_cc_linux_arm64_v8")
+
+oci.pull(
+    name = "distroless_py",
+    image = "gcr.io/distroless/python3-debian13",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64/v8",
+    ],
+    tag = "latest", 
+)
+use_repo(oci, "distroless_py")

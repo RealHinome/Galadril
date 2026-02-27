@@ -11,11 +11,11 @@ py_library(
     visibility = ["//platform/vision/src:__subpackages__"],
     deps = [
         "//platform/vision/src/galadril_vision/common",
+        "@pip//authlib",  # keep
+        "@pip//cachetools",  # keep
         "@pip//confluent_kafka",
-        "@pip//httpx",
-        "@pip//authlib",
-        "@pip//fastavro",
-        "@pip//cachetools",
+        "@pip//fastavro",  # keep
+        "@pip//httpx",  # keep
         "@pip//orjson",
         "@pip//pydantic",
         "@pip//structlog",

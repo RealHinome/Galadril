@@ -1,3 +1,5 @@
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_push")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 py_library(
@@ -30,4 +32,34 @@ py_binary(
         "//platform/vision/src/galadril_vision/pipeline",
         "@pip//structlog",
     ],
+)
+
+pkg_tar(
+    name = "layer",
+    srcs = [":vision_service"],
+    strip_prefix = ".",
+)
+
+oci_image(
+    name = "linux",
+    base = "@distroless_py",
+    entrypoint = ["/platform/vision/src/galadril_vision/vision_service"],
+    tars = [":layer"],
+)
+
+oci_image_index(
+    name = "images",
+    images = [
+        ":linux",
+    ],
+)
+
+oci_push(
+    name = "push",
+    image = ":images",
+    remote_tags = [
+        "latest",
+    ],
+    repository = "ghcr.io/realhinome/galadril-vision",
+    visibility = ["//visibility:public"],
 )

@@ -11,7 +11,6 @@ py_library(
     imports = ["../../.."],
     visibility = ["//platform/vision/src:__subpackages__"],
     deps = [
-        "//platform/vision/src/galadril_vision",
         "//platform/vision/src/galadril_vision/common",
         "@pip//orjson",
         "@pip//pgvector",

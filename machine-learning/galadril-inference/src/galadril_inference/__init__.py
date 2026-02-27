@@ -1,7 +1,7 @@
 """ML inference library for the Galadril platform."""
 
 from galadril_inference.core.engine import InferenceEngine
-from galadril_inference.core.types import (
+from galadril_inference.common.types import (
     ModelMeta,
     ModelStatus,
     PredictionRequest,

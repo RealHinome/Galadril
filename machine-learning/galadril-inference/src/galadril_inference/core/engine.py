@@ -15,7 +15,7 @@ from galadril_inference.common.exceptions import (
     ModelNotReadyError,
 )
 from galadril_inference.core.registry import ModelRegistry
-from galadril_inference.core.types import (
+from galadril_inference.common.types import (
     ModelMeta,
     ModelStatus,
     PredictionRequest,

@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 
 import structlog
 
-from galadril_inference.core.exceptions import ArtifactResolutionError
+from galadril_inference.common.exceptions import ArtifactResolutionError
 from galadril_inference.loading.loader import ArtifactLoader
 
 if TYPE_CHECKING:

@@ -5,7 +5,7 @@ from __future__ import annotations
 import structlog
 
 from galadril_inference.common.exceptions import ModelNotFoundError
-from galadril_inference.core.types import ModelMeta, ModelStatus
+from galadril_inference.common.types import ModelMeta, ModelStatus
 from galadril_inference.models.base import BaseModel
 
 logger = structlog.get_logger(__name__)

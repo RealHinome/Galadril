@@ -51,6 +51,8 @@ class VisionPipeline:
             address=ray_config.address,
             num_cpus=ray_config.num_cpus,
             num_gpus=ray_config.num_gpus,
+            include_dashboard=False,
+            ignore_reinit_error=True,
         )
         self._kafka_consumer = KafkaMultiTopicConsumer(
             self._config.kafka,

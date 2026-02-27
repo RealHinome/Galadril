@@ -15,8 +15,11 @@ manifest:
     albucore: albucore
     albumentations: albumentations
     annotated_types: annotated_types
+    anyio: anyio
     attr: attrs
     attrs: attrs
+    authlib: authlib
+    avro: avro
     boto3: boto3
     boto3_stubs: boto3_stubs
     botocore: botocore
@@ -39,6 +42,7 @@ manifest:
     distlib: distlib
     dotenv: python_dotenv
     easydict: easydict
+    fastavro: fastavro
     fb303: pyiceberg
     filelock: filelock
     flatbuffers: flatbuffers
@@ -118,7 +122,10 @@ manifest:
     google.type.quaternion_pb2: googleapis_common_protos
     google.type.timeofday_pb2: googleapis_common_protos
     grpc: grpcio
+    h11: h11
     hive_metastore: pyiceberg
+    httpcore: httpcore
+    httpx: httpx
     idna: idna
     imageio: imageio
     importlib_metadata: importlib_metadata
@@ -201,6 +208,7 @@ manifest:
     pylab: matplotlib
     pyparsing: pyparsing
     pyroaring: pyroaring
+    pyrsistent: pyrsistent
     python_discovery: python_discovery
     pyximport: cython
     ray: ray
@@ -241,4 +249,4 @@ manifest:
     zstandard: zstandard
   pip_repository:
     name: pip
-integrity: 5906de2d45f0c8263b59942c88db6baa9ccbe6df0861cfe54d9739cb98425d75
+integrity: 639fd8867d5e3b79ffd446d06bc7880a5525eb430e2ff46d11462ed33183f38b

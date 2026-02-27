@@ -16,7 +16,7 @@ from galadril_vision.common.types import (
 )
 
 if TYPE_CHECKING:
-    from galadril_vision.config import PostgresConfig
+    from galadril_vision.common.config import PostgresConfig
     from galadril_vision.connectors.postgres.client import PostgresClient
 
 logger = structlog.get_logger(__name__)

@@ -16,7 +16,7 @@ dependencies = [
     "galadril-inference",
     "daft[ray,iceberg]>=0.7.3",
     "ray[default]>=2.52",
-    "confluent-kafka>=2.13",
+    "confluent-kafka[avro,json,schema-registry]>=2.13",
     "psycopg[binary,pool]>=3.2",
     "pgvector>=0.3",
     "pydantic>=2.10",

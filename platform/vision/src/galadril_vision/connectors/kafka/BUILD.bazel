@@ -12,6 +12,10 @@ py_library(
     deps = [
         "//platform/vision/src/galadril_vision/common",
         "@pip//confluent_kafka",
+        "@pip//httpx",
+        "@pip//authlib",
+        "@pip//fastavro",
+        "@pip//cachetools",
         "@pip//orjson",
         "@pip//pydantic",
         "@pip//structlog",

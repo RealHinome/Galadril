@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import orjson
 import structlog
-from confluent_kafka import Consumer, KafkaError
+from confluent_kafka import Consumer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 

@@ -20,11 +20,11 @@ py_library(
 )
 
 py_binary(
-    name = "vision_service",
+    name = "vision",
     srcs = ["main.py"],
     imports = [".."],
     main = "main.py",
-    visibility = ["//platform/vision/src:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//machine-learning/galadril-inference/src/galadril_inference",
         "//machine-learning/galadril-inference/src/galadril_inference/storage",
@@ -36,14 +36,14 @@ py_binary(
 
 pkg_tar(
     name = "layer",
-    srcs = [":vision_service"],
+    srcs = [":vision"],
     strip_prefix = ".",
 )
 
 oci_image(
     name = "linux",
     base = "@distroless_py",
-    entrypoint = ["/platform/vision/src/galadril_vision/vision_service"],
+    entrypoint = ["/platform/vision/src/galadril_vision/vision"],
     tars = [":layer"],
 )
 

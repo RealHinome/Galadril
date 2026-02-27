@@ -50,6 +50,7 @@ multirun(
     commands = [
         "//services/gateway:gateway",
         "//services/intake:intake",
+        "//platform/vision/src/galadril_vision:vision",
     ],
     jobs = 0,
 )
@@ -58,6 +59,7 @@ multirun(
     name = "push",
     commands = [
         "//services/intake:push",
+        "//platform/vision/src/galadril_vision:push",
     ],
     jobs = 0,
 )

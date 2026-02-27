@@ -12,8 +12,6 @@ from daft import col
 
 from galadril_vision.common.types import (
     DetectedFaceRecord,
-    EntityType,
-    ExtractedEntity,
     ProcessedRecord,
     ProcessingStatus,
 )
@@ -31,7 +29,7 @@ from galadril_vision.pipeline.transforms import (
 )
 
 if TYPE_CHECKING:
-    from galadril_vision.config import VisionConfig
+    from galadril_vision.common.config import VisionConfig
 
 logger = structlog.get_logger(__name__)
 
@@ -54,11 +52,9 @@ class VisionPipeline:
             num_cpus=ray_config.num_cpus,
             num_gpus=ray_config.num_gpus,
         )
-        daft.context.set_runner_ray()
-
         self._kafka_consumer = KafkaMultiTopicConsumer(
             self._config.kafka,
-            schema_registry_url=self._config.kafka.schema_registry_url,
+            schema_registry_url=self._config.kafka.schema_registry,
         )
         self._kafka_consumer.connect()
 
@@ -117,10 +113,10 @@ class VisionPipeline:
             run_inference_udf(
                 col("image"),
                 col("record_id"),
-                artifact_bucket=inf_cfg.artifact_bucket,
-                artifact_prefix=inf_cfg.artifact_prefix,
-                artifact_endpoint_url=inf_cfg.artifact_endpoint_url,
-                model_name=inf_cfg.face_model_name,
+                artifact_bucket=inf_cfg.bucket,
+                artifact_prefix=inf_cfg.prefix,
+                artifact_endpoint_url=inf_cfg.endpoint_url,
+                model_name=self._config.face_model_name,
             ),
         )
 
@@ -151,6 +147,11 @@ class VisionPipeline:
                     )
                 )
                 continue
+
+            if self._vector_store is None or self._graph_store is None:
+                raise RuntimeError(
+                    "Pipeline components not initialized. Did you call initialize()?"
+                )
 
             face_records: list[DetectedFaceRecord] = []
             for i, face in enumerate(faces_data):
@@ -264,6 +265,11 @@ class VisionPipeline:
     async def run(self) -> None:
         """Consume from Kafka and process continuously."""
         logger.info("vision_pipeline_started")
+
+        if self._kafka_consumer is None:
+            raise RuntimeError(
+                "Pipeline components not initialized. Did you call await initialize()?"
+            )
 
         try:
             for grouped_batch in self._kafka_consumer.stream():

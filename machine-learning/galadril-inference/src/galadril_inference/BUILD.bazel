@@ -4,6 +4,6 @@ py_library(
     name = "galadril_inference",
     srcs = ["__init__.py"],
     imports = [".."],
-    visibility = ["//machine-learning/galadril-inference/src:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = ["//machine-learning/galadril-inference/src/galadril_inference/core"],
 )

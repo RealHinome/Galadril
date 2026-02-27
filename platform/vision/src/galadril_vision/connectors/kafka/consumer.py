@@ -22,7 +22,7 @@ from galadril_vision.connectors.kafka.schemas import (
 )
 
 if TYPE_CHECKING:
-    from galadril_vision.config import KafkaConfig
+    from galadril_vision.common.config import KafkaConfig
 
 logger = structlog.get_logger(__name__)
 
@@ -77,10 +77,7 @@ class KafkaMultiTopicConsumer:
 
         for topic in _TOPIC_TYPE_MAP:
             try:
-                self._deserializers[topic] = AvroDeserializer(
-                    sr_client,
-                    schema_str=None,  # TODO: Fetch from registry.
-                )
+                self._deserializers[topic] = AvroDeserializer()
             except Exception as exc:
                 logger.warning(
                     "deserializer_init_failed",
@@ -152,13 +149,17 @@ class KafkaMultiTopicConsumer:
                 break
 
             if msg.error():
-                if msg.error().code() == KafkaError._PARTITION_EOF:
-                    continue
                 raise KafkaConsumerError(f"Kafka error: {msg.error()}")
 
-            record = self._parse_message(msg.topic(), msg.value())
-            if record:
-                records.append(record)
+            msg_topic = msg.topic()
+            msg_value = msg.value()
+
+            if msg_topic is not None and msg_value is not None:
+                record = self._parse_message(msg_topic, msg_value)
+                if record:
+                    records.append(record)
+            else:
+                pass
 
         return records
 

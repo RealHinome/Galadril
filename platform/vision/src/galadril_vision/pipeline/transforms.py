@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import daft
 import numpy as np
 import structlog
 from daft import DataType, Series
 from numpy.typing import NDArray
+from galadril_inference import InferenceEngine, PredictionRequest
 
 logger = structlog.get_logger(__name__)
 
@@ -26,11 +27,11 @@ def download_images_udf(
     import boto3
     import cv2
 
-    kwargs = {"region_name": "eu-west-1"}
-    if endpoint_url:
-        kwargs["endpoint_url"] = endpoint_url
-
-    client = boto3.client("s3", **kwargs)
+    client = boto3.client(
+        "s3",
+        region_name="eu-west-1",
+        endpoint_url=endpoint_url,
+    )
     results: list[NDArray[np.uint8] | None] = []
 
     for storage_path, record_id in zip(
@@ -57,7 +58,7 @@ def download_images_udf(
             if image is None:
                 logger.warning("image_decode_failed", record_id=record_id)
 
-            results.append(image)
+            results.append(cast(NDArray[np.uint8], image))
 
         except Exception as exc:
             logger.warning(

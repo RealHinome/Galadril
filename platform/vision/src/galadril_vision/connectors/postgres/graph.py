@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 import orjson
 import structlog
 
+from psycopg import sql
 from galadril_vision.common.exceptions import GraphOperationError
 from galadril_vision.common.types import (
     DetectedFaceRecord,
@@ -31,18 +32,17 @@ class GraphStore:
         async with self._client.connection() as conn:
             await conn.execute("LOAD 'age'")
             await conn.execute("SET search_path = ag_catalog, public")
-            await conn.execute(
-                f"""
+            query = sql.SQL("""
                 DO $$
                 BEGIN
                     IF NOT EXISTS (
-                        SELECT 1 FROM ag_catalog.ag_graph WHERE name = '{self._graph_name}'
+                        SELECT 1 FROM ag_catalog.ag_graph WHERE name = {graph_str}
                     ) THEN
-                        PERFORM ag_catalog.create_graph('{self._graph_name}');
+                        PERFORM ag_catalog.create_graph({graph_str});
                     END IF;
                 END $$;
-                """
-            )
+            """).format(graph_str=sql.Literal(self._graph_name))
+            await conn.execute(query)
         logger.info("graph_store_initialized", graph=self._graph_name)
 
     async def ensure_vertex(self, vertex: GraphVertex) -> None:
@@ -53,16 +53,17 @@ class GraphStore:
 
         try:
             async with self._client.connection() as conn:
-                await conn.execute(
-                    f"""
-                    SELECT * FROM cypher('{self._graph_name}', $$
-                        MERGE (v:{vertex.label.value})
-                        SET v += $props
-                        RETURN v
-                    $$, %s) AS (v agtype)
-                    """,
-                    (params,),
+                query = sql.SQL("""
+                SELECT * FROM cypher({graph}, $$
+                    MERGE (v:{label})
+                    SET v += $props
+                    RETURN v
+                $$, %s) AS (v agtype)
+                """).format(
+                    graph=sql.Literal(self._graph_name),
+                    label=sql.Identifier(vertex.label.value),
                 )
+                await conn.execute(query, (params,))
             logger.debug(
                 "vertex_ensured", vertex_id=vertex.vertex_id, label=vertex.label
             )
@@ -80,18 +81,19 @@ class GraphStore:
 
         try:
             async with self._client.connection() as conn:
-                await conn.execute(
-                    f"""
-                    SELECT * FROM cypher('{self._graph_name}', $$
-                        MATCH (a {{id: $source_id}})
-                        MATCH (b {{id: $target_id}})
-                        MERGE (a)-[r:{edge.edge_type}]->(b)
-                        SET r += $props
-                        RETURN r
-                    $$, %s) AS (r agtype)
-                    """,
-                    (params,),
+                query = sql.SQL("""
+                SELECT * FROM cypher({graph}, $$
+                    MATCH (a {{id: $source_id}})
+                    MATCH (b {{id: $target_id}})
+                    MERGE (a)-[r:{edge_type}]->(b)
+                    SET r += $props
+                    RETURN r
+                $$, %s) AS (r agtype)
+                """).format(
+                    graph=sql.Literal(self._graph_name),
+                    edge_type=sql.Identifier(edge.edge_type),
                 )
+                await conn.execute(query, (params,))
             logger.debug(
                 "edge_created",
                 source=edge.source_vertex_id,
@@ -162,6 +164,7 @@ class GraphStore:
                 vertex_id = face.identified_person_id
                 props = {"type": "known"}
 
+            vertex_id = vertex_id or "unknown_id"
             await self.ensure_vertex(
                 GraphVertex(
                     vertex_id=vertex_id,

@@ -8,27 +8,43 @@ manifest:
   modules_mapping:
     Cython: cython
     PIL: pillow
+    aiohappyeyeballs: aiohappyeyeballs
+    aiohttp: aiohttp
+    aiohttp_cors: aiohttp_cors
+    aiosignal: aiosignal
     albucore: albucore
     albumentations: albumentations
     annotated_types: annotated_types
+    attr: attrs
+    attrs: attrs
     boto3: boto3
     boto3_stubs: boto3_stubs
     botocore: botocore
     botocore_stubs: botocore_stubs
+    cachetools: cachetools
     certifi: certifi
     cffi: cffi
     charset_normalizer: charset_normalizer
     cli: stringzilla
+    click: click
+    colorful: colorful
+    confluent_kafka: confluent_kafka
     contourpy: contourpy
-    coverage: coverage
     cryptography: cryptography
     cv2: opencv_python_headless
     cycler: cycler
     cython: cython
+    daft: daft
     dateutil: python_dateutil
+    distlib: distlib
+    dotenv: python_dotenv
     easydict: easydict
+    fb303: pyiceberg
+    filelock: filelock
     flatbuffers: flatbuffers
     fontTools: fonttools
+    frozenlist: frozenlist
+    fsspec: fsspec
     google.api.annotations_pb2: googleapis_common_protos
     google.api.auth_pb2: googleapis_common_protos
     google.api.backend_pb2: googleapis_common_protos
@@ -62,6 +78,8 @@ manifest:
     google.api.system_parameter_pb2: googleapis_common_protos
     google.api.usage_pb2: googleapis_common_protos
     google.api.visibility_pb2: googleapis_common_protos
+    google.api_core: google_api_core
+    google.auth: google_auth
     google.cloud.common_resources_pb2: googleapis_common_protos
     google.cloud.extended_operations_pb2: googleapis_common_protos
     google.cloud.location.locations_pb2: googleapis_common_protos
@@ -74,6 +92,7 @@ manifest:
     google.longrunning.operations_pb2_grpc: googleapis_common_protos
     google.longrunning.operations_proto: googleapis_common_protos
     google.longrunning.operations_proto_pb2: googleapis_common_protos
+    google.oauth2: google_auth
     google.protobuf: protobuf
     google.rpc.code_pb2: googleapis_common_protos
     google.rpc.context.attribute_context_pb2: googleapis_common_protos
@@ -99,30 +118,38 @@ manifest:
     google.type.quaternion_pb2: googleapis_common_protos
     google.type.timeofday_pb2: googleapis_common_protos
     grpc: grpcio
+    hive_metastore: pyiceberg
     idna: idna
     imageio: imageio
     importlib_metadata: importlib_metadata
-    iniconfig: iniconfig
     insightface: insightface
     isympy: sympy
     jinja2: jinja2
     jmespath: jmespath
     joblib: joblib
+    jsonschema: jsonschema
+    jsonschema_specifications: jsonschema_specifications
     kiwisolver: kiwisolver
     lazy_loader: lazy_loader
+    markdown_it: markdown_it_py
     markupsafe: markupsafe
     matplotlib: matplotlib
+    mdurl: mdurl
     ml_dtypes: ml_dtypes
+    mmh3: mmh3
     moto: moto
     mpl_toolkits.axes_grid1: matplotlib
     mpl_toolkits.axisartist: matplotlib
     mpl_toolkits.mplot3d: matplotlib
     mpmath: mpmath
+    msgpack: msgpack
+    multidict: multidict
     mypy_boto3_s3: mypy_boto3_s3
     networkx: networkx
     numpy: numpy
     onnx: onnx
     onnxruntime: onnxruntime
+    opencensus: opencensus_context
     opentelemetry.attributes: opentelemetry_api
     opentelemetry.baggage: opentelemetry_api
     opentelemetry.context: opentelemetry_api
@@ -131,6 +158,7 @@ manifest:
     opentelemetry.exporter.otlp.proto.grpc: opentelemetry_exporter_otlp_proto_grpc
     opentelemetry.exporter.otlp.proto.http: opentelemetry_exporter_otlp_proto_http
     opentelemetry.exporter.otlp.version: opentelemetry_exporter_otlp
+    opentelemetry.exporter.prometheus: opentelemetry_exporter_prometheus
     opentelemetry.metrics: opentelemetry_api
     opentelemetry.propagate: opentelemetry_api
     opentelemetry.propagators.composite: opentelemetry_api
@@ -148,32 +176,52 @@ manifest:
     opentelemetry.util.re: opentelemetry_api
     opentelemetry.util.types: opentelemetry_api
     opentelemetry.version: opentelemetry_api
+    orjson: orjson
     packaging: packaging
-    pluggy: pluggy
+    pandas: pandas
+    pgvector: pgvector
+    platformdirs: platformdirs
     prettytable: prettytable
-    py: pytest
+    prometheus_client: prometheus_client
+    propcache: propcache
+    proto: proto_plus
+    psycopg: psycopg
+    psycopg_binary: psycopg_binary
+    psycopg_pool: psycopg_pool
     py_partiql_parser: py_partiql_parser
+    pyarrow: pyarrow
+    pyasn1: pyasn1
+    pyasn1_modules: pyasn1_modules
     pycparser: pycparser
     pydantic: pydantic
     pydantic_core: pydantic_core
+    pydantic_settings: pydantic_settings
     pygments: pygments
+    pyiceberg: pyiceberg
     pylab: matplotlib
     pyparsing: pyparsing
-    pytest: pytest
-    pytest_cov: pytest_cov
-    pytest_tmp_files: pytest_tmp_files
+    pyroaring: pyroaring
+    python_discovery: python_discovery
     pyximport: cython
+    ray: ray
+    referencing: referencing
     requests: requests
     responses: responses
+    rich: rich
+    rpds: rpds_py
+    rsa: rsa
     s3transfer: s3transfer
     scipy: scipy
     simsimd: simsimd
     six: six
     skimage: scikit_image
     sklearn: scikit_learn
+    smart_open: smart_open
+    strictyaml: strictyaml
     stringzilla: stringzilla
     structlog: structlog
     sympy: sympy
+    tenacity: tenacity
     threadpoolctl: threadpoolctl
     tifffile: tifffile
     tqdm: tqdm
@@ -182,11 +230,15 @@ manifest:
     typing_extensions: typing_extensions
     typing_inspection: typing_inspection
     urllib3: urllib3
+    virtualenv: virtualenv
     wcwidth: wcwidth
     werkzeug: werkzeug
+    wrapt: wrapt
     xmltodict: xmltodict
     yaml: pyyaml
+    yarl: yarl
     zipp: zipp
+    zstandard: zstandard
   pip_repository:
     name: pip
-integrity: 373986f07062f78d67a338e5489f74b4001a6ee10816bfa42c47a2ff8ed3f59c
+integrity: 50ed55c17398a172c72e9bb5bfdf0d833e63b3a779dea35f3858cbc83f2c6425

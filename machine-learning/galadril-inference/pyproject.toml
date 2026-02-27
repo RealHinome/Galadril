@@ -9,9 +9,6 @@ dependencies = [
     "boto3>=1.35",
     "boto3-stubs[s3]",
     "moto[s3]>=5.0",
-    "pytest>=8.0",
-    "pytest-cov>=6.0",
-    "pytest-tmp-files>=0.0.2",
 ]
 
 [build-system]

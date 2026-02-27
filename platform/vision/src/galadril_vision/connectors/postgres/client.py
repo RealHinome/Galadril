@@ -6,11 +6,11 @@ from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, AsyncIterator
 
 import structlog
-from psycopg import AsyncConnection
+from psycopg import AsyncConnection, sql
 from psycopg_pool import AsyncConnectionPool
 
 if TYPE_CHECKING:
-    from galadril_vision.config import PostgresConfig
+    from galadril_vision.common.config import PostgresConfig
 
 logger = structlog.get_logger(__name__)
 
@@ -54,14 +54,17 @@ class PostgresClient:
 
         # Create graph if not exists.
         graph_name = self._config.graph_name
-        await conn.execute(
-            f"""
-            SELECT * FROM ag_catalog.create_graph('{graph_name}')
+        query = sql.SQL("""
+            SELECT * FROM ag_catalog.create_graph({name})
             WHERE NOT EXISTS (
-                SELECT 1 FROM ag_catalog.ag_graph WHERE name = '{graph_name}'
+                SELECT 1 FROM ag_catalog.ag_graph WHERE name = {name_str}
             )
-            """
+        """).format(
+            name=sql.Literal(graph_name),
+            name_str=sql.Literal(graph_name),
         )
+
+        await conn.execute(query)
 
         logger.info("postgres_extensions_initialized", graph=graph_name)
 

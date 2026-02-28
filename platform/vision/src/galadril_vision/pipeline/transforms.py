@@ -9,7 +9,6 @@ import numpy as np
 import structlog
 from daft import DataType, Series
 from numpy.typing import NDArray
-from galadril_inference import InferenceEngine, PredictionRequest
 
 logger = structlog.get_logger(__name__)
 

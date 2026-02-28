@@ -1,0 +1,76 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm,headheight=72pt]{geometry}
+\usepackage{setspace}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\onehalfspacing
+
+\usepackage{cmap}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{csquotes}
+
+\usepackage{erewhon}
+\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,
+spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+\input{glyphtounicode}
+\pdfgentounicode=1
+\pdfinterwordspaceon
+
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{advdate}
+\usepackage{comment}
+\usepackage{calc}
+
+\newcommand{\theauthor}{Analyse}
+\newcommand{\theobject}{Rapport Technique}
+\newcommand{\thesubject}{}
+\newcommand{\thekeywords}{}
+
+\newcommand{\setupmetadata}[4]{
+    \renewcommand{\theauthor}{#1}
+    \renewcommand{\theobject}{#2}
+    \renewcommand{\thesubject}{#3}
+    \renewcommand{\thekeywords}{#4}
+}
+
+\usepackage{hyperref}
+\usepackage{hyperxmp}
+\hypersetup{
+    pdfauthor={\theauthor},
+    pdfproducer={Scribe Engine},
+    pdftitle={\theobject},
+    pdfsubject={\thesubject},
+    pdfkeywords={\thekeywords},
+    colorlinks=false,
+    pdfdisplaydoctitle=true
+}
+
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\large\bfseries\uppercase}{}{0pt}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{}{0pt}{\underline}
+\titlespacing*{\section}{0pt}{12pt}{8pt}
+
+\newcommand{\separator}{\rule{\linewidth}{0.4pt}\vskip 2pt}
+
+\begin{document}
+
+\begin{flushright}
+    \textbf{\theauthor} \\
+    \today
+\end{flushright}
+
+\separator
+\begin{center}
+    \Large \textbf{\MakeUppercase{\theobject}}
+\end{center}
+\separator
+
+% From Go template.
+{{range .Sections}}
+\section{ {{.Title}} }
+{{.Content}}
+
+\end{document}

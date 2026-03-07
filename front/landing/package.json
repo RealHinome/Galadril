@@ -1,5 +1,5 @@
 {
-	"name": "front",
+	"name": "landing",
 	"type": "module",
 	"private": true,
 	"scripts": {

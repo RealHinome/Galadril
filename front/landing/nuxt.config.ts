@@ -73,6 +73,13 @@ export default defineNuxtConfig({
 		},
 	},
 
+	nitro: {
+		preset: isDevelopment ? "node-server" : "cloudflare_module",
+		prerender: {
+			autoSubfolderIndex: !isDevelopment,
+		},
+	},
+
 	sri: true,
 	security: {
 		strict: true,

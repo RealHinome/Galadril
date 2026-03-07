@@ -30,7 +30,7 @@ galadril-inference = { workspace = true }
 
 [tool.uv.workspace]
 members = [
-    "machine-learning/*",
+    "machine-learning/galadril-inference",
     "platform/*",
 ]
 

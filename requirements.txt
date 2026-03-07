@@ -362,7 +362,7 @@ pyyaml==6.0.3
     #   moto
     #   ray
     #   responses
-ray==2.53.0
+ray==2.54.0
     # via
     #   galadril (pyproject.toml)
     #   daft

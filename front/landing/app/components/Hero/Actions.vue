@@ -13,11 +13,11 @@
 			</button>
 		</NuxtLink>
 
-		<NuxtLink to="/dashboard">
+		<NuxtLink to="/docs">
 			<button
-				class="px-8 py-3 bg-white/50 backdrop-blur-sm border border-slate-300 text-slate-900 rounded-full font-medium hover:bg-white transition-all duration-200"
+				class="px-8 py-3 rounded-full border border-gray-300 bg-white/50 backdrop-blur-md hover:bg-gray-100 transition shadow-sm text-gray-800 font-medium"
 			>
-				{{ $t("access_to_dashboard") }}
+				{{ $t("read_documentation") }}
 			</button>
 		</NuxtLink>
 	</div>

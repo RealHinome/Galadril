@@ -1,0 +1,33 @@
+{
+	"platform": "Platform",
+	"contact": "Contact",
+
+	"title": "Data integration",
+	"subtitle": "For everything you want",
+	"description": "Galadril provides advanced data integration and AI platform for real-time complex systems, while still ensure foresight, and transparency.",
+
+	"source_code": "Source code",
+	"read_documentation": "Read documentation",
+
+	"wraps": {
+		"control": "The ultimate control",
+		"over": "over your operations",
+		"synapse": {
+			"title": "The Synapse",
+			"description": "Heterogeneous data ingested and interconnected to form a comprehensible network."
+		},
+		"vision": {
+			"title": "The Vision",
+			"description": "State-of-the-art AI models with extensible API to handle all threats."
+		},
+		"scribe": {
+			"title": "Galadril Scribe",
+			"description": "Writing technical reports in TeX with your favorite LLM to analyze a processed threat or predict next actions."
+		}
+	},
+
+	"expand": {
+		"deployed_everywhere": "Deployed everywhere,",
+		"secure": "secure by design."
+	}
+}

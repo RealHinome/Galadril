@@ -69,7 +69,7 @@ export default defineNuxtConfig({
 
 	routeRules: {
 		"/": {
-			noScripts: true,
+			noScripts: false,
 		},
 	},
 

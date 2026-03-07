@@ -1,9 +1,7 @@
 <template>
-	<div
-		class="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-white px-6"
+	<section
+		class="relative min-h-[100svh] flex flex-col items-center justify-center pt-24 pb-12 px-4 md:px-8"
 	>
-		<HeroBackground />
-
 		<div
 			class="relative z-10 max-w-4xl w-full flex flex-col items-center justify-center text-center space-y-8"
 		>
@@ -17,7 +15,6 @@
 			/>
 
 			<HeroTitle />
-
 			<HeroActions />
 
 			<div class="max-w-2xl mx-auto pt-8">
@@ -26,5 +23,5 @@
 				</p>
 			</div>
 		</div>
-	</div>
+	</section>
 </template>

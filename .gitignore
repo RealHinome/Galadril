@@ -1,5 +1,5 @@
 /bazel-*
-nodes_modules/
+node_modules/
 target/
 .venv/
 .DS_Store

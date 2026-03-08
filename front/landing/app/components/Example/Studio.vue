@@ -14,7 +14,7 @@
       -->
 
 		<div
-			class="dashboard-card w-full max-w-6xl aspect-[4/3] md:aspect-video bg-white rounded-xl md:rounded-2xl shadow-[0_0_50px_-12px_rgba(251,191,36,0.4)] border border-amber-200/50 overflow-hidden flex flex-col transform-gpu origin-center relative z-10"
+			class="dashboard-card w-full max-w-md lg:max-w-4xl 2xl:lg:max-w-6xl aspect-[1/2] lg:aspect-[4/3] md:aspect-video bg-white rounded-xl md:rounded-2xl shadow-[0_0_50px_-12px_rgba(251,191,36,0.4)] border border-amber-200/50 overflow-hidden flex flex-col transform-gpu origin-center relative z-10"
 		>
 			<div
 				class="h-10 md:h-12 bg-zinc-100 flex items-center px-3 md:px-4 gap-2 border-b border-zinc-200"

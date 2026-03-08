@@ -4,18 +4,19 @@
 			to="https://github.com/RealHinome/Galadril"
 			target="_blank"
 			rel="noreferrer"
+			class="w-full sm:w-56"
 		>
 			<button
-				class="flex px-8 py-3 bg-black text-white rounded-full font-medium hover:bg-zinc-800 transition-colors duration-200"
+				class="flex items-center justify-center w-full px-8 py-3 bg-black text-white rounded-full font-medium hover:bg-zinc-800 transition-colors duration-200"
 			>
 				<NuxtImg width="30" src="/github.svg" draggable="false" alt="GitHub" />
-				<span class="mt-0.5 ml-2">{{ $t("source_code") }}</span>
+				<span class="ml-2">{{ $t("source_code") }}</span>
 			</button>
 		</NuxtLink>
 
-		<NuxtLink to="/docs">
+		<NuxtLink to="/docs" class="w-full sm:w-56">
 			<button
-				class="px-8 py-3 rounded-full border border-gray-300 bg-white/50 backdrop-blur-md hover:bg-gray-100 transition shadow-sm text-gray-800 font-medium"
+				class="w-full px-8 py-3 rounded-full border border-slate-300 bg-white/50 backdrop-blur-md transition shadow-sm text-slate-800 font-medium"
 			>
 				{{ $t("read_documentation") }}
 			</button>

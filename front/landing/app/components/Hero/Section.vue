@@ -1,12 +1,15 @@
 <template>
 	<section
-		class="relative min-h-[100svh] flex flex-col items-center justify-center pt-24 pb-12 px-4 md:px-8"
+		class="relative flex flex-col items-center justify-center pt-12 2xl:pt-24 pb-12 px-4 md:px-8"
 	>
 		<div
 			class="relative z-10 max-w-4xl w-full flex flex-col items-center justify-center text-center space-y-8"
 		>
+			<div
+				class="absolute inset-0 -z-10 bg-zinc-400/20 blur-3xl rounded-full scale-75"
+			></div>
 			<NuxtImg
-				class="w-52"
+				class="w-32 lg:w-48 2xl:w-52"
 				width="150"
 				alt="Logo"
 				src="/favicon.png"

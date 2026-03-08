@@ -21,43 +21,52 @@ const wraps = [
 
 <template>
 	<section
-		class="horizontal-section h-[100svh] bg-white flex flex-col justify-center overflow-hidden relative"
+		class="horizontal-section min-h-[100svh] bg-white flex flex-col justify-center overflow-hidden relative py-12"
 	>
 		<h3
-			class="absolute top-16 md:top-20 w-full text-3xl md:text-5xl font-serif text-center text-gray-900 z-10 px-4"
+			class="absolute top-8 md:top-20 w-full text-2xl sm:text-3xl md:text-5xl font-serif text-center text-gray-900 z-10 px-6"
 		>
-			{{ $t("wraps.control") }} <br /><span class="italic text-gray-500">{{
-				$t("wraps.over")
-			}}</span>
+			{{ $t("wraps.control") }} <br />
+			<span class="italic text-gray-500 text-xl sm:text-2xl md:text-4xl">
+				{{ $t("wraps.over") }}
+			</span>
 		</h3>
 
 		<div
-			class="horizontal-wrap flex gap-4 md:gap-8 px-[5vw] md:px-[10vw] w-max items-center h-full mt-16 md:mt-20"
+			class="horizontal-wrap flex gap-6 md:gap-12 px-[7vw] md:px-[15vw] w-max items-center h-full mt-24 md:mt-32 overflow-x-auto snap-x snap-mandatory scroll-px-[7vw]"
 		>
 			<div
 				v-for="(slide, index) in wraps"
 				:key="index"
-				class="w-[85vw] sm:w-[60vw] md:w-[45vw] h-[65vh] md:h-[60vh] bg-gray-50 rounded-2xl md:rounded-3xl p-6 md:p-10 flex flex-col border border-gray-200 shadow-sm flex-shrink-0"
+				class="snap-center w-[86vw] sm:w-[65vw] md:w-[50vw] lg:w-[50vw] max-w-3xl h-[60vh] md:h-[65vh] bg-gray-50 rounded-3xl p-6 md:p-10 flex flex-col border border-gray-200 shadow-sm flex-shrink-0 transition-transform duration-300"
 			>
-				<h4
-					class="text-xl md:text-2xl font-semibold mb-2 md:mb-4 text-gray-800"
+				<span
+					class="text-xs font-mono uppercase tracking-widest text-gray-400 mb-2"
 				>
-					#0{{ index + 1 }} &ndash; {{ slide.title }}
+					Step 0{{ index + 1 }}
+				</span>
+
+				<h4 class="text-xl md:text-2xl font-semibold mb-3 text-gray-800">
+					{{ slide.title }}
 				</h4>
-				<p class="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
+
+				<p
+					class="text-sm md:text-md text-gray-600 mb-6 leading-relaxed line-clamp-3 md:line-clamp-none"
+				>
 					{{ slide.description }}
 				</p>
 
 				<div
-					class="flex-1 bg-gray-200 rounded-lg md:rounded-xl overflow-hidden relative"
+					class="flex-1 bg-gray-100 rounded-2xl overflow-hidden relative group"
 				>
 					<NuxtImg
 						:src="slide.illustration"
-						class="absolute inset-0 w-full h-full object-cover object-top"
+						alt=""
+						class="absolute inset-0 w-full h-full object-cover object-center"
+						loading="lazy"
 					/>
-
 					<div
-						class="absolute inset-0 bg-gradient-to-t from-gray-300/80 via-transparent to-transparent"
+						class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"
 					></div>
 				</div>
 			</div>

@@ -1,6 +1,6 @@
 <template>
 	<h1
-		class="text-5xl md:text-7xl lg:text-8xl font-serif tracking-tight text-slate-900 leading-[1.1]"
+		class="text-4xl md:text-5xl lg:text-6xl 2xl:text-8xl font-serif tracking-tight text-slate-900 leading-[1.1]"
 	>
 		{{ $t("title") }}
 		<br />

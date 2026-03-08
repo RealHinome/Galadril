@@ -37,24 +37,28 @@ const wraps = [
 			<div
 				v-for="(slide, index) in wraps"
 				:key="index"
-				class="w-[85vw] sm:w-[60vw] md:w-[45vw] h-[55vh] md:h-[50vh] bg-gray-50 rounded-2xl md:rounded-3xl p-6 md:p-10 flex flex-col border border-gray-200 shadow-sm flex-shrink-0"
+				class="w-[85vw] sm:w-[60vw] md:w-[45vw] h-[65vh] md:h-[60vh] bg-gray-50 rounded-2xl md:rounded-3xl p-6 md:p-10 flex flex-col border border-gray-200 shadow-sm flex-shrink-0"
 			>
 				<h4
 					class="text-xl md:text-2xl font-semibold mb-2 md:mb-4 text-gray-800"
 				>
 					#0{{ index + 1 }} &ndash; {{ slide.title }}
 				</h4>
-				<p class="text-sm md:text-base text-gray-500 mb-6 md:mb-8">
+				<p class="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
 					{{ slide.description }}
 				</p>
+
 				<div
 					class="flex-1 bg-gray-200 rounded-lg md:rounded-xl overflow-hidden relative"
 				>
+					<NuxtImg
+						:src="slide.illustration"
+						class="absolute inset-0 w-full h-full object-cover object-top"
+					/>
+
 					<div
-						class="absolute inset-0 bg-gradient-to-t from-gray-300 to-transparent"
-					>
-						<NuxtImg width="50%" :src="slide.illustration" />
-					</div>
+						class="absolute inset-0 bg-gradient-to-t from-gray-300/80 via-transparent to-transparent"
+					></div>
 				</div>
 			</div>
 		</div>

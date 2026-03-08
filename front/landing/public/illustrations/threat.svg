@@ -30,10 +30,16 @@
     <rect width="100%" height="100%" fill="url(#grid)" />
   </g>
 
-  <rect x="300" y="50" width="100" height="400" fill="url(#grad-warning-organic)" opacity="0.5" />
-  <rect x="580" y="50" width="120" height="400" fill="url(#grad-danger-organic)" opacity="0.5" />
+  <rect x="300" y="50" width="100" height="400" fill="url(#grad-warning-organic)" opacity="0">
+    <animate attributeName="opacity" from="0" to="0.5" dur="0.2s" begin="2.25s" fill="freeze" />
+  </rect>
+  
+  <rect x="580" y="50" width="120" height="400" fill="url(#grad-danger-organic)" opacity="0">
+    <animate attributeName="opacity" from="0" to="0.5" dur="0.2s" begin="4.35s" fill="freeze" />
+  </rect>
 
   <path 
+    id="main-curve"
     d="M0,350 L40,345 L60,355 L100,340 L130,360 L160,330 L190,345 L220,310 L250,325 
        L280,340 L310,220 L330,260 L350,180 L380,210 L410,320 L440,335 L470,345 L500,330 
        L530,350 L560,320 L590,120 L610,180 L630,60 L650,140 L680,90 L710,340 L750,345 L800,350" 
@@ -42,23 +48,36 @@
     stroke-width="2" 
     filter="url(#line-glow)"
     stroke-linejoin="round"
+    stroke-dasharray="1500"
+    stroke-dashoffset="1500"
   >
-    <animate attributeName="stroke-dasharray" from="0,1500" to="1500,0" dur="3s" fill="freeze" />
+    <animate 
+      id="trace-anim"
+      attributeName="stroke-dashoffset" 
+      from="1500" 
+      to="0" 
+      dur="6s" 
+      fill="freeze" 
+      begin="0s"
+    />
   </path>
 
   <g font-family="monospace" font-size="10" font-weight="bold">
-    <g transform="translate(350, 180)">
+    
+    <g transform="translate(350, 180)" opacity="0">
       <circle r="4" fill="#f59e0b">
-        <animate attributeName="r" values="3;6;3" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="r" values="3;6;3" dur="2s" repeatCount="indefinite" begin="2.625s" />
       </circle>
       <text x="10" y="-10" fill="#d97706">ANM_042</text>
+      <animate attributeName="opacity" from="0" to="1" dur="0.1s" begin="2.625s" fill="freeze" />
     </g>
 
-    <g transform="translate(630, 60)">
+    <g transform="translate(630, 60)" opacity="0">
       <circle r="5" fill="#ef4444">
-        <animate attributeName="opacity" values="1;0.2;1" dur="0.6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="1;0.2;1" dur="0.6s" repeatCount="indefinite" begin="4.725s" />
       </circle>
       <text x="10" y="-10" fill="#dc2626">CRIT_THRESHOLD_EXCEEDED</text>
+      <animate attributeName="opacity" from="0" to="1" dur="0.1s" begin="4.725s" fill="freeze" />
     </g>
   </g>
 
@@ -72,8 +91,8 @@
   </g>
 
   <line x1="0" y1="50" x2="0" y2="450" stroke="#3b82f6" stroke-width="1" opacity="0.3">
-    <animate attributeName="x1" from="0" to="800" dur="5s" repeatCount="indefinite" />
-    <animate attributeName="x2" from="0" to="800" dur="5s" repeatCount="indefinite" />
+    <animate attributeName="x1" from="0" to="800" dur="6s" begin="0s" fill="freeze" />
+    <animate attributeName="x2" from="0" to="800" dur="6s" begin="0s" fill="freeze" />
   </line>
 
 </svg>

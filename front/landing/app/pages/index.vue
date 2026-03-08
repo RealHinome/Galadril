@@ -68,6 +68,7 @@ onUnmounted(() => {
 	<div
 		class="bg-gray-50 min-h-screen font-sans text-gray-900 overflow-x-hidden"
 	>
+		<DefaultBanner :message="$t('in_developpement')" />
 		<DefaultNavbar />
 		<HeroSection />
 		<ExampleStudio />

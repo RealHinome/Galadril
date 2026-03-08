@@ -2,6 +2,8 @@
 	"platform": "Platform",
 	"contact": "Contact",
 
+	"in_developpement": "This project is still in its early stages.",
+
 	"title": "Data integration",
 	"subtitle": "For everything you want",
 	"description": "Galadril provides advanced data integration and AI platform for real-time complex systems, while still ensure foresight, and transparency.",

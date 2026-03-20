@@ -24,7 +24,7 @@ attrs==25.4.0
     #   confluent-kafka
     #   jsonschema
     #   referencing
-authlib==1.6.8
+authlib==1.6.9
     # via confluent-kafka
 avro==1.12.1
     # via confluent-kafka

@@ -1,13 +1,13 @@
 {
-    "name": "galadril",
-    "private": true, 
-    "scripts": {
-      "dev": "pnpm -r --parallel run dev",
-      "build": "pnpm -r run build",
-      "lint": "pnpm -r run lint"
-    },
-    "devDependencies": {
-      "typescript": "^5.9.3",
-      "vue-tsc": "^3.2.5"
-    }
+  "name": "galadril",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.2.6"
+  }
 }

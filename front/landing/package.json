@@ -12,18 +12,18 @@
 	},
 	"dependencies": {
 		"@nuxt/a11y": "1.0.0-alpha.1",
-		"@nuxt/eslint": "1.15.1",
-		"@nuxt/hints": "1.0.0-alpha.6",
+		"@nuxt/eslint": "1.15.2",
+		"@nuxt/hints": "1.0.2",
 		"@nuxt/image": "2.0.0",
 		"@nuxtjs/color-mode": "4.0.0",
 		"@nuxtjs/i18n": "10.2.3",
 		"@nuxtjs/tailwindcss": "6.14.0",
 		"gsap": "^3.14.2",
-		"nuxt": "^4.3.1",
+		"nuxt": "^4.4.2",
 		"nuxt-security": "^2.5.1",
 		"prettier": "^3.8.1",
-		"std-env": "^3.10.0",
-		"vue": "^3.5.29",
-		"vue-router": "^4.6.4"
+		"std-env": "^4.0.0",
+		"vue": "^3.5.30",
+		"vue-router": "^5.0.4"
 	}
 }

@@ -8,6 +8,7 @@ manifest:
   modules_mapping:
     Cython: cython
     PIL: pillow
+    adbc_driver_duckdb: duckdb
     aiohappyeyeballs: aiohappyeyeballs
     aiohttp: aiohttp
     aiohttp_cors: aiohttp_cors
@@ -41,6 +42,7 @@ manifest:
     dateutil: python_dateutil
     distlib: distlib
     dotenv: python_dotenv
+    duckdb: duckdb
     easydict: easydict
     fastavro: fastavro
     fb303: pyiceberg
@@ -249,4 +251,4 @@ manifest:
     zstandard: zstandard
   pip_repository:
     name: pip
-integrity: 639fd8867d5e3b79ffd446d06bc7880a5525eb430e2ff46d11462ed33183f38b
+integrity: 309caca3534b2d58a0c402242a0b0b762a6fc7d7074735b7bfc8f9da6f7bea6b

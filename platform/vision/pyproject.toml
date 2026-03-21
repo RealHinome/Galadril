@@ -16,6 +16,8 @@ dependencies = [
     "pydantic-settings>=2.6",
     "structlog>=24.0",
     "orjson>=3.10",
+    "pyyaml>=6.0",
+    "duckdb>=1.5",
 ]
 
 [project.optional-dependencies]

@@ -81,6 +81,8 @@ daft==0.7.4
     # via galadril (pyproject.toml)
 distlib==0.4.0
     # via virtualenv
+duckdb==1.5.0
+    # via galadril (pyproject.toml)
 easydict==1.13
     # via insightface
 fastavro==1.12.1
@@ -358,6 +360,7 @@ python-dotenv==1.2.1
     # via pydantic-settings
 pyyaml==6.0.3
     # via
+    #   galadril (pyproject.toml)
     #   albumentations
     #   moto
     #   ray

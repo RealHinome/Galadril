@@ -1,30 +1,25 @@
 """Entry point for galadril-vision pipeline."""
 
+import argparse
 import asyncio
-import sys
 import signal
+import sys
 import structlog
 
 from galadril_vision.common.config import VisionConfig
+from galadril_vision.common.pipeline_yaml import load_pipeline_yaml
 from galadril_vision.pipeline.runner import VisionPipeline
 
 
-def setup_logging():
-    structlog.configure(
-        processors=[
-            structlog.processors.TimeStamper(fmt="iso"),
-            structlog.processors.JSONRenderer(),
-        ],
-        context_class=dict,
-        cache_logger_on_first_use=True,
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Galadril Vision pipeline")
+    parser.add_argument(
+        "--config",
+        type=str,
+        default=None,
+        help="Path to pipeline.yaml",
     )
-    import logging
-
-    logging.basicConfig(
-        level="INFO",
-        format="%(message)s",
-        stream=sys.stdout,
-    )
+    return parser.parse_args()
 
 
 async def preload_models(config: VisionConfig):
@@ -57,10 +52,34 @@ async def preload_models(config: VisionConfig):
 
 
 async def main():
-    # setup_logging()
     logger = structlog.get_logger("main")
+    args = parse_args()
 
     config = VisionConfig()
+
+    if args.pipeline_config:
+        pipeline_cfg = load_pipeline_yaml(args.pipeline_config)
+
+        config.kafka.bootstrap_servers = ",".join(
+            pipeline_cfg.connectors.kafka.brokers
+        )
+        config.kafka.schema_registry = (
+            pipeline_cfg.connectors.kafka.schema_registry
+        )
+        config.kafka.group_id = pipeline_cfg.connectors.kafka.consumer_group
+
+        if pipeline_cfg.pipeline:
+            first_model_path = pipeline_cfg.pipeline[0].model
+            if "face_recognition" in first_model_path.lower():
+                config.face_model_name = "face_recognition"
+
+        logger.info(
+            "pipeline_loaded",
+            name=pipeline_cfg.name,
+            sources=[s.topic for s in pipeline_cfg.sources],
+            steps=[s.step for s in pipeline_cfg.pipeline],
+        )
+
     logger.info("config_loaded", config=config.model_dump(mode="json"))
 
     await preload_models(config)

@@ -34,7 +34,7 @@ class PostgresConfig(BaseSettings):
     )
     min_connections: int = 5
     max_connections: int = 20
-    graph_name: str = "galadril_social"
+    graph_name: str = "galadril_dev"
     vector_dimensions: int = 512
     similarity_threshold: float = 0.85
 

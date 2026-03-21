@@ -18,6 +18,10 @@ rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
 rust.toolchain(
     edition = "2024",
     versions = ["1.93.1"],
+    extra_target_triples = [
+        "x86_64-unknown-linux-gnu",
+        "aarch64-unknown-linux-gnu",
+    ],
 )
 
 crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")

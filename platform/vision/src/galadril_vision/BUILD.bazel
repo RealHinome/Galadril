@@ -1,6 +1,23 @@
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_push")
-load("@rules_pkg//:pkg.bzl", "pkg_tar")
+load("@bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+load("@aspect_rules_py//py:defs.bzl", "py_image_layer")
+
+platform(
+    name = "linux_amd64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+platform(
+    name = "linux_arm64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:arm64",
+    ],
+)
 
 py_library(
     name = "galadril_vision",
@@ -25,32 +42,38 @@ py_binary(
     imports = [".."],
     main = "main.py",
     visibility = ["//visibility:public"],
-    deps = [
-        "//machine-learning/galadril-inference/src/galadril_inference",
-        "//machine-learning/galadril-inference/src/galadril_inference/storage",
-        "//platform/vision/src/galadril_vision/common",
-        "//platform/vision/src/galadril_vision/pipeline",
-        "@pip//structlog",
-    ],
+    deps = [":galadril_vision"],
 )
 
-pkg_tar(
-    name = "layer",
-    srcs = [":vision"],
-    strip_prefix = ".",
+py_image_layer(
+    name = "vision_layers",
+    binary = ":vision",
 )
 
 oci_image(
     name = "linux",
-    base = "@distroless_py",
+    base = "@python_base",
     entrypoint = ["/platform/vision/src/galadril_vision/vision"],
-    tars = [":layer"],
+    tars = [":vision_layers"],
+)
+
+platform_transition_filegroup(
+    name = "image_amd64",
+    srcs = [":linux"],
+    target_platform = ":linux_amd64",
+)
+
+platform_transition_filegroup(
+    name = "image_arm64",
+    srcs = [":linux"],
+    target_platform = ":linux_arm64",
 )
 
 oci_image_index(
     name = "images",
     images = [
-        ":linux",
+        ":image_amd64",
+        ":image_arm64",
     ],
 )
 

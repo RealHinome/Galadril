@@ -3,6 +3,7 @@ module(
     version = "0.1.0",
 )
 
+bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "rules_multirun", version = "0.13.0")
 bazel_dep(name = "rules_go", version = "0.60.0")
 bazel_dep(name = "gazelle", version = "0.47.0")
@@ -29,10 +30,14 @@ use_repo(crate, "crates")
 
 bazel_dep(name = "rules_python", version = "1.8.4")
 bazel_dep(name = "rules_python_gazelle_plugin", version = "1.8.4")
+bazel_dep(name = "aspect_rules_py", version = "1.10.0")
 bazel_dep(name = "rules_uv", version = "0.89.2")
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
-python.toolchain(python_version = "3.13")
+python.toolchain(
+    is_default = True,
+    python_version = "3.13",
+)
 use_repo(python, "python_3_13")
 
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
@@ -64,18 +69,24 @@ oci.pull(
     ],
     tag = "latest",
 )
-use_repo(oci, "distroless_cc", "distroless_cc_linux_amd64", "distroless_cc_linux_arm64_v8")
-
 oci.pull(
-    name = "distroless_py",
-    image = "gcr.io/distroless/python3-debian13",
+    name = "python_base",
+    image = "python",
     platforms = [
-        "linux/amd64",
         "linux/arm64/v8",
+        "linux/amd64",
     ],
-    tag = "latest",
+    tag = "3.13-slim",
 )
-use_repo(oci, "distroless_py", "distroless_py_linux_amd64", "distroless_py_linux_arm64_v8")
+use_repo(
+    oci,
+    "distroless_cc",
+    "distroless_cc_linux_amd64",
+    "distroless_cc_linux_arm64_v8",
+    "python_base",
+    "python_base_linux_amd64",
+    "python_base_linux_arm64_v8",
+)
 
 bazel_dep(name = "aspect_rules_js", version = "3.0.3")
 

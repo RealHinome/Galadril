@@ -7,7 +7,7 @@ import sys
 import structlog
 
 from galadril_vision.common.config import VisionConfig
-from galadril_vision.common.pipeline_yaml import load_pipeline_yaml
+from galadril_vision.config.loader import load_pipeline_config
 from galadril_vision.pipeline.runner import VisionPipeline
 
 
@@ -16,13 +16,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--config",
         type=str,
+        dest="pipeline_config",
         default=None,
         help="Path to pipeline.yaml",
     )
     return parser.parse_args()
 
 
-async def preload_models(config: VisionConfig):
+async def preload_models(config: VisionConfig, models_to_load: list[str]):
     """Warm up and load inference models before Ray workers run."""
     from galadril_inference import InferenceEngine
     from galadril_inference.storage import S3Loader
@@ -35,9 +36,8 @@ async def preload_models(config: VisionConfig):
     )
 
     engine = InferenceEngine(loader=loader)
-    model_names = [config.face_model_name]
 
-    for model_name in model_names:
+    for model_name in models_to_load:
         try:
             engine.load_model(model_name)
             logger.info("model_preloaded", model=model_name, status="READY")
@@ -56,33 +56,57 @@ async def main():
     args = parse_args()
 
     config = VisionConfig()
+    models_to_load = []
 
     if args.pipeline_config:
-        pipeline_cfg = load_pipeline_yaml(args.pipeline_config)
+        pipeline_cfg = load_pipeline_config(args.pipeline_config)
 
-        config.kafka.bootstrap_servers = ",".join(
-            pipeline_cfg.connectors.kafka.brokers
-        )
-        config.kafka.schema_registry = (
-            pipeline_cfg.connectors.kafka.schema_registry
-        )
-        config.kafka.group_id = pipeline_cfg.connectors.kafka.consumer_group
+        if pipeline_cfg.connectors.kafka:
+            config.kafka.bootstrap_servers = ",".join(
+                pipeline_cfg.connectors.kafka.brokers
+            )
+            config.kafka.schema_registry = str(
+                pipeline_cfg.connectors.kafka.schema_registry
+            )
+            config.kafka.group_id = pipeline_cfg.connectors.kafka.consumer_group
+
+        if pipeline_cfg.connectors.s3:
+            config.image_store.endpoint_url = str(
+                pipeline_cfg.connectors.s3.endpoint
+            )
+
+        if pipeline_cfg.connectors.postgres:
+            pg = pipeline_cfg.connectors.postgres
+            config.postgres.dsn = (
+                f"postgresql://{pg.user}:{pg.password}@{pg.host}/{pg.database}"
+            )
 
         if pipeline_cfg.pipeline:
-            first_model_path = pipeline_cfg.pipeline[0].model
-            if "face_recognition" in first_model_path.lower():
-                config.face_model_name = "face_recognition"
+            for step in pipeline_cfg.pipeline:
+                if step.type == "inference" and step.model:
+                    model_id = (
+                        step.model.split(".")[-2]
+                        if "." in step.model
+                        else step.model
+                    )
+
+                    if model_id not in models_to_load:
+                        models_to_load.append(model_id)
 
         logger.info(
             "pipeline_loaded",
             name=pipeline_cfg.name,
             sources=[s.topic for s in pipeline_cfg.sources],
             steps=[s.step for s in pipeline_cfg.pipeline],
+            models=models_to_load,
         )
 
     logger.info("config_loaded", config=config.model_dump(mode="json"))
 
-    await preload_models(config)
+    if not models_to_load:
+        models_to_load = [config.face_model_name]
+
+    await preload_models(config, models_to_load)
 
     async with VisionPipeline(config) as pipeline:
         logger.info("pipeline_started")

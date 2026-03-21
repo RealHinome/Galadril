@@ -5,10 +5,10 @@ from pydantic import Field, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Union
 
+from galadril_vision.config.schema import PipelineYamlConfig
+
 
 class S3StorageConfig(BaseSettings):
-    """Generic S3 configuration block."""
-
     bucket: str = "my-bucket"
     prefix: str = ""
     endpoint_url: str | None = None
@@ -66,6 +66,7 @@ class VisionConfig(BaseSettings):
         default_factory=lambda: S3StorageConfig(prefix="models")
     )
 
+    pipeline_config: PipelineYamlConfig | None = None
+
     batch_size: int = 32
-    face_model_name: str = "face_recognition"
     unknown_vertex_prefix: str = "UNKNOWN"

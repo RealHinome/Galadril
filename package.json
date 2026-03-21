@@ -6,6 +6,12 @@
     "build": "pnpm -r run build",
     "lint": "pnpm -r run lint"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "vue-demi"
+    ]
+  },
   "devDependencies": {
     "typescript": "^5.9.3",
     "vue-tsc": "^3.2.6"

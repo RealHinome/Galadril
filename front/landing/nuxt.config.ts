@@ -2,6 +2,7 @@ import { isDevelopment } from "std-env";
 
 export default defineNuxtConfig({
 	compatibilityDate: "2025-07-15",
+	builder: "vite",
 	devtools: { enabled: true },
 
 	app: {

@@ -52,7 +52,7 @@ use_repo(python_gazelle_extension, "python_gazelle_extra")
 bazel_dep(name = "rules_oci", version = "2.2.7")
 bazel_dep(name = "rules_pkg", version = "1.2.0")
 bazel_dep(name = "aspect_bazel_lib", version = "2.22.5")
-bazel_dep(name = "bazel_lib", version = "3.2.1")
+bazel_dep(name = "bazel_lib", version = "3.2.2")
 
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 oci.pull(
@@ -73,6 +73,20 @@ oci.pull(
         "linux/amd64",
         "linux/arm64/v8",
     ],
-    tag = "latest", 
+    tag = "latest",
 )
-use_repo(oci, "distroless_py")
+use_repo(oci, "distroless_py", "distroless_py_linux_amd64", "distroless_py_linux_arm64_v8")
+
+bazel_dep(name = "aspect_rules_js", version = "3.0.3")
+
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
+npm.npm_translate_lock(
+    name = "npm",
+    npmrc = "//:.npmrc",
+    pnpm_lock = "//:pnpm-lock.yaml",
+    verify_node_modules_ignored = "//:.bazelignore",
+)
+use_repo(npm, "npm")
+
+pnpm = use_extension("@aspect_rules_js//npm:extensions.bzl", "pnpm", dev_dependency = True)
+use_repo(pnpm, "pnpm")

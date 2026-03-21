@@ -3,6 +3,7 @@ load("@pip//:requirements.bzl", "all_whl_requirements")
 load("@rules_multirun//:defs.bzl", "multirun")
 load("@rules_python_gazelle_plugin//manifest:defs.bzl", "gazelle_python_manifest")
 load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
+load("@npm//:defs.bzl", "npm_link_all_packages")
 
 # gazelle:exclude .venv
 # gazelle:exclude target
@@ -63,3 +64,5 @@ multirun(
     ],
     jobs = 0,
 )
+
+npm_link_all_packages(name = "node_modules")

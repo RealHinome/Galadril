@@ -14,6 +14,7 @@ dependencies = [
     "boto3-stubs[s3]",
     "moto[s3]>=5.0",
     "galadril-inference",
+    "galadril-pipeline",
     "daft[ray,iceberg]>=0.7.3",
     "ray[default]>=2.52",
     "confluent-kafka[avro,json,schema-registry]>=2.13",
@@ -29,6 +30,7 @@ requires-python = "==3.13.*"
 
 [tool.uv.sources]
 galadril-inference = { workspace = true }
+galadril-pipeline = { workspace = true }
 
 [tool.uv.workspace]
 members = [

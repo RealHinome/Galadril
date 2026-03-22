@@ -1,12 +1,14 @@
 load("@gazelle//:def.bzl", "gazelle", "gazelle_binary")
+load("@npm//:defs.bzl", "npm_link_all_packages")
 load("@pip//:requirements.bzl", "all_whl_requirements")
 load("@rules_multirun//:defs.bzl", "multirun")
 load("@rules_python_gazelle_plugin//manifest:defs.bzl", "gazelle_python_manifest")
 load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
-load("@npm//:defs.bzl", "npm_link_all_packages")
 
 # gazelle:exclude .venv
 # gazelle:exclude target
+
+load("@rules_uv//uv:pip.bzl", "pip_compile")
 
 platform(
     name = "linux_amd64",
@@ -26,13 +28,12 @@ platform(
     visibility = ["//visibility:public"],
 )
 
-load("@rules_uv//uv:pip.bzl", "pip_compile")
-
 pip_compile(
     name = "generate_requirements_txt",
     args = [
         "--all-extras",
         "--no-emit-package galadril-inference",
+        "--no-emit-package galadril-pipeline",
     ],
     requirements_in = "//:pyproject.toml",
     requirements_txt = "//:requirements.txt",

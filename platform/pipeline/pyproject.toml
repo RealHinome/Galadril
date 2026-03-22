@@ -1,0 +1,25 @@
+[project]
+name = "galadril-pipeline"
+version = "0.1.0"
+description = "Configuration reader."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic>=2.10",
+    "pyyaml>=6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/galadril_pipeline"]
+
+[tool.uv]
+managed = true
+package = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

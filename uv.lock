@@ -11,6 +11,7 @@ resolution-markers = [
 members = [
     "galadril",
     "galadril-inference",
+    "galadril-pipeline",
     "spark",
     "vision",
 ]
@@ -655,6 +656,7 @@ dependencies = [
     { name = "daft", extra = ["iceberg", "ray"] },
     { name = "duckdb" },
     { name = "galadril-inference" },
+    { name = "galadril-pipeline" },
     { name = "insightface" },
     { name = "moto", extra = ["s3"] },
     { name = "numpy" },
@@ -686,6 +688,7 @@ requires-dist = [
     { name = "daft", extras = ["ray", "iceberg"], specifier = ">=0.7.3" },
     { name = "duckdb", specifier = ">=1.5" },
     { name = "galadril-inference", editable = "machine-learning/galadril-inference" },
+    { name = "galadril-pipeline", editable = "platform/pipeline" },
     { name = "insightface", specifier = ">=0.7.3" },
     { name = "moto", extras = ["s3"], specifier = ">=5.0" },
     { name = "numpy", specifier = ">=2.4.2" },
@@ -737,6 +740,21 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [{ name = "opencv-python-headless", specifier = ">=4.13.0.92" }]
+
+[[package]]
+name = "galadril-pipeline"
+version = "0.1.0"
+source = { editable = "platform/pipeline" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "pyyaml" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pydantic", specifier = ">=2.10" },
+    { name = "pyyaml", specifier = ">=6.0" },
+]
 
 [[package]]
 name = "google-api-core"

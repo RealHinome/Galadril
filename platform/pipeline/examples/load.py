@@ -8,12 +8,14 @@ from galadril_pipeline import (
 
 
 def main():
-    config_path = Path(__file__).parent.parent.parent.parent / "examples" / "pipeline.yaml"
+    config_path = (
+        Path(__file__).parent.parent.parent.parent
+        / "examples"
+        / "pipeline.yaml"
+    )
 
     if not config_path.exists():
-        print(
-            f"Configuration file not found at {config_path.absolute()}"
-        )
+        print(f"Configuration file not found at {config_path.absolute()}")
         return
 
     try:

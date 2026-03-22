@@ -8,6 +8,7 @@ py_library(
         "graph.py",
         "parser.py",
     ],
+    imports = [".."],
     visibility = ["//:__subpackages__"],
     deps = [
         "@pip//pydantic",

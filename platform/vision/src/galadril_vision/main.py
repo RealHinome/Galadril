@@ -1,114 +1,53 @@
-"""Entry point for galadril-vision pipeline."""
+"""Entry point for galadril-vision dynamically orchestrated by galadril-pipeline."""
 
-import argparse
 import asyncio
+import os
 import signal
 import sys
 import structlog
 
 from galadril_vision.common.config import VisionConfig
-from galadril_vision.config.loader import load_pipeline_config
+from galadril_pipeline import PipelineParser
 from galadril_vision.pipeline.runner import VisionPipeline
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Galadril Vision pipeline")
-    parser.add_argument(
-        "--config",
-        type=str,
-        default=None,
-        help="Path to pipeline.yaml",
-    )
-    return parser.parse_args()
-
-
-async def preload_models(config: VisionConfig):
-    """Warm up and load inference models before Ray workers run."""
-    from galadril_inference import InferenceEngine
-    from galadril_inference.storage import S3Loader
-
-    logger = structlog.get_logger("model_warmup")
-    loader = S3Loader(
-        bucket=config.inference.bucket,
-        prefix=config.inference.prefix,
-        endpoint_url=config.inference.endpoint_url,
-    )
-
-    engine = InferenceEngine(loader=loader)
-
-    model_names = set()
-    if config.pipeline_config and config.pipeline_config.pipeline:
-        for step in config.pipeline_config.pipeline:
-            if step.type == "inference" and step.model:
-                if "face_recognition" in step.model.lower():
-                    model_names.add("face_recognition")
-                else:
-                    model_names.add(step.model.split(".")[-1].lower())
-    else:
-        logger.warning("no_pipeline_config_found", fallback="face_recognition")
-        model_names.add("face_recognition")
-
-    for model_name in model_names:
-        try:
-            engine.load_model(model_name)
-            logger.info("model_preloaded", model=model_name, status="READY")
-        except Exception as exc:
-            logger.error(
-                "model_preload_failed", model=model_name, error=str(exc)
-            )
-
-    ready = engine.ready_models()
-    logger.info("models_ready", model_list=ready)
-    return engine
-
-
-async def main():
+async def main() -> None:
     logger = structlog.get_logger("main")
-    args = parse_args()
+    config_path = os.getenv("PIPELINE_PATH", "config.yaml")
 
+    try:
+        pipeline_graph = PipelineParser.from_yaml(config_path)
+    except Exception as exc:
+        logger.error("pipeline_load_failed", error=str(exc))
+        sys.exit(1)
+
+    yaml_cfg = pipeline_graph.config
     config = VisionConfig()
 
-    if args.config:
-        try:
-            pipeline_cfg = load_pipeline_config(args.config)
-            config.pipeline_config = pipeline_cfg
+    if yaml_cfg.connectors.kafka:
+        config.kafka.bootstrap_servers = ",".join(
+            yaml_cfg.connectors.kafka.brokers
+        )
+        config.kafka.schema_registry = yaml_cfg.connectors.kafka.schema_registry
+        config.kafka.group_id = yaml_cfg.connectors.kafka.consumer_group
 
-            config.kafka.bootstrap_servers = ",".join(
-                pipeline_cfg.connectors.kafka.brokers
-            )
-            config.kafka.schema_registry = str(
-                pipeline_cfg.connectors.kafka.schema_registry
-            )
-            config.kafka.group_id = pipeline_cfg.connectors.kafka.consumer_group
+    if yaml_cfg.connectors.s3:
+        config.image_store.endpoint_url = yaml_cfg.connectors.s3.endpoint
+        config.inference.endpoint_url = yaml_cfg.connectors.s3.endpoint
 
-            if pipeline_cfg.connectors.s3:
-                config.image_store.endpoint_url = str(
-                    pipeline_cfg.connectors.s3.endpoint
-                )
-
-            if pipeline_cfg.connectors.postgres:
-                pg = pipeline_cfg.connectors.postgres
-                config.postgres.dsn = f"postgresql://{pg.user}:{pg.password}@{pg.host}/{pg.database}"
-
-            logger.info(
-                "pipeline_loaded",
-                name=pipeline_cfg.name,
-                sources=[s.topic for s in pipeline_cfg.sources],
-                steps=[s.step for s in pipeline_cfg.pipeline],
-            )
-        except Exception as exc:
-            logger.error("pipeline_config_error", error=str(exc))
-            sys.exit(1)
+    if yaml_cfg.connectors.postgres:
+        pg = yaml_cfg.connectors.postgres
+        config.postgres.dsn = (
+            f"postgresql://{pg.user}:{pg.password}@{pg.host}/{pg.database}"
+        )
 
     logger.info("config_loaded", config=config.model_dump(mode="json"))
 
-    await preload_models(config)
-
-    async with VisionPipeline(config) as pipeline:
+    async with VisionPipeline(config, pipeline_graph) as pipeline:
         logger.info("pipeline_started")
         stop_event = asyncio.Event()
 
-        def shutdown_handler(*_):
+        def shutdown_handler(*_) -> None:
             logger.warning("shutdown_signal_received")
             stop_event.set()
 

@@ -1,9 +1,9 @@
-"""Kafka consumer for heterogeneous input messages."""
+"""Kafka consumer for dynamic topics."""
 
 from __future__ import annotations
 
 from collections.abc import Iterator
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import orjson
 import structlog
@@ -12,26 +12,11 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 
 from galadril_vision.common.exceptions import KafkaConsumerError
-from galadril_vision.connectors.kafka.schemas import (
-    DocumentMessage,
-    FinancialTransactionMessage,
-    InputType,
-    OsintArticleMessage,
-    SatelliteImageMessage,
-    UnifiedInputRecord,
-)
 
 if TYPE_CHECKING:
     from galadril_vision.common.config import KafkaConfig
 
 logger = structlog.get_logger(__name__)
-
-_TOPIC_TYPE_MAP = {
-    "galadril.raw.satellite": InputType.SATELLITE_IMAGE,
-    "galadril.raw.document": InputType.DOCUMENT,
-    "galadril.raw.osint": InputType.OSINT_ARTICLE,
-    "galadril.raw.financial": InputType.FINANCIAL_TRANSACTION,
-}
 
 
 class KafkaMultiTopicConsumer:
@@ -40,15 +25,21 @@ class KafkaMultiTopicConsumer:
     def __init__(
         self,
         config: KafkaConfig,
+        topics: list[str],
         schema_registry_url: str | None = None,
     ) -> None:
         self._config = config
+        self._topics = topics
         self._consumer: Consumer | None = None
         self._schema_registry_url = schema_registry_url
         self._deserializers: dict[str, AvroDeserializer] = {}
 
     def connect(self) -> None:
-        """Initialize the Kafka consumer with multi-topic subscription."""
+        """Initialize the Kafka consumer."""
+        if not self._topics:
+            logger.warning("no_topics_to_subscribe")
+            return
+
         conf = {
             "bootstrap.servers": self._config.bootstrap_servers,
             "group.id": self._config.group_id,
@@ -58,24 +49,21 @@ class KafkaMultiTopicConsumer:
         }
 
         self._consumer = Consumer(conf)
-
-        topics = list(_TOPIC_TYPE_MAP.keys())
-        self._consumer.subscribe(topics)
+        self._consumer.subscribe(self._topics)
 
         if self._schema_registry_url:
             self._init_deserializers()
 
         logger.info(
             "kafka_consumer_connected",
-            topics=topics,
+            topics=self._topics,
             group_id=self._config.group_id,
         )
 
     def _init_deserializers(self) -> None:
         """Initialize Avro deserializers for each topic."""
-        sr_client = SchemaRegistryClient({"url": self._schema_registry_url})
-
-        for topic in _TOPIC_TYPE_MAP:
+        SchemaRegistryClient({"url": self._schema_registry_url})
+        for topic in self._topics:
             try:
                 self._deserializers[topic] = AvroDeserializer()
             except Exception as exc:
@@ -85,62 +73,16 @@ class KafkaMultiTopicConsumer:
                     error=str(exc),
                 )
 
-    def _parse_message(
-        self,
-        topic: str,
-        value: bytes,
-    ) -> UnifiedInputRecord | None:
-        """Parse a message based on its topic."""
-        try:
-            # Use Avro deserializer if available, otherwise JSON.
-            if topic in self._deserializers:
-                payload = self._deserializers[topic](value, None)
-            else:
-                payload = orjson.loads(value)
-
-            input_type = _TOPIC_TYPE_MAP.get(topic)
-
-            match input_type:
-                case InputType.SATELLITE_IMAGE:
-                    msg = SatelliteImageMessage.model_validate(payload)
-                    return UnifiedInputRecord.from_satellite(msg)
-
-                case InputType.DOCUMENT:
-                    msg = DocumentMessage.model_validate(payload)
-                    return UnifiedInputRecord.from_document(msg)
-
-                case InputType.OSINT_ARTICLE:
-                    msg = OsintArticleMessage.model_validate(payload)
-                    return UnifiedInputRecord.from_osint(msg)
-
-                case InputType.FINANCIAL_TRANSACTION:
-                    msg = FinancialTransactionMessage.model_validate(payload)
-                    return UnifiedInputRecord.from_financial(msg)
-
-                case _:
-                    logger.warning("unknown_topic", topic=topic)
-                    return None
-
-        except Exception as exc:
-            logger.warning(
-                "message_parse_failed",
-                topic=topic,
-                error=str(exc),
-            )
-            return None
-
     def poll_batch(
         self,
         max_records: int | None = None,
-    ) -> list[UnifiedInputRecord]:
-        """Poll for a batch of messages from all subscribed topics."""
+    ) -> list[tuple[str, dict[str, Any]]]:
+        """Poll for a batch of messages."""
         if self._consumer is None:
-            raise KafkaConsumerError(
-                "Consumer not connected. Call connect() first."
-            )
+            raise KafkaConsumerError("Consumer not connected.")
 
         batch_size = max_records or self._config.max_poll_records
-        records: list[UnifiedInputRecord] = []
+        records: list[tuple[str, dict[str, Any]]] = []
 
         while len(records) < batch_size:
             msg = self._consumer.poll(timeout=1.0)
@@ -155,29 +97,20 @@ class KafkaMultiTopicConsumer:
             msg_value = msg.value()
 
             if msg_topic is not None and msg_value is not None:
-                record = self._parse_message(msg_topic, msg_value)
-                if record:
-                    records.append(record)
-            else:
-                pass
+                try:
+                    if msg_topic in self._deserializers:
+                        payload = self._deserializers[msg_topic](
+                            msg_value, None
+                        )
+                    else:
+                        payload = orjson.loads(msg_value)
+                    records.append((msg_topic, payload))
+                except Exception as exc:
+                    logger.warning(
+                        "message_parse_failed", topic=msg_topic, error=str(exc)
+                    )
 
         return records
-
-    def poll_batch_by_type(
-        self,
-        max_records: int | None = None,
-    ) -> dict[InputType, list[UnifiedInputRecord]]:
-        """Poll and group records by input type for optimized batch processing."""
-        records = self.poll_batch(max_records)
-
-        grouped: dict[InputType, list[UnifiedInputRecord]] = {
-            t: [] for t in InputType
-        }
-
-        for record in records:
-            grouped[record.input_type].append(record)
-
-        return grouped
 
     def commit(self) -> None:
         """Commit current offsets."""
@@ -198,9 +131,9 @@ class KafkaMultiTopicConsumer:
     def __exit__(self, *args) -> None:
         self.close()
 
-    def stream(self) -> Iterator[dict[InputType, list[UnifiedInputRecord]]]:
-        """Yield batches of records grouped by type continuously."""
+    def stream(self) -> Iterator[list[tuple[str, dict[str, Any]]]]:
+        """Yield batches of records continuously."""
         while True:
-            batch = self.poll_batch_by_type()
-            if any(batch.values()):
+            batch = self.poll_batch()
+            if batch:
                 yield batch

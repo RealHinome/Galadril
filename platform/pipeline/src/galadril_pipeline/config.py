@@ -4,6 +4,7 @@ from .models.connectors import Connectors
 from .models.sources import Source
 from .models.pipeline import PipelineStep
 
+
 class PipelineConfig(BaseModel):
     name: str
     connectors: Connectors

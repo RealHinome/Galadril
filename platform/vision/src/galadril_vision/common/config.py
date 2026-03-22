@@ -5,8 +5,6 @@ from pydantic import Field, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Union
 
-from galadril_vision.config.schema import PipelineYamlConfig
-
 
 class S3StorageConfig(BaseSettings):
     bucket: str = "my-bucket"
@@ -65,8 +63,6 @@ class VisionConfig(BaseSettings):
     inference: S3StorageConfig = Field(
         default_factory=lambda: S3StorageConfig(prefix="models")
     )
-
-    pipeline_config: PipelineYamlConfig | None = None
 
     batch_size: int = 32
     unknown_vertex_prefix: str = "UNKNOWN"

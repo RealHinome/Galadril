@@ -8,7 +8,8 @@ mod domain;
 
 use std::sync::Arc;
 
-use tracing_subscriber::{EnvFilter, fmt, prelude::*};
+use tracing_subscriber::prelude::*;
+use tracing_subscriber::{EnvFilter, fmt};
 
 use crate::adapters::spi::kafka::{
     KafkaConsumerAdapter, KafkaProducerAdapter,
@@ -33,6 +34,7 @@ async fn main() -> anyhow::Result<()> {
         .init();
 
     let config = AppConfig::from_env()?;
+    tracing::info!(name = %config.pipeline.name, "pipeline configuration loaded");
 
     let s3_adapter = Arc::new(
         S3Adapter::new(&config.s3_endpoint, &config.s3_bucket).await?,
@@ -42,13 +44,16 @@ async fn main() -> anyhow::Result<()> {
         KafkaProducerAdapter::new(
             &config.kafka_brokers,
             &config.schema_registry,
-            &config.topic,
+            &config.pipeline.sources,
         )
         .await?,
     );
 
-    let ingestion_service =
-        Arc::new(IngestionService::new(s3_adapter, kafka_producer));
+    let ingestion_service = Arc::new(IngestionService::new(
+        s3_adapter,
+        kafka_producer,
+        config.pipeline.clone(),
+    ));
 
     let consumer = KafkaConsumerAdapter::new(
         &config.kafka_brokers,

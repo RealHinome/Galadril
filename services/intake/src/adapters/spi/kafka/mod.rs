@@ -3,12 +3,11 @@
 mod consumer;
 mod producer;
 
-pub use consumer::*;
-pub use producer::*;
-
 use std::time::Duration;
 
 use anyhow::{Context, Result, anyhow};
+pub use consumer::*;
+pub use producer::*;
 use rdkafka::ClientConfig;
 use rdkafka::admin::{AdminClient, AdminOptions, NewTopic};
 use rdkafka::types::RDKafkaErrorCode;

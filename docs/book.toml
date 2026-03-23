@@ -1,5 +1,5 @@
 [book]
-title = "Galadril Docs"
+title = "Galadril Documentation"
 authors = ["RealHinome"]
 description = "Documentation for Galadril project."
 language = "en"
@@ -15,6 +15,7 @@ edition = "2024"
 limit-results = 15
 
 [output.html]
+preferred-dark-theme = "light"
 smart-punctuation = true
 git-repository-url = "https://github.com/RealHinome/Galadril/tree/main/docs"
-edit-url-template = "https://github.com/RealHinome/Galadril/tree/masmainter/docs/{path}"
+edit-url-template = "https://github.com/RealHinome/Galadril/tree/main/docs/{path}"

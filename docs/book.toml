@@ -1,0 +1,11 @@
+[book]
+authors = ["RealHinome"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Galadril Docs"
+
+[output.html]
+smart-punctuation = true
+git-repository-url = "https://github.com/RealHinome/Galadril/tree/main/docs"
+edit-url-template = "https://github.com/RealHinome/Galadril/tree/masmainter/docs/{path}"

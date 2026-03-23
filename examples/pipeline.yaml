@@ -21,6 +21,7 @@ connectors:
 
 sources:
   - id: image_source
+    match_pattern: "^images/" # detect every files in S3 images folder.
     topic: raw
     schema_path: schemas/avro/satellite.avsc
 

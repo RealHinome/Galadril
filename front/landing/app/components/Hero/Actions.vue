@@ -14,7 +14,7 @@
 			</button>
 		</NuxtLink>
 
-		<NuxtLink to="/docs" class="w-full sm:w-56">
+		<NuxtLink to="https://realhinome.github.io/Galadril/" class="w-full sm:w-56">
 			<button
 				class="w-full px-8 py-3 rounded-full border border-slate-300 bg-white/50 backdrop-blur-md transition shadow-sm text-slate-800 font-medium"
 			>

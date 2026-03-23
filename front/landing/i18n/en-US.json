@@ -24,7 +24,7 @@
 		},
 		"scribe": {
 			"title": "Galadril Scribe",
-			"description": "Writing technical reports in TeX with your favorite LLM to analyze a processed threat or predict next actions."
+			"description": "Writing technical reports in TeX with your favorite LLM to predict next actions."
 		}
 	},
 

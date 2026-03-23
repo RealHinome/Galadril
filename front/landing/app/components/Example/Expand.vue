@@ -18,6 +18,7 @@
 				src="/illustrations/gulf.jpg"
 				format="webp"
 				quality="70"
+				draggable="false"
 				alt=""
 				class="w-full h-full object-cover opacity-80"
 			/>

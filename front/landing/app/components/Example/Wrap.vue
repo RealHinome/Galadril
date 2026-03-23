@@ -23,53 +23,54 @@ const wraps = [
 	<section
 		class="horizontal-section min-h-[100svh] bg-white flex flex-col justify-center overflow-hidden relative py-12"
 	>
-		<h3
-			class="absolute top-8 md:top-20 w-full text-2xl sm:text-3xl md:text-5xl font-serif text-center text-gray-900 z-10 px-6"
-		>
-			{{ $t("wraps.control") }} <br />
-			<span class="italic text-gray-500 text-xl sm:text-2xl md:text-4xl">
-				{{ $t("wraps.over") }}
-			</span>
-		</h3>
-
+		<div class="absolute top-12 md:top-16 lg:top-20 left-0 w-full z-10 px-6">
+			<h3
+				class="text-3xl md:text-5xl font-serif text-center text-gray-900 leading-tight"
+			>
+				{{ $t("wraps.control") }} <br />
+				<span class="italic text-gray-500 text-xl md:text-3xl block">
+					{{ $t("wraps.over") }}
+				</span>
+			</h3>
+		</div>
 		<div
-			class="horizontal-wrap flex gap-6 md:gap-12 px-[7vw] md:px-[15vw] w-max items-center h-full mt-24 md:mt-32 overflow-x-auto snap-x snap-mandatory scroll-px-[7vw]"
+			class="horizontal-wrap flex gap-8 md:gap-12 px-[10vw] md:px-[15vw] w-max items-center h-full mt-32 md:mt-40 overflow-x-auto snap-x snap-mandatory scroll-smooth"
 		>
 			<div
 				v-for="(slide, index) in wraps"
 				:key="index"
-				class="snap-center w-[86vw] sm:w-[65vw] md:w-[50vw] lg:w-[50vw] max-w-3xl h-[60vh] md:h-[65vh] bg-gray-50 rounded-3xl p-6 md:p-10 flex flex-col border border-gray-200 shadow-sm flex-shrink-0 transition-transform duration-300"
+				class="snap-center w-[85vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw] max-w-6xl bg-gray-50 rounded-[2rem] p-8 md:p-12 flex flex-col border border-gray-100 shadow-sm flex-shrink-0 transition-all duration-300"
 			>
 				<span
-					class="text-xs font-mono uppercase tracking-widest text-gray-400 mb-2"
+					class="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-400 mb-4"
 				>
 					Step 0{{ index + 1 }}
 				</span>
 
-				<h4 class="text-xl md:text-2xl font-semibold mb-3 text-gray-800">
-					{{ slide.title }}
-				</h4>
-
-				<p
-					class="text-sm md:text-md text-gray-600 mb-6 leading-relaxed line-clamp-3 md:line-clamp-none"
-				>
-					{{ slide.description }}
-				</p>
+				<div class="flex flex-col gap-4 mb-8">
+					<h4
+						class="text-xl md:text-2xl font-semibold text-gray-800 tracking-tight"
+					>
+						{{ slide.title }}
+					</h4>
+					<p class="text-sm md:text-base text-gray-600 leading-relaxed">
+						{{ slide.description }}
+					</p>
+				</div>
 
 				<div
-					class="flex-1 bg-gray-100 rounded-2xl overflow-hidden relative group"
+					class="w-full aspect-video md:aspect-[21/9] bg-white rounded-2xl overflow-hidden relative border border-gray-200/50 p-4 md:p-8"
 				>
 					<NuxtImg
 						:src="slide.illustration"
-						alt=""
-						class="absolute inset-0 w-full h-full object-cover object-center"
+						:alt="slide.title"
+						class="w-full h-full object-contain"
 						loading="lazy"
 					/>
-					<div
-						class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"
-					></div>
 				</div>
 			</div>
+
+			<div class="w-[10vw] md:w-[15vw] flex-shrink-0"></div>
 		</div>
 	</section>
 </template>

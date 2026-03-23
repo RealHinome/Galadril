@@ -8,6 +8,6 @@ py_library(
         "sources.py",
     ],
     imports = ["../.."],
-    visibility = ["//:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = ["@pip//pydantic"],
 )

@@ -1,9 +1,18 @@
 [book]
-authors = ["RealHinome"]
-language = "en"
-multilingual = false
-src = "src"
 title = "Galadril Docs"
+authors = ["RealHinome"]
+description = "Documentation for Galadril project."
+language = "en"
+text-direction = "ltr"
+
+[rust]
+edition = "2024"
+
+[preprocessor.index]
+[preprocessor.links]
+
+[output.html.search]
+limit-results = 15
 
 [output.html]
 smart-punctuation = true

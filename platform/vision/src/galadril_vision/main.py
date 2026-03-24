@@ -6,14 +6,15 @@ import signal
 import sys
 import structlog
 
-from galadril_vision.common.config import VisionConfig
 from galadril_pipeline import PipelineParser
-from galadril_vision.pipeline.runner import VisionPipeline
+
+from common.config import VisionConfig
+from pipeline.runner import VisionPipeline
 
 
 async def main() -> None:
     logger = structlog.get_logger("main")
-    config_path = os.getenv("PIPELINE_PATH", "config.yaml")
+    config_path = os.getenv("PIPELINE_PATH", "pipelie.yaml")
 
     try:
         pipeline_graph = PipelineParser.from_yaml(config_path)

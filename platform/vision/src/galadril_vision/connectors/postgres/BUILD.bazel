@@ -15,6 +15,7 @@ py_library(
         "@pip//orjson",
         "@pip//pgvector",
         "@pip//psycopg",
+        "@pip//psycopg_binary",  # keep
         "@pip//psycopg_pool",
         "@pip//structlog",
     ],

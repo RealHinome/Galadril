@@ -1,7 +1,7 @@
 import yaml
 from pathlib import Path
-from .config import PipelineConfig
-from .graph import PipelineGraph
+from galadril_pipeline.config import PipelineConfig
+from galadril_pipeline.graph import PipelineGraph
 
 
 class PipelineParser:

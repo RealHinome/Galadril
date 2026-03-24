@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 from typing import List
-from .models.connectors import Connectors
-from .models.sources import Source
-from .models.pipeline import PipelineStep
+from galadril_pipeline.models.connectors import Connectors
+from galadril_pipeline.models.sources import Source
+from galadril_pipeline.models.pipeline import PipelineStep
 
 
 class PipelineConfig(BaseModel):

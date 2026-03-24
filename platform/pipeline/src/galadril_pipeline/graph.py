@@ -1,6 +1,6 @@
 from typing import List, Dict, Set
 from .config import PipelineConfig
-from .models.pipeline import PipelineStep
+from galadril_pipeline.models.pipeline import PipelineStep
 
 
 class CircularDependencyError(Exception):

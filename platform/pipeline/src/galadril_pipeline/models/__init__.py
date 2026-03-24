@@ -1,8 +1,13 @@
 """Models for galadril-pipeline."""
 
-from .connectors import Connectors, KafkaConnector, S3Connector, PostgresConnector
-from .sources import Source
-from .pipeline import PipelineStep
+from galadril_pipeline.models.connectors import (
+    Connectors,
+    KafkaConnector,
+    S3Connector,
+    PostgresConnector,
+)
+from galadril_pipeline.models.sources import Source
+from galadril_pipeline.models.pipeline import PipelineStep
 
 __all__ = [
     "Connectors",

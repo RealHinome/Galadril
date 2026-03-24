@@ -1,6 +1,6 @@
-from .parser import PipelineParser
-from .config import PipelineConfig
-from .graph import (
+from galadril_pipeline.parser import PipelineParser
+from galadril_pipeline.config import PipelineConfig
+from galadril_pipeline.graph import (
     PipelineGraph,
     CircularDependencyError,
     MissingDependencyError,

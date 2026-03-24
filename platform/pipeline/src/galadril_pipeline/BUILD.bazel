@@ -2,8 +2,13 @@ load("@rules_python//python:defs.bzl", "py_library")
 
 py_library(
     name = "galadril_pipeline",
-    srcs = glob(["src/**/*.py"]),
-    imports = ["src"],
+    srcs = [
+        "__init__.py",
+        "config.py",
+        "graph.py",
+        "parser.py",
+    ],
+    imports = [".."],
     visibility = ["//visibility:public"],
     deps = [
         "@pip//pydantic",

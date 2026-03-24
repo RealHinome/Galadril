@@ -17,11 +17,11 @@ bazel_dep(name = "rules_rust", version = "0.68.1")
 rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
 rust.toolchain(
     edition = "2024",
-    versions = ["1.93.1"],
     extra_target_triples = [
         "x86_64-unknown-linux-gnu",
         "aarch64-unknown-linux-gnu",
     ],
+    versions = ["1.93.1"],
 )
 
 crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
@@ -51,12 +51,6 @@ pip.parse(
     requirements_lock = "//:requirements.txt",
 )
 use_repo(pip, "pip")
-
-python_gazelle_extension = use_extension("@rules_python//python/extensions:gazelle.bzl", "python_gazelle_extension")
-python_gazelle_extension.use_pip_repository(
-    name = "pip",
-)
-use_repo(python_gazelle_extension, "python_gazelle_extra")
 
 bazel_dep(name = "rules_oci", version = "2.2.7")
 bazel_dep(name = "rules_pkg", version = "1.2.0")

@@ -11,7 +11,6 @@ build --disk_cache=~/.cache/bazel-disk
 build --repository_cache=~/.cache/bazel-repo
 build:ci --verbose_failures
 build:ci --announce_rc
-build:ci --@rules_rust//rust/settings:extra_rustc_flag=-Clink-arg=-fuse-ld=lld
 
 test:ci --test_output=errors
 test:ci --test_summary=detailed
@@ -29,4 +28,3 @@ build:release --@rules_rust//rust/settings:extra_rustc_flag=-Coverflow-checks=of
 build:release --@rules_rust//rust/settings:extra_rustc_flag=-Cdebuginfo=0
 build:release --@rules_rust//rust/settings:extra_rustc_flag=-Cstrip=debuginfo
 build:release --@rules_rust//rust/settings:extra_rustc_flag=-Cforce-frame-pointers=no
-build:release --@rules_rust//rust/settings:extra_rustc_flag=-Clink-arg=-fuse-ld=lld

@@ -24,7 +24,7 @@ class DynamicPipelineExecutor:
     ) -> None:
         self.outputs[source_id] = batch
 
-    def run_step(self, step: PipelineStepConfig) -> list[dict[str, Any]]:
+    def run_step(self, step: PipelineStep) -> list[dict[str, Any]]:
         data = self._resolve_input(step)
 
         if step.duckdb and step.duckdb.enabled and step.duckdb.query:

@@ -11,6 +11,7 @@ py_library(
     visibility = ["//platform/vision/src:__subpackages__"],
     deps = [
         "//platform/vision/src/galadril_vision/common",
+        "@pip//attrs",  # keep
         "@pip//authlib",  # keep
         "@pip//cachetools",  # keep
         "@pip//confluent_kafka",

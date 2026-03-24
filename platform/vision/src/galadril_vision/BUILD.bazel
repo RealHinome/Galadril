@@ -3,13 +3,15 @@ load("@bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_push")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
+# gazelle:python_root platform/vision/src/galadril_vision
+
 py_library(
     name = "galadril_vision",
     srcs = [
         "__init__.py",
         "main.py",
     ],
-    imports = [".."],
+    imports = ["."],
     visibility = ["//platform/vision/src:__subpackages__"],
     deps = [
         "//platform/pipeline/src/galadril_pipeline",
@@ -22,7 +24,7 @@ py_library(
 py_binary(
     name = "vision",
     srcs = ["main.py"],
-    imports = [".."],
+    imports = ["."],  # keep
     main = "main.py",
     visibility = ["//visibility:public"],
     deps = [

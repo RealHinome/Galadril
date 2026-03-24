@@ -8,16 +8,16 @@ from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from galadril_vision.connectors.kafka.consumer import KafkaMultiTopicConsumer
-from galadril_vision.connectors.postgres.client import PostgresClient
-from galadril_vision.connectors.postgres.graph import GraphStore
-from galadril_vision.connectors.postgres.vector import VectorStore
+from connectors.kafka.consumer import KafkaMultiTopicConsumer
+from connectors.postgres.client import PostgresClient
+from connectors.postgres.graph import GraphStore
+from connectors.postgres.vector import VectorStore
 
 from galadril_inference import InferenceEngine, PredictionRequest
 from galadril_inference.storage import S3Loader
 
 if TYPE_CHECKING:
-    from galadril_vision.common.config import VisionConfig
+    from common.config import VisionConfig
     from galadril_pipeline.graph import PipelineGraph
 
 logger = structlog.get_logger(__name__)

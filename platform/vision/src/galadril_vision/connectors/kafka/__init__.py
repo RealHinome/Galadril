@@ -1,7 +1,7 @@
 """Kafka connector module."""
 
-from galadril_vision.connectors.kafka.consumer import KafkaMultiTopicConsumer
-from galadril_vision.connectors.kafka.schemas import (
+from connectors.kafka.consumer import KafkaMultiTopicConsumer
+from connectors.kafka.schemas import (
     SatelliteImageMessage,
     UnifiedInputRecord,
     DocumentMessage,

@@ -2,20 +2,18 @@ from __future__ import annotations
 
 from typing import Any
 
-from galadril_vision.config.pipeline_schema import (
-    PipelineYamlConfig,
-    PipelineStepConfig,
-)
-from galadril_vision.pipeline.model_loader import build_model
-from galadril_vision.pipeline.duckdb_ops import run_duckdb_aggregation
+from galadril_pipeline.config import PipelineConfig
+from galadril_pipeline.models.pipeline import PipelineStep
+from pipeline.model_loader import build_model
+from pipeline.duckdb import run_duckdb_aggregation
 
 
 class DynamicPipelineExecutor:
-    def __init__(self, config: PipelineYamlConfig) -> None:
+    def __init__(self, config: PipelineConfig) -> None:
         self.config = config
         self.outputs: dict[str, list[dict[str, Any]]] = {}
 
-    def _resolve_input(self, step: PipelineStepConfig) -> list[dict[str, Any]]:
+    def _resolve_input(self, step: PipelineStep) -> list[dict[str, Any]]:
         inputs: list[dict[str, Any]] = []
         for src in step.input_from:
             inputs.extend(self.outputs.get(src, []))

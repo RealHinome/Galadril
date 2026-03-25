@@ -7,8 +7,10 @@ from galadril_inference import InferenceEngine, PredictionRequest
 from galadril_inference.storage.local import LocalLoader
 from insightface.app import FaceAnalysis
 
-ARTIFACTS_DIR = Path("./examples/artifacts")
+EXAMPLES_DIR = Path(__file__).parent.resolve()
+ARTIFACTS_DIR = EXAMPLES_DIR / "artifacts"
 MODEL_DIR = ARTIFACTS_DIR / "face_recognition" / "1.0.0"
+IMAGE_PATH = EXAMPLES_DIR / "image.jpg"
 
 
 def ensure_model_downloaded() -> None:
@@ -32,13 +34,16 @@ def ensure_model_downloaded() -> None:
 
 
 def main() -> None:
+    ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
+
     ensure_model_downloaded()
 
     engine = InferenceEngine(loader=LocalLoader(ARTIFACTS_DIR))
     engine.load_model("face_recognition")
-    image = cv2.imread("./examples/image.jpg")
+    
+    image = cv2.imread(str(IMAGE_PATH))
     if image is None:
-        print("Error: could not read image. Check the file path.")
+        print(f"Error: could not read image at {IMAGE_PATH}. Check if the file exists.")
         return
 
     result = engine.predict(

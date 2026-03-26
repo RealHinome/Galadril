@@ -40,10 +40,12 @@ def main() -> None:
 
     engine = InferenceEngine(loader=LocalLoader(ARTIFACTS_DIR))
     engine.load_model("face_recognition")
-    
+
     image = cv2.imread(str(IMAGE_PATH))
     if image is None:
-        print(f"Error: could not read image at {IMAGE_PATH}. Check if the file exists.")
+        print(
+            f"Error: could not read image at {IMAGE_PATH}. Check if the file exists."
+        )
         return
 
     result = engine.predict(

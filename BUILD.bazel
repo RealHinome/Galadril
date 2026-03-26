@@ -34,6 +34,8 @@ pip_compile(
         "--all-extras",
         "--no-emit-package galadril-inference",
         "--no-emit-package galadril-pipeline",
+        "--universal",
+        "--generate-hashes",
     ],
     requirements_in = "//:pyproject.toml",
     requirements_txt = "//:requirements.txt",

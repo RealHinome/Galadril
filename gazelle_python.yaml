@@ -16,6 +16,7 @@ manifest:
     aiosignal: aiosignal
     albucore: albucore
     albumentations: albumentations
+    annotated_doc: annotated_doc
     annotated_types: annotated_types
     anyio: anyio
     attr: attrs
@@ -52,6 +53,7 @@ manifest:
     fontTools: fonttools
     frozenlist: frozenlist
     fsspec: fsspec
+    functorch: torch
     google.api.annotations_pb2: googleapis_common_protos
     google.api.auth_pb2: googleapis_common_protos
     google.api.backend_pb2: googleapis_common_protos
@@ -126,9 +128,11 @@ manifest:
     google.type.timeofday_pb2: googleapis_common_protos
     grpc: grpcio
     h11: h11
+    hf_xet: hf_xet
     hive_metastore: pyiceberg
     httpcore: httpcore
     httpx: httpx
+    huggingface_hub: huggingface_hub
     idna: idna
     imageio: imageio
     importlib_metadata: importlib_metadata
@@ -190,6 +194,7 @@ manifest:
     packaging: packaging
     pandas: pandas
     pgvector: pgvector
+    pkg_resources: setuptools
     platformdirs: platformdirs
     prettytable: prettytable
     prometheus_client: prometheus_client
@@ -221,7 +226,10 @@ manifest:
     rich: rich
     rpds: rpds_py
     s3transfer: s3transfer
+    safetensors: safetensors
     scipy: scipy
+    setuptools: setuptools
+    shellingham: shellingham
     simsimd: simsimd
     six: six
     skimage: scikit_image
@@ -234,7 +242,11 @@ manifest:
     tenacity: tenacity
     threadpoolctl: threadpoolctl
     tifffile: tifffile
+    timesfm: timesfm
+    torch: torch
+    torchgen: torch
     tqdm: tqdm
+    typer: typer
     types_awscrt: types_awscrt
     types_s3transfer: types_s3transfer
     typing_extensions: typing_extensions
@@ -251,4 +263,4 @@ manifest:
     zstandard: zstandard
   pip_repository:
     name: pip
-integrity: 4a0dd519478d39f4451c363ab2a66b4a8a49e4876fdd03cf4073518bf80095bb
+integrity: abae5b854a2b3380b39a2fb92021751bcb3d7104974c04880642d3318478ecc3

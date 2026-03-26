@@ -14,6 +14,8 @@ albucore==0.0.24
     # via albumentations
 albumentations==2.0.8
     # via insightface
+annotated-doc==0.0.4
+    # via typer
 annotated-types==0.7.0
     # via pydantic
 anyio==4.12.1
@@ -62,6 +64,7 @@ click==8.3.1
     # via
     #   pyiceberg
     #   ray
+    #   typer
 colorful==0.5.8
     # via ray
 confluent-kafka==2.13.2
@@ -89,8 +92,10 @@ fastavro==1.12.1
     # via confluent-kafka
 filelock==3.25.2
     # via
+    #   huggingface-hub
     #   python-discovery
     #   ray
+    #   torch
     #   virtualenv
 flatbuffers==25.12.19
     # via onnxruntime
@@ -103,8 +108,10 @@ frozenlist==1.8.0
 fsspec==2026.2.0
     # via
     #   daft
+    #   huggingface-hub
     #   pyiceberg
     #   ray
+    #   torch
 google-api-core==2.30.0
     # via opencensus
 google-auth==2.49.1
@@ -120,10 +127,19 @@ grpcio==1.78.0
     #   ray
 h11==0.16.0
     # via httpcore
+hf-xet==1.4.2
+    # via huggingface-hub
 httpcore==1.0.9
     # via httpx
 httpx==0.28.1
-    # via confluent-kafka
+    # via
+    #   confluent-kafka
+    #   huggingface-hub
+huggingface-hub==1.8.0
+    # via
+    #   galadril (pyproject.toml)
+    #   galadril-inference
+    #   timesfm
 idna==3.11
     # via
     #   anyio
@@ -139,7 +155,9 @@ insightface==0.7.3
     #   galadril (pyproject.toml)
     #   galadril-inference
 jinja2==3.1.6
-    # via moto
+    # via
+    #   moto
+    #   torch
 jmespath==1.1.0
     # via
     #   boto3
@@ -185,7 +203,9 @@ multidict==6.7.1
 mypy-boto3-s3==1.42.67
     # via boto3-stubs
 networkx==3.6.1
-    # via scikit-image
+    # via
+    #   scikit-image
+    #   torch
 numpy==2.4.3
     # via
     #   galadril (pyproject.toml)
@@ -206,6 +226,7 @@ numpy==2.4.3
     #   scikit-learn
     #   scipy
     #   tifffile
+    #   timesfm
 onnx==1.20.1
     # via insightface
 onnxruntime==1.24.4
@@ -262,6 +283,7 @@ orjson==3.11.7
 packaging==26.0
     # via
     #   daft
+    #   huggingface-hub
     #   lazy-loader
     #   matplotlib
     #   onnxruntime
@@ -362,6 +384,7 @@ pyyaml==6.0.3
     #   galadril (pyproject.toml)
     #   albumentations
     #   galadril-pipeline
+    #   huggingface-hub
     #   moto
     #   ray
     #   responses
@@ -386,13 +409,17 @@ requests==2.32.5
 responses==0.26.0
     # via moto
 rich==14.3.3
-    # via pyiceberg
+    # via
+    #   pyiceberg
+    #   typer
 rpds-py==0.30.0
     # via
     #   jsonschema
     #   referencing
 s3transfer==0.16.0
     # via boto3
+safetensors==0.7.0
+    # via timesfm
 scikit-image==0.26.0
     # via insightface
 scikit-learn==1.8.0
@@ -403,6 +430,10 @@ scipy==1.17.1
     #   insightface
     #   scikit-image
     #   scikit-learn
+setuptools==81.0.0
+    # via torch
+shellingham==1.5.4
+    # via typer
 simsimd==6.5.16
     # via albucore
 six==1.17.0
@@ -418,17 +449,30 @@ stringzilla==4.6.0
 structlog==25.5.0
     # via galadril (pyproject.toml)
 sympy==1.14.0
-    # via onnxruntime
+    # via
+    #   onnxruntime
+    #   torch
 tenacity==9.1.4
     # via pyiceberg
 threadpoolctl==3.6.0
     # via scikit-learn
 tifffile==2026.3.3
     # via scikit-image
+timesfm @ git+https://github.com/google-research/timesfm.git@ed29ec5ef7e2d86c48b632859de3b63856ef9cad
+    # via
+    #   galadril (pyproject.toml)
+    #   galadril-inference
+torch==2.11.0
+    # via
+    #   galadril (pyproject.toml)
+    #   galadril-inference
 tqdm==4.67.3
     # via
     #   daft
+    #   huggingface-hub
     #   insightface
+typer==0.24.1
+    # via huggingface-hub
 types-awscrt==0.31.3
     # via botocore-stubs
 types-s3transfer==0.16.0
@@ -436,6 +480,7 @@ types-s3transfer==0.16.0
 typing-extensions==4.15.0
     # via
     #   grpcio
+    #   huggingface-hub
     #   onnx
     #   opentelemetry-api
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -445,6 +490,7 @@ typing-extensions==4.15.0
     #   psycopg-pool
     #   pydantic
     #   pydantic-core
+    #   torch
     #   typing-inspection
 typing-inspection==0.4.2
     # via

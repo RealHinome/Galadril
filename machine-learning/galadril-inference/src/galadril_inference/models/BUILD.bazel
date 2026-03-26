@@ -6,6 +6,7 @@ py_library(
         "__init__.py",
         "base.py",
         "face_recognition.py",
+        "time_series.py",
     ],
     imports = ["../.."],
     visibility = ["//machine-learning/galadril-inference/src:__subpackages__"],
@@ -14,5 +15,7 @@ py_library(
         "@pip//insightface",
         "@pip//numpy",
         "@pip//structlog",
+        "@pip//timesfm",
+        "@pip//torch",
     ],
 )

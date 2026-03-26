@@ -3,7 +3,7 @@ name = "galadril"
 version = "0.1.0"
 description = "All Galadril services."
 dependencies = [
-    "numpy>=2.4.2",
+    "numpy>=1.26.0",
     "opentelemetry-api>=1.39.1",
     "opentelemetry-exporter-otlp>=1.39.1",
     "opentelemetry-sdk>=1.39.1",
@@ -25,12 +25,16 @@ dependencies = [
     "orjson>=3.10",
     "pyyaml>=6.0",
     "duckdb>=1.5",
+    "timesfm>=2.0.0",
+    "huggingface-hub>=0.20.0",
+    "torch>=2.0.0",
 ]
 requires-python = "==3.13.*"
 
 [tool.uv.sources]
 galadril-inference = { workspace = true }
 galadril-pipeline = { workspace = true }
+timesfm = { git = "https://github.com/google-research/timesfm.git" }
 
 [tool.uv.workspace]
 members = [
@@ -41,6 +45,8 @@ members = [
 [dependency-groups]
 dev = [
     "mypy>=1.19.1",
+    "opencv-python-headless>=4.0.0",
+    "pytest>=8.0.0",
     "ruff>=0.15.2",
 ]
 

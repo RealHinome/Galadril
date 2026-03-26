@@ -9,7 +9,13 @@ dependencies = [
     "boto3>=1.35",
     "boto3-stubs[s3]",
     "moto[s3]>=5.0",
+    "timesfm>=2.0.0",
+    "huggingface-hub>=0.20.0",
+    "torch>=2.0.0",
 ]
+
+[tool.uv.sources]
+timesfm = { git = "https://github.com/google-research/timesfm.git" }
 
 [build-system]
 requires = ["hatchling"]
@@ -25,5 +31,6 @@ pythonpath = ["src"]
 
 [dependency-groups]
 dev = [
-    "opencv-python-headless>=4.13.0.92",
+    "opencv-python-headless>=4.0.0",
+    "pytest>=8.0.0",
 ]

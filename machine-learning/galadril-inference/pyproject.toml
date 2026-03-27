@@ -10,6 +10,7 @@ dependencies = [
     "boto3-stubs[s3]",
     "moto[s3]>=5.0",
     "timesfm>=2.0.0",
+    "timesfm[xreg]>=2.0.0; platform_system == 'linux'",
     "huggingface-hub>=0.20.0",
     "torch>=2.0.0",
 ]

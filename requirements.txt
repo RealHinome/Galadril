@@ -1138,6 +1138,52 @@ insightface==0.7.3 \
     # via
     #   galadril (pyproject.toml)
     #   galadril-inference
+jax==0.9.2 ; platform_system == 'linux' \
+    --hash=sha256:42b28017b3e6b57a44b0274cc15f5153239c4873959030399ac1afc009c22365 \
+    --hash=sha256:822a8ae155ab42e7bc59f2ae7a28705bcfccb01a7e76abfc8ae996190cdc5598
+    # via timesfm
+jax-cuda12-pjrt==0.9.2 ; platform_system == 'linux' \
+    --hash=sha256:536a305292276c5745efbba7eb57576849c5a7c77398a3a9e61fd31baf5102f0 \
+    --hash=sha256:56f4a27e5f19ca914c0f4402539469aa92d01bf71336acd0ed8fddc20a91bc8d
+    # via jax-cuda12-plugin
+jax-cuda12-plugin==0.9.2 ; platform_system == 'linux' \
+    --hash=sha256:33212699e1bbb1bed5d2ae14ae9ff72a1eed2d092a51e6abcc0278a6b2b82874 \
+    --hash=sha256:5351742c0fcb21da9e094a1965ab20fde525862877f76918a490b1b56664d53a \
+    --hash=sha256:88a55908d775b06dda92a8c4f4c015778e25ba5c3605b57f84b00052f66e8ef1 \
+    --hash=sha256:8965073b811dbf2ea7ce11612c845498d0e900089c86dcca21219ae7b8f7996e \
+    --hash=sha256:918af0e625be922b1da105993f21482add3fad392a6b621d88b58557fa84090d \
+    --hash=sha256:b28ccf05bcc0bc7ccbcbd326d802846574cf6da039158e76147bd96f5c6f1189 \
+    --hash=sha256:b3955f375d17902f0d27e7059672cd1963a55345953a42699e4e078cec725adc \
+    --hash=sha256:b9a27085d893cc59c2b286b1789755f91cf3eab1dea1b5be9e632f4c9739a20e \
+    --hash=sha256:bd7dfed17bfa9d0e3016f8c2a6767c7479d91e1bdfdf7916eb2b07435cc4658e \
+    --hash=sha256:cd9a18876f900535c63244cb072944076a39526587582f78de333502135dd42a \
+    --hash=sha256:d5577cd867bd9267769e453bad850d4807a84396bc976f632a515edbd77e484b \
+    --hash=sha256:e03fba42374a469f856b236db65727a15923efe6778128feedfc5497aded85e7
+    # via jax
+jaxlib==0.9.2 ; platform_system == 'linux' \
+    --hash=sha256:2d445dab57debd8c26b416c8bc91a4704ba6d7169788a961e4b15419bc3f4254 \
+    --hash=sha256:306de54a1de7386c806c723e356ce332d923ef748f8a72d674fefb748121d4dc \
+    --hash=sha256:35b473df72dbc2cfda0cb1b3de7521a2150a0aa5ef57ed7583eeceb012dc17c0 \
+    --hash=sha256:3d7151140a4936f3218b2d1b1343dd237bd2865cf51442884b6d82fe884a3de7 \
+    --hash=sha256:501df74472437ffc11aa3bd8f7fc8b1da274f80bd176d33012cf0d604093667d \
+    --hash=sha256:52a0032508f8cf5791c7a7bee142531ee706c3c05518117fb0b6ee8d5e17fde7 \
+    --hash=sha256:6949d7ecd869c117e7ea8361866e60cf229c3cd9d6afdc37425a43cf83fc89e9 \
+    --hash=sha256:6ffb22eccf07bfc8c9760bfbcdaa268df9b3745739e8397bfce5daee5d79cb51 \
+    --hash=sha256:785f177c3eb78cb7dc797c55ed5c4b6312141845c9a686957e484bacbfce5e88 \
+    --hash=sha256:87bd42c9f18c9cc9a45371d02ecdbdb574ea1e2277149601a92e14a24c4bbc86 \
+    --hash=sha256:88b276a71f4f2071b1fd2e922abfd67c87c6977a551a1036febcea78d5ef7e22 \
+    --hash=sha256:97c2fbe58cbee4a27d94ca735d709d231b299ab6ed8b3b1075f52d864dfd32c1 \
+    --hash=sha256:9ac995b4ba1aaeedae0d69f319987d515dcaecd4505b642b6312f9e15439351f \
+    --hash=sha256:b6d5003e3add5c346a34ae9edc47058cbc2db60c8ed5c50096522176daf01c9f \
+    --hash=sha256:b8998f9fa6e67bf956044c310023f6a7bbfaa0d8955f11d928404c8f6eb02fcf \
+    --hash=sha256:bab168d25555464461bd077323484f690c471e69ce8b0c39a39fb81b3e3a8bf0 \
+    --hash=sha256:bbe59bdef668ff5fd998c6d88e8df9a32ab95bec0dea3d2b5f7a11b86a9a6788 \
+    --hash=sha256:be4627c42d44add7fe17d284ef579ff8d159e3cb6947f6437758f34177e878e6 \
+    --hash=sha256:bef61eef36ed38cec1069ea973f88af9e03335e884f6501ec3fe7f6222a1555b \
+    --hash=sha256:c2f0837cc0788746301e68ae9eda468e6a8a7734dc4d529f26a2cb60fb56c657 \
+    --hash=sha256:e8e8165f0f647933f0ff9e1e4d9937d541841d3672a20db73f5ccb5e842b0edc \
+    --hash=sha256:fef02d846863b726e72452993883a8596eac325f22a2ec7ea921da0fbc5509b4
+    # via jax
 jinja2==3.1.6 \
     --hash=sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d \
     --hash=sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67
@@ -1485,7 +1531,10 @@ ml-dtypes==0.5.4 \
     --hash=sha256:ce756d3a10d0c4067172804c9cc276ba9cc0ff47af9078ad439b075d1abdc29b \
     --hash=sha256:d81fdb088defa30eb37bf390bb7dde35d3a83ec112ac8e33d75ab28cc29dd8b0 \
     --hash=sha256:f21c9219ef48ca5ee78402d5cc831bd58ea27ce89beda894428bc67a52da5328
-    # via onnx
+    # via
+    #   jax
+    #   jaxlib
+    #   onnx
 mmh3==5.2.1 \
     --hash=sha256:022aa1a528604e6c83d0a7705fdef0b5355d897a9e0fa3a8d26709ceaa06965d \
     --hash=sha256:0634581290e6714c068f4aa24020acf7880927d1f0084fa753d9799ae9610082 \
@@ -1909,6 +1958,8 @@ numpy==2.4.3 \
     #   contourpy
     #   imageio
     #   insightface
+    #   jax
+    #   jaxlib
     #   matplotlib
     #   ml-dtypes
     #   onnx
@@ -1930,21 +1981,59 @@ nvidia-cublas==13.1.0.3 ; sys_platform == 'linux' \
     #   cuda-toolkit
     #   nvidia-cudnn-cu13
     #   nvidia-cusolver
+nvidia-cublas-cu12==12.9.2.10 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:7caf6512c921f956e5e609378e8332be502d7e5108deaade5c7ecf6b8042e842
+    # via
+    #   jax-cuda12-plugin
+    #   nvidia-cudnn-cu12
+    #   nvidia-cusolver-cu12
+nvidia-cuda-cccl-cu12==12.9.27 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:37869e17ce2e1ecec6eddf1927cca0f8c34e64fd848d40453df559091e2d7117 \
+    --hash=sha256:72106f95a9bb3be18472806b4f663ebf0f9248a86d14b4ae3305725b855d9d92 \
+    --hash=sha256:d7898b38aa68beaa234d48f0868273702342a196d6e2e9d0ef058dca2390ebea
+    # via nvidia-nvshmem-cu12
 nvidia-cuda-cupti==13.0.85 ; sys_platform == 'linux' \
     --hash=sha256:4eb01c08e859bf924d222250d2e8f8b8ff6d3db4721288cf35d14252a4d933c8 \
     --hash=sha256:683f58d301548deeefcb8f6fac1b8d907691b9d8b18eccab417f51e362102f00 \
     --hash=sha256:796bd679890ee55fb14a94629b698b6db54bcfd833d391d5e94017dd9d7d3151
     # via cuda-toolkit
+nvidia-cuda-cupti-cu12==12.9.79 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:096bcf334f13e1984ba36685ad4c1d6347db214de03dbb6eebb237b41d9d934f \
+    --hash=sha256:1848a9380067560d5bee10ed240eecc22991713e672c0515f9c3d9396adf93c8 \
+    --hash=sha256:791853b030602c6a11d08b5578edfb957cadea06e9d3b26adbf8d036135a4afe
+    # via jax-cuda12-plugin
+nvidia-cuda-nvcc-cu12==12.9.86 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:44e1eca4d08926193a558d2434b1bf83d57b4d5743e0c431c0c83d51da1df62b \
+    --hash=sha256:5d6a0d32fdc7ea39917c20065614ae93add6f577d840233237ff08e9a38f58f0 \
+    --hash=sha256:8ed7f0b17dea662755395be029376db3b94fed5cbb17c2d35cc866c5b1b84099
+    # via jax-cuda12-plugin
 nvidia-cuda-nvrtc==13.0.88 ; sys_platform == 'linux' \
     --hash=sha256:6bcd4e7f8e205cbe644f5a98f2f799bef9556fefc89dd786e79a16312ce49872 \
     --hash=sha256:ad9b6d2ead2435f11cbb6868809d2adeeee302e9bb94bcf0539c7a40d80e8575 \
     --hash=sha256:d27f20a0ca67a4bb34268a5e951033496c5b74870b868bacd046b1b8e0c3267b
     # via cuda-toolkit
+nvidia-cuda-nvrtc-cu12==12.9.86 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:096d4de6bda726415dfaf3198d4f5c522b8e70139c97feef5cd2ca6d4cd9cead \
+    --hash=sha256:210cf05005a447e29214e9ce50851e83fc5f4358df8b453155d5e1918094dcb4 \
+    --hash=sha256:72972ebdcf504d69462d3bcd67e7b81edd25d0fb85a2c46d3ea3517666636349
+    # via
+    #   jax-cuda12-plugin
+    #   nvidia-cublas-cu12
 nvidia-cuda-runtime==13.0.96 ; sys_platform == 'linux' \
     --hash=sha256:7f82250d7782aa23b6cfe765ecc7db554bd3c2870c43f3d1821f1d18aebf0548 \
     --hash=sha256:ef9bcbe90493a2b9d810e43d249adb3d02e98dd30200d86607d8d02687c43f55 \
     --hash=sha256:f79298c8a098cec150a597c8eba58ecdab96e3bdc4b9bc4f9983635031740492
     # via cuda-toolkit
+nvidia-cuda-runtime-cu12==12.9.79 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:25bba2dfb01d48a9b59ca474a1ac43c6ebf7011f1b0b8cc44f54eb6ac48a96c3 \
+    --hash=sha256:83469a846206f2a733db0c42e223589ab62fd2fabac4432d2f8802de4bded0a4 \
+    --hash=sha256:8e018af8fa02363876860388bd10ccb89eb9ab8fb0aa749aaf58430a9f7c4891
+    # via jax-cuda12-plugin
+nvidia-cudnn-cu12==9.20.0.48 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:7d7479e1321c7a039b33827f0247791ee1be091759032c1f66a287c4a643396a \
+    --hash=sha256:9cac47d5be5e5d84f53358fa688d41f2ae35e9a920c0e3eeb48bce4ada5460d9 \
+    --hash=sha256:d9da9c15344323afae571751393552652c52486eab0b886530997bef664e29de
+    # via jax-cuda12-plugin
 nvidia-cudnn-cu13==9.19.0.56 ; sys_platform == 'linux' \
     --hash=sha256:40d8c375005bcb01495f8edf375230b203a411a0c05fb6dc92a3781edcb23eac \
     --hash=sha256:6ed29ffaee1176c612daf442e4dd6cfeb6a0caa43ddcbeb59da94953030b1be4 \
@@ -1955,6 +2044,11 @@ nvidia-cufft==12.0.0.61 ; sys_platform == 'linux' \
     --hash=sha256:2abce5b39d2f5ae12730fb7e5db6696533e36c26e2d3e8fd1750bdd2853364eb \
     --hash=sha256:6c44f692dce8fd5ffd3e3df134b6cdb9c2f72d99cf40b62c32dde45eea9ddad3
     # via cuda-toolkit
+nvidia-cufft-cu12==11.4.1.4 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:1a28c9b12260a1aa7a8fd12f5ebd82d027963d635ba82ff39a1acfa7c4c0fbcf \
+    --hash=sha256:8e5bfaac795e93f80611f807d42844e8e27e340e0cde270dcb6c65386d795b80 \
+    --hash=sha256:c67884f2a7d276b4b80eb56a79322a95df592ae5e765cf1243693365ccab4e28
+    # via jax-cuda12-plugin
 nvidia-cufile==1.15.1.6 ; sys_platform == 'linux' \
     --hash=sha256:08a3ecefae5a01c7f5117351c64f17c7c62efa5fffdbe24fc7d298da19cd0b44 \
     --hash=sha256:bdc0deedc61f548bddf7733bdc216456c2fdb101d020e1ab4b88d232d5e2f6d1
@@ -1969,6 +2063,11 @@ nvidia-cusolver==12.0.4.66 ; sys_platform == 'linux' \
     --hash=sha256:0a759da5dea5c0ea10fd307de75cdeb59e7ea4fcb8add0924859b944babf1112 \
     --hash=sha256:16515bd33a8e76bb54d024cfa068fa68d30e80fc34b9e1090813ea9362e0cb65
     # via cuda-toolkit
+nvidia-cusolver-cu12==11.7.5.82 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:15da72d1340d29b5b3cf3fd100e3cd53421dde36002eda6ed93811af63c40d88 \
+    --hash=sha256:62efa83e4ace59a4c734d052bb72158e888aa7b770e1a5f601682f16fe5b4fd2 \
+    --hash=sha256:77666337237716783c6269a658dea310195cddbd80a5b2919b1ba8735cec8efd
+    # via jax-cuda12-plugin
 nvidia-cusparse==12.6.3.3 ; sys_platform == 'linux' \
     --hash=sha256:2b3c89c88d01ee0e477cb7f82ef60a11a4bcd57b6b87c33f789350b59759360b \
     --hash=sha256:80bcc4662f23f1054ee334a15c72b8940402975e0eab63178fc7e670aa59472c \
@@ -1976,11 +2075,22 @@ nvidia-cusparse==12.6.3.3 ; sys_platform == 'linux' \
     # via
     #   cuda-toolkit
     #   nvidia-cusolver
+nvidia-cusparse-cu12==12.5.10.65 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:221c73e7482dd93eda44e65ce567c031c07e2f93f6fa0ecd3ba876a195023e83 \
+    --hash=sha256:73060ce019ac064a057267c585bf1fd5a353734151f87472ff02b2c5c9984e78 \
+    --hash=sha256:9e487468a22a1eaf1fbd1d2035936a905feb79c4ce5c2f67626764ee4f90227c
+    # via
+    #   jax-cuda12-plugin
+    #   nvidia-cusolver-cu12
 nvidia-cusparselt-cu13==0.8.0 ; sys_platform == 'linux' \
     --hash=sha256:25e30a8a7323935d4ad0340b95a0b69926eee755767e8e0b1cf8dd85b197d3fd \
     --hash=sha256:400c6ed1cf6780fc6efedd64ec9f1345871767e6a1a0a552a1ea0578117ea77c \
     --hash=sha256:e80212ed7b1afc97102fbb2b5c82487aa73f6a0edfa6d26c5a152593e520bb8f
     # via torch
+nvidia-nccl-cu12==2.29.7 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:0cf032ee22b560447daf0456108a75e32bd74a4de6c6b64725637a359fa48cd8 \
+    --hash=sha256:ecd0a012051abc20c1aa87328841efa8cade3ced65803046e38c2f03c0891fea
+    # via jax-cuda12-plugin
 nvidia-nccl-cu13==2.28.9 ; sys_platform == 'linux' \
     --hash=sha256:01c873ba1626b54caa12272ed228dc5b2781545e0ae8ba3f432a8ef1c6d78643 \
     --hash=sha256:e4553a30f34195f3fa1da02a6da3d6337d28f2003943aa0a3d247bbc25fefc42
@@ -1994,6 +2104,19 @@ nvidia-nvjitlink==13.0.88 ; sys_platform == 'linux' \
     #   nvidia-cufft
     #   nvidia-cusolver
     #   nvidia-cusparse
+nvidia-nvjitlink-cu12==12.9.86 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:994a05ef08ef4b0b299829cde613a424382aff7efb08a7172c1fa616cc3af2ca \
+    --hash=sha256:cc6fcec260ca843c10e34c936921a1c426b351753587fdd638e8cff7b16bb9db \
+    --hash=sha256:e3f1171dbdc83c5932a45f0f4c99180a70de9bd2718c1ab77d14104f6d7147f9
+    # via
+    #   jax-cuda12-plugin
+    #   nvidia-cufft-cu12
+    #   nvidia-cusolver-cu12
+    #   nvidia-cusparse-cu12
+nvidia-nvshmem-cu12==3.6.5 ; platform_system == 'linux' and sys_platform == 'linux' \
+    --hash=sha256:7b38521ff84cdfc68da3360fe249cfbabfe05ee9aa271458857476124b03a420 \
+    --hash=sha256:f86db35f1ced21a790fa255dcae7db8998bf8655a95e76c033a6574190b398e4
+    # via jax-cuda12-plugin
 nvidia-nvshmem-cu13==3.4.5 ; sys_platform == 'linux' \
     --hash=sha256:290f0a2ee94c9f3687a02502f3b9299a9f9fe826e6d0287ee18482e78d495b80 \
     --hash=sha256:6dc2a197f38e5d0376ad52cd1a2a3617d3cdc150fd5966f4aee9bcebb1d68fe9
@@ -2129,6 +2252,10 @@ opentelemetry-semantic-conventions==0.61b0 \
     --hash=sha256:072f65473c5d7c6dc0355b27d6c9d1a679d63b6d4b4b16a9773062cb7e31192a \
     --hash=sha256:fa530a96be229795f8cef353739b618148b0fe2b4b3f005e60e262926c4d38e2
     # via opentelemetry-sdk
+opt-einsum==3.4.0 ; platform_system == 'linux' \
+    --hash=sha256:69bb92469f86a1565195ece4ac0323943e83477171b91d24c35afe028a90d7cd \
+    --hash=sha256:96ca72f1b886d148241348783498194c577fa30a8faac108586b14f1ba4473ac
+    # via jax
 orjson==3.11.7 \
     --hash=sha256:043d3006b7d32c7e233b8cfb1f01c651013ea079e08dcef7189a29abd8befe11 \
     --hash=sha256:0527a4510c300e3b406591b0ba69b5dc50031895b0a93743526a3fc45f59d26e \
@@ -3361,7 +3488,9 @@ scikit-learn==1.8.0 \
     --hash=sha256:f984ca4b14914e6b4094c5d52a32ea16b49832c03bd17a110f004db3c223e8e1 \
     --hash=sha256:fb65db5d7531bccf3a4f6bec3462223bea71384e2cda41da0f10b7c292b9e7c4 \
     --hash=sha256:fe1c011a640a9f0791146011dfd3c7d9669785f9fed2b2a5f9e207536cf5c2fd
-    # via insightface
+    # via
+    #   insightface
+    #   timesfm
 scipy==1.17.1 \
     --hash=sha256:010f4333c96c9bb1a4516269e33cb5917b08ef2166d5556ca2fd9f082a9e6ea0 \
     --hash=sha256:02ae3b274fde71c5e92ac4d54bc06c42d80e399fec704383dcd99b301df37458 \
@@ -3427,6 +3556,8 @@ scipy==1.17.1 \
     # via
     #   albumentations
     #   insightface
+    #   jax
+    #   jaxlib
     #   scikit-image
     #   scikit-learn
 setuptools==81.0.0 \

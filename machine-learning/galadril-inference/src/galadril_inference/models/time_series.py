@@ -45,7 +45,7 @@ class TimesFMModel(BaseModel):
         )
 
     def load(self, artifact_path: str) -> None:
-        """Load the TimesFM model using the updated PyTorch API."""
+        """Load the TimesFM model."""
         try:
             import timesfm  # type: ignore
             import torch  # type: ignore

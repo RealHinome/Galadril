@@ -25,11 +25,18 @@ dependencies = [
     "orjson>=3.10",
     "pyyaml>=6.0",
     "duckdb>=1.5",
-    "timesfm>=2.0.0",
+    "timesfm[xreg]>=2.0.0",
     "huggingface-hub>=0.20.0",
     "torch>=2.0.0",
 ]
 requires-python = "==3.13.*"
+
+[tool.uv]
+required-environments = [
+    "sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "sys_platform == 'linux' and platform_machine == 'aarch64'",
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+]
 
 [tool.uv.sources]
 galadril-inference = { workspace = true }

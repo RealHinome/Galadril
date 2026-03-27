@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal, cast
 
 import numpy as np
 import structlog
@@ -22,6 +22,8 @@ logger = structlog.get_logger(__name__)
 
 _MODEL_NAME = "timesfm_forecast"
 _MODEL_VERSION = "1.0.0"
+
+_XRegMode = Literal["xreg + timesfm", "timesfm + xreg"]
 
 
 class TimesFMModel(BaseModel):
@@ -43,14 +45,14 @@ class TimesFMModel(BaseModel):
         )
 
     def load(self, artifact_path: str) -> None:
-        """Load the TimesFM model."""
+        """Load the TimesFM model using the updated PyTorch API."""
         try:
-            import timesfm
-            import torch
+            import timesfm  # type: ignore
+            import torch  # type: ignore
         except ImportError as exc:
             raise ModelLoadError(
                 _MODEL_NAME,
-                "timesfm or torch is not installed.",
+                "timesfm or torch is not installed. Install with: uv add timesfm torch",
             ) from exc
 
         try:
@@ -60,14 +62,15 @@ class TimesFMModel(BaseModel):
                 "google/timesfm-2.5-200m-pytorch"
             )
 
-            # TODO: custom config.
             self._model.compile(
                 timesfm.ForecastConfig(
                     max_context=15000,
                     max_horizon=1000,
+                    normalize_inputs=True,
                     use_continuous_quantile_head=True,
                     fix_quantile_crossing=True,
                     infer_is_positive=False,
+                    return_backcast=False,
                 )
             )
 
@@ -81,37 +84,83 @@ class TimesFMModel(BaseModel):
         logger.info("model_cleaned_up", model_name=_MODEL_NAME)
 
     def predict(self, request: PredictionRequest) -> PredictionResult:
-        """Run the forecasting inference."""
+        """Run forecasting inference."""
         self._ensure_loaded()
 
         history = self._extract_history(request)
-        horizon = request.features.get("horizon", 24)
+        horizon = self._extract_horizon(request)
+
+        dyn_cov = request.features.get("dynamic_numerical_covariates")
+        has_covariates = dyn_cov is not None and len(dyn_cov) > 0
+
+        if hasattr(self._model, "config"):
+            self._model.config.return_backcast = has_covariates
 
         try:
-            point_forecast, quantile_forecast = self._model.forecast(
-                horizon=horizon,
-                inputs=[np.array(history, dtype=np.float32)],
-            )
+            inputs = [np.asarray(history, dtype=np.float32)]
 
-            # Extract scenarios from the 10 quantiles.
-            scenarios = {
-                "low_scenario": quantile_forecast[0, :, 1].tolist(),
-                "most_likely": quantile_forecast[0, :, 5].tolist(),
-                "high_scenario": quantile_forecast[0, :, 9].tolist(),
-            }
-        except Exception as exc:
-            raise RuntimeError(f"TimesFM inference failed: {exc}") from exc
+            if not has_covariates:
+                outputs = self._model.forecast(
+                    horizon=horizon,
+                    inputs=inputs,
+                )
+                point_forecast = outputs[0]
+                quantile_forecast = outputs[1]
+            else:
+                dyn_num_cov = self._extract_dynamic_numerical_covariates(
+                    request,
+                    context_len=len(history),
+                    horizon=horizon,
+                )
+                xreg_mode = self._extract_xreg_mode(request)
 
-        return PredictionResult(
-            model_name=_MODEL_NAME,
-            model_version=_MODEL_VERSION,
-            prediction={
+                ridge = request.features.get("ridge", 0.1)
+                if not isinstance(ridge, (int, float)):
+                    raise SchemaValidationError(
+                        _MODEL_NAME,
+                        [
+                            f"Feature 'ridge' must be a number, got {type(ridge).__name__}."
+                        ],
+                    )
+
+                model_outputs, xreg_outputs = (
+                    self._model.forecast_with_covariates(
+                        inputs=inputs,
+                        dynamic_numerical_covariates=dyn_num_cov,
+                        xreg_mode=xreg_mode,
+                        ridge=float(ridge),
+                    )
+                )
+
+                point_forecast = model_outputs[0]
+                quantile_forecast = model_outputs[1]
+
+            prediction_payload: dict[str, Any] = {
                 "horizon": horizon,
                 "point_forecast": point_forecast[0].tolist(),
-                "scenarios": scenarios,
-            },
-            confidence=1.0,
-        )
+                "quantiles": quantile_forecast[0].tolist(),
+            }
+
+            if has_covariates:
+                prediction_payload["xreg_mode"] = self._extract_xreg_mode(
+                    request
+                )
+                prediction_payload["xreg_outputs"] = xreg_outputs
+
+            return PredictionResult(
+                model_name=_MODEL_NAME,
+                model_version=_MODEL_VERSION,
+                prediction=prediction_payload,
+                confidence=1.0,
+            )
+
+        except SchemaValidationError:
+            raise
+        except Exception as exc:
+            raise RuntimeError(f"TimesFM inference failed: {exc}") from exc
+        finally:
+            if hasattr(self._model, "config"):
+                self._model.config.return_backcast = False
 
     def input_schema(self) -> dict[str, Any]:
         return {
@@ -128,6 +177,26 @@ class TimesFMModel(BaseModel):
                     "description": "Number of steps to forecast.",
                     "default": 24,
                 },
+                "dynamic_numerical_covariates": {
+                    "type": "object",
+                    "description": (
+                        "Optional dict[str, list[float]] for a single series, "
+                        "or dict[str, list[list[float]]] if extending to batching later. "
+                        "Each covariate must be length (len(history) + horizon)."
+                    ),
+                    "additionalProperties": True,
+                },
+                "xreg_mode": {
+                    "type": "string",
+                    "enum": ["xreg + timesfm", "timesfm + xreg"],
+                    "description": "How covariates are integrated when provided.",
+                    "default": "xreg + timesfm",
+                },
+                "ridge": {
+                    "type": "number",
+                    "description": "Optional ridge regularization strength for xreg.",
+                    "default": 0.1,
+                },
             },
         }
 
@@ -140,22 +209,14 @@ class TimesFMModel(BaseModel):
                     "type": "array",
                     "items": {"type": "number"},
                 },
-                "scenarios": {
-                    "type": "object",
-                    "properties": {
-                        "low_scenario": {
-                            "type": "array",
-                            "items": {"type": "number"},
-                        },
-                        "most_likely": {
-                            "type": "array",
-                            "items": {"type": "number"},
-                        },
-                        "high_scenario": {
-                            "type": "array",
-                            "items": {"type": "number"},
-                        },
-                    },
+                "quantiles": {
+                    "type": "array",
+                    "description": "Raw quantile outputs. Shape: [horizon, 10] where index 0 is mean, 1-9 are deciles 0.1-0.9.",
+                    "items": {"type": "array", "items": {"type": "number"}},
+                },
+                "xreg_mode": {"type": "string"},
+                "xreg_outputs": {
+                    "description": "Raw xreg outputs from TimesFM."
                 },
             },
         }
@@ -168,12 +229,27 @@ class TimesFMModel(BaseModel):
             )
 
     @staticmethod
+    def _extract_horizon(request: PredictionRequest) -> int:
+        horizon = request.features.get("horizon", 24)
+        if not isinstance(horizon, int):
+            raise SchemaValidationError(
+                _MODEL_NAME,
+                [
+                    f"Feature 'horizon' must be an int, got {type(horizon).__name__}."
+                ],
+            )
+        if horizon <= 0:
+            raise SchemaValidationError(
+                _MODEL_NAME, ["Feature 'horizon' must be > 0."]
+            )
+        return horizon
+
+    @staticmethod
     def _extract_history(request: PredictionRequest) -> list[float]:
         history = request.features.get("history")
         if history is None:
             raise SchemaValidationError(
-                _MODEL_NAME,
-                ["Missing required feature: 'history'."],
+                _MODEL_NAME, ["Missing required feature: 'history'."]
             )
         if not isinstance(history, list):
             raise SchemaValidationError(
@@ -182,4 +258,73 @@ class TimesFMModel(BaseModel):
                     f"Feature 'history' must be a list, got {type(history).__name__}."
                 ],
             )
+        if not history:
+            raise SchemaValidationError(
+                _MODEL_NAME, ["Feature 'history' cannot be empty."]
+            )
         return [float(x) for x in history]
+
+    @staticmethod
+    def _extract_xreg_mode(request: PredictionRequest) -> _XRegMode:
+        raw = request.features.get("xreg_mode", "xreg + timesfm")
+        if raw not in ("xreg + timesfm", "timesfm + xreg"):
+            raise SchemaValidationError(
+                _MODEL_NAME,
+                [
+                    "Feature 'xreg_mode' must be one of: "
+                    "'xreg + timesfm', 'timesfm + xreg'."
+                ],
+            )
+        return cast(_XRegMode, raw)
+
+    @staticmethod
+    def _extract_dynamic_numerical_covariates(
+        request: PredictionRequest,
+        *,
+        context_len: int,
+        horizon: int,
+    ) -> dict[str, list[np.ndarray]]:
+        raw = request.features.get("dynamic_numerical_covariates")
+        if raw is None:
+            return {}
+
+        if not isinstance(raw, dict):
+            raise SchemaValidationError(
+                _MODEL_NAME,
+                [
+                    "Feature 'dynamic_numerical_covariates' must be a dict[str, list[float]]."
+                ],
+            )
+
+        required_len = context_len + horizon
+        parsed: dict[str, list[np.ndarray]] = {}
+
+        for cov_name, cov_values in raw.items():
+            if not isinstance(cov_name, str) or not cov_name:
+                raise SchemaValidationError(
+                    _MODEL_NAME,
+                    ["Covariate names must be non-empty strings."],
+                )
+
+            if not isinstance(cov_values, list):
+                raise SchemaValidationError(
+                    _MODEL_NAME,
+                    [
+                        f"Covariate '{cov_name}' must be a list[float], "
+                        f"got {type(cov_values).__name__}."
+                    ],
+                )
+
+            if len(cov_values) != required_len:
+                raise SchemaValidationError(
+                    _MODEL_NAME,
+                    [
+                        f"Covariate '{cov_name}' length must be context_len + horizon "
+                        f"({context_len} + {horizon} = {required_len}), got {len(cov_values)}."
+                    ],
+                )
+
+            arr = np.asarray([float(x) for x in cov_values], dtype=np.float32)
+            parsed[cov_name] = [arr]
+
+        return parsed

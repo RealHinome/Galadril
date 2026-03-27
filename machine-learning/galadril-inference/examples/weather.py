@@ -75,26 +75,28 @@ def main() -> None:
         )
     )
 
-    scenarios = result.prediction["scenarios"]
+    point_forecasts = result.prediction["point_forecast"]
+    quantiles = result.prediction["quantiles"]
 
     print(f"\nComparison: Today's Forecast vs Actual (Paris)")
-    print(
-        f"{'Time':<20} | {'Actual':<8} | {'P10 (Low)':<10} | {'P50 (Likely)':<12} | {'P90 (High)':<10}"
-    )
-    print("-" * 70)
+    print(f"{'Time':<20} | {'Actual':<10} | {'Forecast (± CI)':<20}")
+    print("-" * 55)
 
     for i in range(0, 24, 3):
         time_str = today_timestamps[i].replace("T", " ")
         actual = (
             f"{actual_today[i]:.1f}°C" if actual_today[i] is not None else "N/A"
         )
-        p10 = f"{scenarios['low_scenario'][i]:.1f}°C"
-        p50 = f"{scenarios['most_likely'][i]:.1f}°C"
-        p90 = f"{scenarios['high_scenario'][i]:.1f}°C"
 
-        print(
-            f"{time_str:<20} | {actual:<8} | {p10:<10} | {p50:<12} | {p90:<10}"
-        )
+        point = point_forecasts[i]
+
+        p10 = quantiles[i][1]
+        p90 = quantiles[i][9]
+
+        margin = (p90 - p10) / 2
+        forecast_str = f"{point:.1f} ± {margin:.1f} °C"
+
+        print(f"{time_str:<20} | {actual:<10} | {forecast_str:<20}")
 
     print(f"Latency: {result.latency_ms:.1f}ms")
 

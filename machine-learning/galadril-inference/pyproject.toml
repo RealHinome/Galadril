@@ -9,7 +9,7 @@ dependencies = [
     "boto3>=1.35",
     "boto3-stubs[s3]",
     "moto[s3]>=5.0",
-    "timesfm>=2.0.0",
+    "timesfm[xreg]>=2.0.0",
     "huggingface-hub>=0.20.0",
     "torch>=2.0.0",
 ]

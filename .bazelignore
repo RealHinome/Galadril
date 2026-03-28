@@ -1,3 +1,4 @@
 node_modules
 front/landing/node_modules
+front/dashboard/node_modules
 .venv

@@ -1,0 +1,97 @@
+{
+  "navbar": {
+    "brand": "Galadril Platform",
+    "search": {
+      "placeholder": "Quick search or actions...",
+      "shortcut": "⌘ K"
+    },
+    "breadcrumbs": {
+      "overview_suffix": "Overview",
+      "quick_access": "Quick Access",
+      "analytics": "Analytics"
+    }
+  },
+  "routes": {
+    "dashboard": "Dashboard",
+    "inventory": "Inventory",
+    "settings": "Settings",
+    "supply-chain": "Supply Chain"
+  },
+  "command_palette": {
+    "placeholder": "Search assets, runs, or type a command...",
+    "sections": {
+      "quick_actions": "Quick actions"
+    },
+    "commands": {
+      "approve_all": {
+        "label": "Approve All Proposals",
+        "description": "Batch approve all pending reallocations",
+        "type": "Action"
+      },
+      "generate_report": {
+        "label": "Generate Report",
+        "description": "Generate technical report using LLM for current page",
+        "type": "Action"
+      }
+    },
+    "footer": {
+      "navigate": "to navigate",
+      "select": "to select",
+      "press": "Press",
+      "close": "to close"
+    }
+  },
+  "details_panel": {
+    "common": {
+      "status_label": "Status:",
+      "operational_actions": "Operational Actions",
+      "view_logic": "View allocation logic"
+    },
+    "actions": {
+      "approve": "Approve Reallocation",
+      "modify": "Modify Proposal",
+      "reject": "Reject Order"
+    },
+    "empty_state": "Select an object to view details"
+  },
+  "map_component": {
+    "titles": {
+      "global_title": "Global Supply Chain",
+      "global_subtitle": "Click a country to drill down",
+      "regional_subtitle": "Active Regional View"
+    },
+    "controls": {
+      "back_to_global": "Back to Global View"
+    },
+    "status": {
+      "loading": "Loading Map...",
+      "error_unavailable": "Regional data unavailable.",
+      "tooltip_status": "Status:"
+    }
+  },
+  "dashboard": {
+    "header": {
+      "title": "System Overview",
+      "sync_label": "Ontology sync:",
+      "sync_status": "Connected"
+    },
+    "stats": {
+      "active_runs": "Active Runs"
+    },
+    "charts": {
+      "throughput_title": "Global Throughput (Units/h)",
+      "view_details": "View Details"
+    },
+    "alerts": {
+      "title": "Critical Investigations",
+      "open_manager": "Open Incident Manager",
+      "status": {
+        "critical": "Critical",
+        "warning": "Warning"
+      }
+    },
+    "recent_objects": {
+      "title": "Recent Supply Chain Objects"
+    }
+  }
+}

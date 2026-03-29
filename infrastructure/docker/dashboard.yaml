@@ -1,0 +1,6 @@
+services:
+  studio:
+    image: ghcr.io/realhinome/galadril-studio:latest
+    container_name: studio
+    ports:
+      - 3000:3000

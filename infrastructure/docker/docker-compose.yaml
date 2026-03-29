@@ -5,3 +5,4 @@ include:
   - path: s3.yaml
   - path: database.yaml
   - path: batch.yaml
+  - path: dashboard.yaml

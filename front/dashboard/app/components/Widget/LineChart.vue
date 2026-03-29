@@ -1,5 +1,4 @@
 <script setup>
-import { computed } from "vue";
 import { graphic } from "echarts/core";
 
 const props = defineProps({
@@ -11,7 +10,7 @@ const props = defineProps({
   showTooltip: { type: Boolean, default: true },
   thresholds: {
     type: Array,
-    default: () => [], // ex: [{ value: 200, color: 'rgba(254, 226, 226, 0.5)' }]
+    default: () => [],
   },
 });
 
@@ -46,7 +45,6 @@ const chartOptions = computed(() => ({
     type: "value",
     splitLine: { lineStyle: { color: "#f4f4f5" } },
     axisLabel: { fontSize: 10, color: "#71717a" },
-    // On laisse ECharts calculer le max pour que les zones soient visibles
     max: (value) =>
       Math.max(value.max, ...props.thresholds.map((t) => t.value)) + 20,
   },
@@ -58,7 +56,7 @@ const chartOptions = computed(() => ({
       symbol: "circle",
       symbolSize: 6,
       showSymbol: false,
-      z: 10, // Force la ligne au premier plan
+      z: 10,
       itemStyle: { color: props.color },
       lineStyle: { color: props.color, width: 2.5 },
       areaStyle: {
@@ -69,7 +67,7 @@ const chartOptions = computed(() => ({
       },
       markArea: {
         silent: true,
-        z: 1, // Derrière la ligne
+        z: 1,
         data: props.thresholds.map((t) => [
           {
             yAxis: t.value,
@@ -79,7 +77,7 @@ const chartOptions = computed(() => ({
             },
           },
           {
-            yAxis: 2000, // Une valeur haute pour remplir vers le haut
+            yAxis: 2000,
           },
         ]),
       },

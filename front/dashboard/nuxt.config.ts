@@ -3,6 +3,11 @@ import { isDevelopment } from "std-env";
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   builder: "vite",
+  vite: {
+    optimizeDeps: {
+      include: ["grid-layout-plus", "vue-echarts", "@heroicons/vue/24/outline"],
+    },
+  },
   devtools: { enabled: true },
   ssr: false,
 
@@ -101,6 +106,19 @@ export default defineNuxtConfig({
     ],
   },
 
+  routeRules: {
+    "/builder": {
+      security: {
+        headers: {
+          contentSecurityPolicy: {
+            // grid-layout-plus injects custom style.
+            "style-src": ["'self'", "'unsafe-inline'"],
+          },
+        },
+      },
+    },
+  },
+
   nitro: {
     preset: "node-server",
     prerender: {
@@ -124,7 +142,7 @@ export default defineNuxtConfig({
         includeSubdomains: true,
         preload: true,
       },
-      xFrameOptions: "DENY", // also managed by CSP.
+      xFrameOptions: "DENY",
       contentSecurityPolicy: {
         "font-src": ["'none'"],
         "form-action": ["'none'"],

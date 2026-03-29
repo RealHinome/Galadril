@@ -32,6 +32,11 @@
         "label": "Generate Report",
         "description": "Generate technical report using LLM for current page",
         "type": "Action"
+      },
+      "create_dashboard": {
+        "label": "Create Dashboard",
+        "description": "Open the dashboard builder to create a new layout",
+        "type": "Navigation"
       }
     },
     "footer": {
@@ -87,6 +92,44 @@
     },
     "recent_objects": {
       "title": "Recent Supply Chain Objects"
+    }
+  },
+  "builder": {
+    "title_placeholder": "Dashboard Name",
+    "add_widget": "Add a widget",
+    "save_dashboard": "Save Dashboard",
+    "roles": {
+      "label": "Roles with access",
+      "placeholder": "Type a role and press Enter...",
+      "or_choose": "Or choose:"
+    },
+    "widgets": {
+      "card": "Indicator (Card)",
+      "line_chart": "Line Chart",
+      "alerts": "Alerts List",
+      "objects": "Objects List",
+      "map": "World Map"
+    },
+    "config_modal": {
+      "title": "Configure: {type}",
+      "card": {
+        "title": "Title",
+        "value": "Value",
+        "trend": "Trend (%)"
+      },
+      "generic": {
+        "title": "Component Title"
+      },
+      "line_chart": {
+        "info": "Chart data source will be linked via Galadril ontology later."
+      },
+      "map": {
+        "info": "Map configuration options (region, data) will be accessible soon."
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
     }
   }
 }

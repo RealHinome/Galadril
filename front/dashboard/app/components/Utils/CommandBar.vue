@@ -1,10 +1,10 @@
 <script setup>
-import { ref, watch, onMounted, onUnmounted, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   MagnifyingGlassIcon,
   BoltIcon,
   DocumentTextIcon,
+  PlusCircleIcon,
 } from "@heroicons/vue/24/outline";
 
 const props = defineProps({
@@ -30,6 +30,13 @@ const commands = computed(() => [
     type: t("command_palette.commands.generate_report.type"),
     icon: DocumentTextIcon,
   },
+  {
+    label: t("command_palette.commands.create_dashboard.label"),
+    description: t("command_palette.commands.create_dashboard.description"),
+    type: t("command_palette.commands.create_dashboard.type"),
+    icon: PlusCircleIcon,
+    href: "/builder",
+  },
 ]);
 
 const filteredResults = computed(() => {
@@ -45,9 +52,13 @@ const close = () => {
   emit("close");
 };
 
-const selectItem = (item) => {
+const selectItem = async (item) => {
   if (item) {
-    emit("select", item);
+    if (item.href) {
+      await navigateTo(item.href, { external: true });
+    } else {
+      emit("select", item);
+    }
     close();
   }
 };

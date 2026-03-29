@@ -6,7 +6,7 @@ defineProps({
   trend: String,
   size: {
     type: String,
-    default: "md", // 'sm' | 'md' | 'lg'
+    default: "md",
   },
 });
 </script>

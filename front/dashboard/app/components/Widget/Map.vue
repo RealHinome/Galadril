@@ -40,8 +40,8 @@ interface MapPoint {
 // Couleurs Galadriel avec saturation légèrement augmentée pour le contraste
 const severityColors: Record<PointMeta["severity"], string> = {
   critical: "#ef4444", // Red 500
-  warning: "#f59e0b",  // Amber 500
-  normal: "#10b981",   // Emerald 500 (plus vif que le précédent)
+  warning: "#f59e0b", // Amber 500
+  normal: "#10b981", // Emerald 500 (plus vif que le précédent)
 };
 
 const props = defineProps<{ points: MapPoint[] }>();
@@ -140,7 +140,10 @@ const chartOptions = computed(() => {
         data: points,
         symbolSize: 14, // Légèrement agrandi
         itemStyle: {
-          color: (params: any) => severityColors[params.data?.meta?.severity as PointMeta["severity"]] || "#d4d4d8",
+          color: (params: any) =>
+            severityColors[
+              params.data?.meta?.severity as PointMeta["severity"]
+            ] || "#d4d4d8",
           borderColor: "#fff",
           borderWidth: 2,
           shadowBlur: 6,
@@ -165,7 +168,10 @@ const onChartClick = async (params: any) => {
   }
   if (params.componentType === "geo" && currentMap.value === "World") {
     const countryName = params.name;
-    const success = await mapStore.loadMapData(countryName, `/geo/${countryName.toLowerCase()}.json`);
+    const success = await mapStore.loadMapData(
+      countryName,
+      `/geo/${countryName.toLowerCase()}.json`,
+    );
     if (success) currentMap.value = countryName;
   }
 };
@@ -178,14 +184,28 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="w-full h-full bg-slate-50 border border-zinc-200 rounded-xl overflow-hidden relative shadow-sm font-sans">
+  <div
+    class="w-full h-full bg-slate-50 border border-zinc-200 rounded-xl overflow-hidden relative shadow-sm font-sans"
+  >
     <div class="absolute top-4 left-4 z-10 flex flex-col gap-2">
-      <div class="bg-white/95 backdrop-blur-md border border-zinc-200 px-4 py-3 shadow-lg rounded-lg pointer-events-none">
+      <div
+        class="bg-white/95 backdrop-blur-md border border-zinc-200 px-4 py-3 shadow-lg rounded-lg pointer-events-none"
+      >
         <h2 class="text-sm font-black text-zinc-900 uppercase tracking-tight">
-          {{ currentMap === "World" ? $t("map_component.titles.global_title") : currentMap }}
+          {{
+            currentMap === "World"
+              ? $t("map_component.titles.global_title")
+              : currentMap
+          }}
         </h2>
-        <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5 opacity-80">
-          {{ currentMap === "World" ? $t("map_component.titles.global_subtitle") : $t("map_component.titles.regional_subtitle") }}
+        <p
+          class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5 opacity-80"
+        >
+          {{
+            currentMap === "World"
+              ? $t("map_component.titles.global_subtitle")
+              : $t("map_component.titles.regional_subtitle")
+          }}
         </p>
       </div>
 
@@ -207,9 +227,16 @@ onMounted(async () => {
         @click="onChartClick"
         class="w-full h-full"
       />
-      <div v-else class="w-full h-full flex flex-col items-center justify-center gap-3 bg-white">
-        <div class="w-8 h-8 border-4 border-zinc-100 border-t-zinc-900 rounded-full animate-spin"></div>
-        <span class="text-[10px] text-zinc-500 uppercase font-black tracking-widest">
+      <div
+        v-else
+        class="w-full h-full flex flex-col items-center justify-center gap-3 bg-white"
+      >
+        <div
+          class="w-8 h-8 border-4 border-zinc-100 border-t-zinc-900 rounded-full animate-spin"
+        ></div>
+        <span
+          class="text-[10px] text-zinc-500 uppercase font-black tracking-widest"
+        >
           {{ $t("map_component.status.loading") }}
         </span>
       </div>

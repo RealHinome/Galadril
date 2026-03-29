@@ -102,37 +102,37 @@ const handleAction = (actionType, id) => {
 </script>
 
 <template>
-<div class="flex h-full max-h-screen bg-zinc-50 font-sans overflow-hidden">
-  
-  <div class="flex-1 flex flex-col min-w-0 h-full">
-    
-    <header class="p-4 border-b border-zinc-200 bg-white shadow-sm flex-shrink-0">
-      <div class="flex flex-row gap-4 w-full">
-        <WidgetCard
-          v-for="metric in topMetrics"
-          :key="metric.id"
-          v-bind="metric"
-          class="flex-1 min-w-0"
+  <div class="flex h-full max-h-screen bg-zinc-50 font-sans overflow-hidden">
+    <div class="flex-1 flex flex-col min-w-0 h-full">
+      <header
+        class="p-4 border-b border-zinc-200 bg-white shadow-sm flex-shrink-0"
+      >
+        <div class="flex flex-row gap-4 w-full">
+          <WidgetCard
+            v-for="metric in topMetrics"
+            :key="metric.id"
+            v-bind="metric"
+            class="flex-1 min-w-0"
+          />
+        </div>
+      </header>
+
+      <main class="flex-1 relative min-h-0 bg-zinc-100">
+        <WidgetMap
+          :points="facilityPoints"
+          @select-node="handleSelectNode"
+          class="absolute inset-0 w-full h-full"
         />
-      </div>
-    </header>
+      </main>
+    </div>
 
-    <main class="flex-1 relative min-h-0 bg-zinc-100">
-      <WidgetMap
-        :points="facilityPoints"
-        @select-node="handleSelectNode"
-        class="absolute inset-0 w-full h-full" 
-      />
-    </main>
+    <NavbarAction
+      class="h-full flex-shrink-0"
+      :selected-item="selectedFacility"
+      @close="handleClose"
+      @approve="(id) => handleAction('Approve', id)"
+      @modify="(id) => handleAction('Modify', id)"
+      @reject="(id) => handleAction('Reject', id)"
+    />
   </div>
-
-  <NavbarAction
-    class="h-full flex-shrink-0"
-    :selected-item="selectedFacility"
-    @close="handleClose"
-    @approve="(id) => handleAction('Approve', id)"
-    @modify="(id) => handleAction('Modify', id)"
-    @reject="(id) => handleAction('Reject', id)"
-  />
-</div>
 </template>

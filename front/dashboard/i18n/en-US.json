@@ -75,16 +75,11 @@
       "sync_label": "Ontology sync:",
       "sync_status": "Connected"
     },
-    "stats": {
-      "active_runs": "Active Runs"
-    },
     "charts": {
-      "throughput_title": "Global Throughput (Units/h)",
       "view_details": "View Details"
     },
     "alerts": {
-      "title": "Critical Investigations",
-      "open_manager": "Open Incident Manager",
+      "open_manager": "Open Manager",
       "status": {
         "critical": "Critical",
         "warning": "Warning"

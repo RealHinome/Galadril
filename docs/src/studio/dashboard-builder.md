@@ -6,7 +6,7 @@ metrics into actionable insights through customizable widgets.
 
 <div align="center">
     <img
-        src="/images/dashboard-builder.gif"
+        src="https://raw.githubusercontent.com/RealHinome/Galadril/refs/heads/gh-pages/images/dashboard-builder.gif"
         alt="Galadril Dashboard Builder Interface"
         width="600"
     />

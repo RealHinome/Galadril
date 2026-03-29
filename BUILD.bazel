@@ -70,7 +70,7 @@ gazelle(
 multirun(
     name = "all",
     commands = [
-        "//services/gateway:gateway",
+        # "//services/gateway:gateway",
         "//services/intake:intake",
         "//platform/vision/src/galadril_vision:vision",
     ],

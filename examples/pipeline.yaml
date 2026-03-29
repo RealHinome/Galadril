@@ -33,3 +33,30 @@ pipeline:
     input_from: [image_source]
     params:
       threshold: 0.85
+
+  - step: face_matching
+    type: flatten
+    connector: postgres
+    input_from: [face_detection]
+    params:
+      table_name: face_embeddings
+      columns:
+        - column_name: embedding # vector({dimensions}).
+      limit: 1
+      threshold: 0.8
+
+  - step: save_detected_face
+    type: sink
+    connector: postgres
+    input_from: [face_matching]
+    params:
+      table_name: face_embeddings
+      columns:
+        - column_name: embedding
+          data: $.input_from.face_detection # original vector savec on wrap.
+        - column_name: metadata
+          data: $.metadata # JSON metadata of file.
+        - column_name: person_id
+          data: $.input_from.face_matching.person_id
+        - column_name: id
+          data: $.input_from.face_matching.id

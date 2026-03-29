@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "light";
-            window.path_to_searchindex_js = "searchindex-e92a5d26.js";
+            window.path_to_searchindex_js = "searchindex-a040e8ba.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-b9f63580.js"></script>
+        <script src="toc-1a644351.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -404,6 +404,63 @@ Database Storage step waits for the Face Recognition step to finish.</p>
     model: my_models.PostgresSink
     input_from: [face_detection] # References the previous Step ID
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="galadril-studio"><a class="header" href="#galadril-studio">Galadril Studio</a></h1>
+<p>Studio is a service designed to visualize data analyzed and retrieved by
+Galadril. Unlike the pipeline, which is configured using YAML, Studio is
+configured via a user interface.</p>
+<p>Since data and user requirements vary, customization is key. Instead of
+providing fixed dashboards, Galadriel offers a suite of premade components,
+allowing you to assemble a dashboard that fits your exact needs.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="dashboard-builder"><a class="header" href="#dashboard-builder">Dashboard Builder</a></h1>
+<p>The <strong>Dashboard Builder</strong> is Galadril’s visual interface for creating
+monitoring views. It allows you to transform raw model outputs and pipeline
+metrics into actionable insights through customizable widgets.</p>
+<div align="center">
+    <img src="/images/dashboard-builder.gif" alt="Galadril Dashboard Builder Interface" width="600" />
+</div>
+
+<h2 id="key-components"><a class="header" href="#key-components">Key Components</a></h2>
+<p>The builder interface is divided into three primary functional areas:</p>
+<h3 id="1-header--identity"><a class="header" href="#1-header--identity">1. Header &amp; Identity</a></h3>
+<ul>
+<li><strong>Dashboard Name</strong>: The top-left field allows you to give your dashboard a
+unique identifier.</li>
+<li><strong>Action Bar</strong>:
+<ul>
+<li><strong>Save Dashboard</strong>: Persists your layout and configuration to the
+Galadril database.</li>
+<li><strong>Add a widget</strong>: Opens the widget library to insert new data
+visualizations.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-access-control-rbac"><a class="header" href="#2-access-control-rbac">2. Access Control (RBAC)</a></h3>
+<p>The <strong>Roles with access</strong> section defines which user groups can view or
+interact with the dashboard. You can configure this in two ways:</p>
+<ul>
+<li><strong>Manual Entry</strong>: Type specific role names and press <code>Enter</code>.</li>
+<li><strong>Quick Select</strong>: Use the preset tags to instantly assign standard permission
+levels.</li>
+</ul>
+<h2 id="widget-library"><a class="header" href="#widget-library">Widget Library</a></h2>
+<p>The following widgets can be added via the <strong>+ Add a widget</strong> button to monitor
+your pipeline:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Widget</th><th style="text-align: left">Best Used For</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>World Map</strong></td><td style="text-align: left">Visualizing geographic distribution of data points or edge device locations.</td></tr>
+<tr><td style="text-align: left"><strong>Indicator (Card)</strong></td><td style="text-align: left">Displaying high-level, single-value metrics like <code>Total Inferences</code> or <code>System Uptime</code>.</td></tr>
+<tr><td style="text-align: left"><strong>Line Chart</strong></td><td style="text-align: left">Tracking performance trends and latency over time.</td></tr>
+<tr><td style="text-align: left"><strong>Alerts List</strong></td><td style="text-align: left">Monitoring a real-time feed of system warnings or model threshold breaches.</td></tr>
+<tr><td style="text-align: left"><strong>Objects List</strong></td><td style="text-align: left">Reviewing granular data records or individual model detection results.</td></tr>
+</tbody>
+</table>
+</div>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="internal-architecture"><a class="header" href="#internal-architecture">Internal Architecture</a></h1>
 <p>Galadril is divided into three distinct operational layers (Medaillon

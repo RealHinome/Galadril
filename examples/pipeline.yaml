@@ -44,6 +44,7 @@ pipeline:
         - column_name: embedding # vector({dimensions}).
       limit: 1
       threshold: 0.8
+      on_no_match: continue # continue to sink if person not known.
 
   - step: save_detected_face
     type: sink

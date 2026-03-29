@@ -8,6 +8,9 @@
   - [Data Parsers](configuration/parsers.md)
   - [Pipeline (Steps)](configuration/pipeline_dag.md)
 
+- [Studio](studio/overview.md)
+  - [Dashboard Builder](studio/dashboard-builder.md)
+
 - [Internal Architecture](architecture/overview.md)
   - [Intake Service](architecture/intake_service.md)
   - [Vision Service](architecture/vision_service.md)

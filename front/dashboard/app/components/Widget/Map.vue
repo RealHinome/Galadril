@@ -37,11 +37,10 @@ interface MapPoint {
   targetCoords?: [number, number];
 }
 
-// Couleurs Galadriel avec saturation légèrement augmentée pour le contraste
 const severityColors: Record<PointMeta["severity"], string> = {
-  critical: "#ef4444", // Red 500
-  warning: "#f59e0b", // Amber 500
-  normal: "#10b981", // Emerald 500 (plus vif que le précédent)
+  critical: "#ef4444",
+  warning: "#f59e0b",
+  normal: "#10b981",
 };
 
 const props = defineProps<{ points: MapPoint[] }>();
@@ -70,7 +69,7 @@ const chartOptions = computed(() => {
         color: severityColors[p.meta.severity] || "#a1a1aa",
         width: p.meta.severity === "critical" ? 2.5 : 1.5,
         curveness: 0.3,
-        opacity: 0.7, // Augmenté pour la visibilité des flux
+        opacity: 0.7,
       },
     }));
 
@@ -85,15 +84,15 @@ const chartOptions = computed(() => {
         show: currentMap.value !== "World",
         fontSize: 10,
         fontWeight: 600,
-        color: "#71717a", // Zinc 500 (meilleure lisibilité i18n)
+        color: "#71717a",
       },
       itemStyle: {
-        areaColor: "#f1f5f9", // Slate 100 : détache les terres du fond bg-slate-50
-        borderColor: "#cbd5e1", // Slate 300 : frontières plus nettes
+        areaColor: "#f1f5f9",
+        borderColor: "#cbd5e1",
         borderWidth: 1,
       },
       emphasis: {
-        itemStyle: { areaColor: "#e2e8f0" }, // Slate 200 au survol
+        itemStyle: { areaColor: "#e2e8f0" },
         label: { show: true, color: "#18181b" },
       },
     },
@@ -106,13 +105,14 @@ const chartOptions = computed(() => {
       textStyle: { color: "#18181b" },
       formatter: (params: any) => {
         if (!params.data || params.seriesType === "lines") return "";
-        const meta = params.data.meta;
+        const meta = params.data.meta as PointMeta;
+        const color = severityColors[meta.severity] || "#d4d4d8";
         return `
           <div style="padding: 4px;">
             <div style="font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 4px; color: #18181b;">${params.data.name}</div>
             <div style="font-size: 11px; color: #71717a; font-weight: 500;">
               ${t("map_component.status.tooltip_status")} : 
-              <span style="color: ${severityColors[meta.severity]}; font-weight: 700;">${meta.status}</span>
+              <span style="color: ${color}; font-weight: 700;">${meta.status}</span>
             </div>
           </div>
         `;
@@ -138,7 +138,7 @@ const chartOptions = computed(() => {
         coordinateSystem: "geo",
         zlevel: 2,
         data: points,
-        symbolSize: 14, // Légèrement agrandi
+        symbolSize: 14,
         itemStyle: {
           color: (params: any) =>
             severityColors[
@@ -147,7 +147,7 @@ const chartOptions = computed(() => {
           borderColor: "#fff",
           borderWidth: 2,
           shadowBlur: 6,
-          shadowColor: "rgba(0,0,0,0.15)", // Ombre portée pour détacher les points
+          shadowColor: "rgba(0,0,0,0.15)",
         },
         emphasis: {
           scale: true,

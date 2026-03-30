@@ -8,6 +8,8 @@ fi
 
 cat <<EOF >${create_sql}
 CREATE EXTENSION IF NOT EXISTS age;
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS vectorscale;
 EOF
 
 if [ -z "${POSTGRESQL_PASSWORD:-}" ]; then

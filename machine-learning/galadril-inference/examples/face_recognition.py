@@ -1,8 +1,8 @@
 """Example: Face recognition with automatic model download."""
 
+import cv2
 from pathlib import Path
 
-import cv2
 from galadril_inference import InferenceEngine, PredictionRequest
 from galadril_inference.storage.local import LocalLoader
 from insightface.app import FaceAnalysis
@@ -10,7 +10,7 @@ from insightface.app import FaceAnalysis
 EXAMPLES_DIR = Path(__file__).parent.resolve()
 ARTIFACTS_DIR = EXAMPLES_DIR / "artifacts"
 MODEL_DIR = ARTIFACTS_DIR / "face_recognition" / "1.0.0"
-IMAGE_PATH = EXAMPLES_DIR / "image.jpg"
+IMAGE_PATH = EXAMPLES_DIR / "images" / "security_council.jpg"
 
 
 def ensure_model_downloaded() -> None:

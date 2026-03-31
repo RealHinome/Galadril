@@ -1,9 +1,11 @@
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 
+
 class ColumnMapping(BaseModel):
     column_name: str
     data: Optional[str] = None
+
 
 class StepParams(BaseModel):
     threshold: Optional[float] = None
@@ -14,6 +16,7 @@ class StepParams(BaseModel):
 
     # Allow dynamic parameters.
     model_config = {"extra": "allow"}
+
 
 class PipelineStep(BaseModel):
     step: str

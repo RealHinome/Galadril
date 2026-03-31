@@ -9,6 +9,7 @@ manifest:
     81d243bd2c585b0f4821__mypyc: charset_normalizer
     Cython: cython
     PIL: pillow
+    accelerate: accelerate
     adbc_driver_duckdb: duckdb
     aiohappyeyeballs: aiohappyeyeballs
     aiohttp: aiohttp
@@ -200,6 +201,7 @@ manifest:
     prometheus_client: prometheus_client
     propcache: propcache
     proto: proto_plus
+    psutil: psutil
     psycopg: psycopg
     psycopg_binary: psycopg_binary
     psycopg_pool: psycopg_pool
@@ -221,6 +223,7 @@ manifest:
     pyximport: cython
     ray: ray
     referencing: referencing
+    regex: regex
     requests: requests
     responses: responses
     rich: rich
@@ -243,9 +246,12 @@ manifest:
     threadpoolctl: threadpoolctl
     tifffile: tifffile
     timesfm: timesfm
+    tokenizers: tokenizers
     torch: torch
     torchgen: torch
+    torchvision: torchvision
     tqdm: tqdm
+    transformers: transformers
     typer: typer
     types_awscrt: types_awscrt
     types_s3transfer: types_s3transfer
@@ -263,4 +269,4 @@ manifest:
     zstandard: zstandard
   pip_repository:
     name: pip
-integrity: beb532ea76be2f76b96dee9be6a072747cffc68d46a0cb32542bfd708adba545
+integrity: bcae2e73031709b1c332d210a76c93ab53afacddd10495378e1535967185ee0c

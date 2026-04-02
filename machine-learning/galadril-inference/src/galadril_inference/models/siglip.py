@@ -71,7 +71,7 @@ class SigLIPModel(BaseModel):
             self._model = AutoModel.from_pretrained(
                 artifact_path,
                 device_map=self._device,
-                torch_dtype=torch.float16
+                dtype=torch.float16
                 if self._device == "cuda"
                 else torch.float32,
             ).eval()

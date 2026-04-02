@@ -32,6 +32,7 @@ dependencies = [
     "transformers>=5.4.0",
     "accelerate>=1.13.0",
     "torchvision>=0.26.0",
+    "pyannote-audio>=4.0.4",
 ]
 requires-python = "==3.13.*"
 

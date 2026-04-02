@@ -17,9 +17,11 @@ manifest:
     aiosignal: aiosignal
     albucore: albucore
     albumentations: albumentations
+    alembic: alembic
     annotated_doc: annotated_doc
     annotated_types: annotated_types
     anyio: anyio
+    asteroid_filterbanks: asteroid_filterbanks
     attr: attrs
     attrs: attrs
     authlib: authlib
@@ -35,6 +37,7 @@ manifest:
     cli: stringzilla
     click: click
     colorful: colorful
+    colorlog: colorlog
     confluent_kafka: confluent_kafka
     contourpy: contourpy
     cryptography: cryptography
@@ -47,6 +50,7 @@ manifest:
     dotenv: python_dotenv
     duckdb: duckdb
     easydict: easydict
+    einops: einops
     fastavro: fastavro
     fb303: pyiceberg
     filelock: filelock
@@ -127,6 +131,7 @@ manifest:
     google.type.postal_address_pb2: googleapis_common_protos
     google.type.quaternion_pb2: googleapis_common_protos
     google.type.timeofday_pb2: googleapis_common_protos
+    greenlet: greenlet
     grpc: grpcio
     h11: h11
     hf_xet: hf_xet
@@ -144,8 +149,13 @@ manifest:
     joblib: joblib
     jsonschema: jsonschema
     jsonschema_specifications: jsonschema_specifications
+    julius: julius
     kiwisolver: kiwisolver
     lazy_loader: lazy_loader
+    lightning: lightning
+    lightning_fabric: pytorch_lightning
+    lightning_utilities: lightning_utilities
+    mako: mako
     markdown_it: markdown_it_py
     markupsafe: markupsafe
     matplotlib: matplotlib
@@ -191,6 +201,7 @@ manifest:
     opentelemetry.util.re: opentelemetry_api
     opentelemetry.util.types: opentelemetry_api
     opentelemetry.version: opentelemetry_api
+    optuna: optuna
     orjson: orjson
     packaging: packaging
     pandas: pandas
@@ -198,6 +209,7 @@ manifest:
     pkg_resources: setuptools
     platformdirs: platformdirs
     prettytable: prettytable
+    primePy: primePy
     prometheus_client: prometheus_client
     propcache: propcache
     proto: proto_plus
@@ -206,6 +218,12 @@ manifest:
     psycopg_binary: psycopg_binary
     psycopg_pool: psycopg_pool
     py_partiql_parser: py_partiql_parser
+    pyannote.audio: pyannote_audio
+    pyannote.core: pyannote_core
+    pyannote.database: pyannote_database
+    pyannote.metrics: pyannote_metrics
+    pyannote.pipeline: pyannote_pipeline
+    pyannoteai.sdk: pyannoteai_sdk
     pyarrow: pyarrow
     pyasn1: pyasn1
     pyasn1_modules: pyasn1_modules
@@ -220,6 +238,8 @@ manifest:
     pyroaring: pyroaring
     pyrsistent: pyrsistent
     python_discovery: python_discovery
+    pytorch_lightning: pytorch_lightning
+    pytorch_metric_learning: pytorch_metric_learning
     pyximport: cython
     ray: ray
     referencing: referencing
@@ -238,6 +258,8 @@ manifest:
     skimage: scikit_image
     sklearn: scikit_learn
     smart_open: smart_open
+    sortedcontainers: sortedcontainers
+    sqlalchemy: sqlalchemy
     strictyaml: strictyaml
     stringzilla: stringzilla
     structlog: structlog
@@ -248,7 +270,12 @@ manifest:
     timesfm: timesfm
     tokenizers: tokenizers
     torch: torch
+    torch_audiomentations: torch_audiomentations
+    torch_pitch_shift: torch_pitch_shift
+    torchaudio: torchaudio
+    torchcodec: torchcodec
     torchgen: torch
+    torchmetrics: torchmetrics
     torchvision: torchvision
     tqdm: tqdm
     transformers: transformers
@@ -269,4 +296,4 @@ manifest:
     zstandard: zstandard
   pip_repository:
     name: pip
-integrity: bcae2e73031709b1c332d210a76c93ab53afacddd10495378e1535967185ee0c
+integrity: 7f8e2efe3beff314ab9eba1f0e1558be2b18d82ad90faac544573eceda098386

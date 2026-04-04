@@ -1,5 +1,8 @@
 # Galadril ⛲️
 
+[Documentation](https://realhinome.github.io/Galadril/) | 
+[GitHub](https://github.com/RealHinome/Galadril)
+
 > *"Things that were, and things that are, and some things that have not yet
 > come to pass."*
 
@@ -9,6 +12,18 @@ on **elucidation, foresight, and transparency**.
 
 > [!CAUTION]
 > This project is still in its early stages.
+
+## Development
+Enter the shell to load the environment:
+```bash
+nix develop github:RealHinome/Galadril?dir=infrastructure/nix
+```
+
+## Deployment
+Deploy to NixOS using the provided flake:
+```bash
+nixos-rebuild switch --flake github:RealHinome/Galadril?dir=infrastructure/nix#server
+```
 
 ## Targeted architecture
 
@@ -37,19 +52,19 @@ flowchart TD
 
     subgraph Processing ["The Vision"]
         Stream_Engine["Stream Processor"]:::stream
-        
+
         subgraph Compute ["Compute Services"]
             Entity_Res["Entity Resolution"]:::ml
             Ontology_Map["Ontology Mapper"]:::stream
             ML_Inf["ML Inference"]:::ml
         end
-        
+
         Feature_Store["Feature Store (Online)"]:::pg
     end
 
     subgraph Knowledge ["The Synapse"]
         Intel_Bus[("Curated Intel Bus (Kafka)")]:::bus
-        
+
         subgraph PG_Engine ["PostgreSQL"]
             direction TB
             KG[("Apache AGE")]:::pg
@@ -57,7 +72,7 @@ flowchart TD
             Relational[("Relational")]:::pg
             Timescale[("TimescaleDB")]:::pg
         end
-        
+
         ObjStore[("Object Store")]:::pg
     end
 
@@ -70,12 +85,12 @@ flowchart TD
     S1 & S2 & S3 & S4 --> Connectors
     Connectors --> Raw_Bus
     Connectors -->|Direct Backup| ObjStore
-    
+
     Raw_Bus --> Stream_Engine
 
     Stream_Engine <--> Ontology_Map
     Stream_Engine <--> Feature_Store
-    
+
     Feature_Store -.-> |"Get Features"| ML_Inf
     ML_Inf --> Stream_Engine
 
@@ -84,7 +99,6 @@ flowchart TD
 
     Stream_Engine --> Intel_Bus
     Intel_Bus --> PG_Engine
-    %% Note: Intel_Bus --> ObjStore a été retiré
 
     PG_Engine & ObjStore --> Gateway
     Gateway <--> Studio

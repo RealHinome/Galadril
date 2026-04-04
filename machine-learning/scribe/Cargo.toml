@@ -10,7 +10,11 @@ repository.workspace = true
 name = "tikz"
 
 [dependencies]
-ollama-rs = { version = "0.3", features = ["tokio", "tool-implementations", "macros"] }
+mistralrs = { version = "0.8", features = ["accelerate", "metal"] }
+lazy_static = "1"
+arc-swap = "1.9"
+meval = "0.2"
+chrono = "0.4"
 schemars = "1.2"
 url = "2.5"
 tectonic = { version = "0.15", features = ["external-harfbuzz"] }

@@ -1,10 +1,10 @@
-use scribe::database::NoOpProvider;
-use scribe::ollama::{Scribe, ScribeConfig};
+use scribe::engine::{Scribe, ScribeConfig};
+use scribe::tools::database::NoOpProvider;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{EnvFilter, fmt};
 
-const PROMPT: &str = "Generate one-section report for sample with tikz graphs";
+const PROMPT: &str = "Using tables, compare United States and French armed forces. No graph. Rely on your knowledge. Only one small section.";
 
 #[tokio::main]
 async fn main() {
@@ -16,14 +16,25 @@ async fn main() {
         .with(fmt::layer())
         .init();
 
-    let config = ScribeConfig::new().expect("cannot generate config");
+    let config = ScribeConfig::new()
+        .expect("cannot generate config")
+        .with_max_iterations(5)
+        .with_max_seq_len(4096 * 2)
+        .with_text_model();
 
-    let mut engine = Scribe::new(config, NoOpProvider);
-    engine.create_custom_model().await.unwrap();
+    // We pass NoOpProvider here, but you can swap this with a real DB
+    // implementation.
+    let engine = Scribe::new(config, NoOpProvider)
+        .await
+        .expect("cannot initialize mistralrs engine");
+
+    tracing::info!("generating report...");
     let pdf = engine
         .generate_pdf(PROMPT)
         .await
         .expect("cannot generate report");
-    std::fs::write("report.pdf", pdf).unwrap();
-    tracing::info!("report generated");
+
+    std::fs::write("report.pdf", pdf)
+        .expect("failed to write generated PDF to disk");
+    tracing::info!(path = "report.pdf", "report saved successfully");
 }

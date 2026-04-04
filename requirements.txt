@@ -4190,7 +4190,7 @@ tifffile==2026.3.3 \
     --hash=sha256:d9a1266bed6f2ee1dd0abde2018a38b4f8b2935cb843df381d70ac4eac5458b7 \
     --hash=sha256:e8be15c94273113d31ecb7aa3a39822189dd11c4967e3cc88c178f1ad2fd1170
     # via scikit-image
-timesfm @ git+https://github.com/google-research/timesfm.git@ed602f95a3d2af5257b55f487c3e73d0d31a60ac
+timesfm @ git+https://github.com/google-research/timesfm.git@f085b9079918092aa5e3917a4e135f87f91a7f03
     # via
     #   galadril (pyproject.toml)
     #   galadril-inference

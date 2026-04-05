@@ -2,7 +2,6 @@
 
 import numpy as np
 import cv2
-from PIL import Image
 from pathlib import Path
 
 from galadril_inference.core.engine import InferenceEngine
@@ -11,17 +10,16 @@ from galadril_inference.loading.loader import ArtifactLoader
 
 EXAMPLES_DIR = Path(__file__).parent.resolve()
 IMAGES = {
-    "Satellite": EXAMPLES_DIR / "images" / "military_satellite.png",
+    "Satellite": EXAMPLES_DIR / "images" / "military_camp.png",
     "Gazelle": EXAMPLES_DIR / "images" / "gazelle.png",
 }
 
 CANDIDATES = {
     "Satellite": [
-        "Aerial view of a large industrial or construction site featuring a grid-like network of dirt roads, excavated ground, and several rectangular storage containers scattered across the field",
         # this is the truth.
-        "Satellite imagery showing a massive military staging area with hundreds of armored vehicles and trucks organized in neat rows on a muddy terrain with visible track marks.",
-        "A close-up photograph of a microscopic circuit board showing complex copper wiring, transistors, and silver soldering points on a dark silicon substrate",
-        "Satellite imagery detailing a strategic military compound. Clearly visible are four T-72 main battle tanks parked at the front gate, a central helicopter landing pad with a stationary Mi-24 Hind gunship, and dozens of personnel moving between the vehicles under camouflage netting. The fresh snowfall shows multiple footprints leading to the command tents.",
+        "A high-angle wide shot of a military tactical operations center established in a grassy field. Large olive-drab modular tents are connected in a complex layout, secured by a perimeter of concertina wire and chain-link fencing. Several personnel in camouflage uniforms are visible near a portable light tower and a satellite dish, while a large tan building and a communications mast sit in the background under an overcast sky.",
+        "An aerial view of a large-scale disaster relief base camp set up following a hurricane. Rows of dark green emergency medical shelters and supply depots are arranged on a damp lawn. Aid workers in high-visibility vests move between the temporary structures and portable generators, while a Red Cross logistics center and a radio tower stand in the distance against a gloomy, gray horizon.",
+        "A wide-angle view of an expansive military encampment featuring dozens of bright orange and white inflatable hangars linked together on a field. Soldiers in combat gear are patrolling the perimeter fence, which is reinforced with barbed wire. In the background, a massive industrial warehouse and a cell tower are visible under a thick layer of storm clouds.",
     ],
     "Gazelle": [
         "Sud-Aviation SA342 Gazelle",  # this is the truth.

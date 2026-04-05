@@ -4,7 +4,7 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{EnvFilter, fmt};
 
-const PROMPT: &str = "Using tables, compare United States and French armed forces. No graph. Rely on your knowledge. Only one small section.";
+const PROMPT: &str = "Synthetic report about DSGE model in macroeconomy. No graph. Rely on your knowledge--database is not connected.";
 
 #[tokio::main]
 async fn main() {
@@ -19,8 +19,7 @@ async fn main() {
     let config = ScribeConfig::new()
         .expect("cannot generate config")
         .with_max_iterations(5)
-        .with_max_seq_len(4096 * 2)
-        .with_text_model();
+        .with_max_seq_len(4096);
 
     // We pass NoOpProvider here, but you can swap this with a real DB
     // implementation.

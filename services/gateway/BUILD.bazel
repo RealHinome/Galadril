@@ -1,0 +1,52 @@
+load("@crates//:defs.bzl", "aliases", "all_crate_deps")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_push")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_test")
+
+rust_binary(
+    name = "gateway",
+    srcs = glob(["src/**/*.rs"]),
+    aliases = aliases(),
+    proc_macro_deps = all_crate_deps(
+        proc_macro = True,
+    ),
+    visibility = ["//visibility:public"],
+    deps = all_crate_deps(
+        normal = True,
+    ),
+)
+
+rust_test(
+    name = "gateway_test",
+    crate = ":gateway",
+    deps = all_crate_deps(normal_dev = True),
+)
+
+pkg_tar(
+    name = "layer",
+    srcs = [":gateway"],
+)
+
+oci_image(
+    name = "linux",
+    base = "@distroless_cc",
+    entrypoint = ["/gateway"],
+    tars = [":layer"],
+)
+
+oci_image_index(
+    name = "images",
+    images = [
+        ":linux",
+    ],
+)
+
+oci_push(
+    name = "push",
+    image = ":images",
+    remote_tags = [
+        "latest",
+    ],
+    repository = "ghcr.io/realhinome/galadril-gateway",
+    visibility = ["//visibility:public"],
+)

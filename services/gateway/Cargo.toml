@@ -1,0 +1,15 @@
+[package]
+name = "gateway"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+cedar-policy = "4.9"
+axum = "0.8"
+juniper = "0.17"
+juniper_axum = "0.3"
+tokio = { version = "1", features = ["macros", "net", "rt-multi-thread"] }
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "chrono"] }
+pgvector = { version = "0.4", features = ["sqlx"] }

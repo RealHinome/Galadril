@@ -1,6 +1,10 @@
 [workspace]
 resolver = "3"
-members = ["machine-learning/scribe","services/intake"]
+members = [
+    "machine-learning/scribe",
+    "services/intake",
+    "services/gateway",
+]
 
 [workspace.package]
 version = "0.1.0"

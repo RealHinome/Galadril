@@ -1217,7 +1217,7 @@
           "REPO_MAPPING:rules_rust+,rules_rust rules_rust+",
           "FILE:@@//Cargo.lock d35ad1651ea2a737cd65e5e21b58c086ca1a68428c82aebe10fedd8226ed9bae",
           "FILE:@@//Cargo.toml b2d928ae4367a2ddad0404d98534846493ac7ea4c9e4fe46530efd52d4ff37e2",
-          "FILE:@@//machine-learning/scribe/Cargo.toml 516257c57216c5efee9411c552c6a2594c9ead01a884663dae2a021d1d00429d",
+          "FILE:@@//machine-learning/scribe/Cargo.toml cc1e2ef321bb472d7e39a0ebfab04e3fd819bdb486a16aa4eaf3582b43639837",
           "FILE:@@//services/intake/Cargo.toml 674808e6148cf315f8d353ae2c1a7c6caaaccc9d0f08d92d8080037cfcb31b0a"
         ],
         "generatedRepoSpecs": {

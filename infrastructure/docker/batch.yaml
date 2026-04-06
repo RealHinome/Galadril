@@ -1,40 +1,4 @@
 services:
-  spark-master:
-    image: apache/spark:4.0.2
-    user: root
-    container_name: spark-master
-    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
-    environment:
-      - SPARK_MODE=master
-      - SPARK_RPC_AUTHENTICATION_ENABLED=no
-      - SPARK_RPC_ENCRYPTION_ENABLED=no
-      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-      - SPARK_SSL_ENABLED=no
-      - SPARK_NO_DAEMONIZE=true
-    ports:
-      - 8080:8080
-      - 7077:7077
-
-  spark-worker:
-    image: apache/spark:4.0.2
-    container_name: spark-worker
-    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
-    depends_on:
-      - spark-master
-    environment:
-      - SPARK_WORKER_MEMORY=2G
-      - SPARK_WORKER_CORES=2
-      - SPARK_WORKER_OPTS=-Dspark.memory.offHeap.enabled=true -Dspark.memory.offHeap.size=1g
-      - SPARK_DAEMON_JAVA_OPTS=-Dspark.sql.shuffle.partitions=4
-        -Dspark.sql.execution.arrow.pyspark.enabled=true
-        -Dspark.sql.adaptive.enabled=true
-        -Dspark.sql.adaptive.coalescePartitions.enabled=true
-        -Dspark.sql.adaptive.skewJoin.enabled=true
-        -Dspark.shuffle.file.buffer=1m
-        -Dspark.reducer.maxSizeInFlight=96m
-        -Dspark.locality.wait=0
-        -Dspark.scheduler.mode=FAIR
-
   intake:
     image: ghcr.io/realhinome/galadril-intake:latest
     platform: linux/amd64
@@ -44,12 +8,24 @@ services:
       - minio
       - minio-init
     environment:
-      - KAFKA_BROKERS=redpanda:9092
       - KAFKA_CONSUMER_GROUP=intake-service
       - KAFKA_TOPIC_NOTIFICATIONS=s3-bucket-notifications
-      - KAFKA_TOPIC=raw
       - SCHEMA_REGISTRY=http://redpanda:8081
-      - S3_ENDPOINT=http://minio:9000
       - AWS_ACCESS_KEY_ID=minioadmin
       - AWS_SECRET_ACCESS_KEY=minioadmin
       - AWS_REGION=us-east-1
+    volumes:
+      - ../../examples/pipeline.yaml:/pipeline.yaml
+      - ../../schemas:/schemas
+
+  vision:
+    image: ghcr.io/realhinome/galadril-vision:latest
+    platform: linux/amd64
+    container_name: vision
+    command: ["--config", "pipeline.yaml"]
+    depends_on:
+      - redpanda
+      - minio
+      - minio-init
+    volumes:
+      - ../../examples/pipeline.yaml:/pipeline.yaml

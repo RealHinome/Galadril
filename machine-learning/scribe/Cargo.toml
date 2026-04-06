@@ -7,7 +7,7 @@ license.workspace = true
 repository.workspace = true
 
 [[example]]
-name = "tikz"
+name = "economy"
 
 [dependencies]
 mistralrs = { version = "0.8", features = ["accelerate", "metal"] }

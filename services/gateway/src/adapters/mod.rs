@@ -1,0 +1,3 @@
+//! Adapters.
+
+pub mod outbound;

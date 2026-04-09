@@ -30,14 +30,14 @@ impl DataInspector for PgDataIntrospector {
             FROM information_schema.columns 
             WHERE table_schema = 'public'
             ORDER BY table_name, ordinal_position
-            "#
+            "#,
         )
         .fetch_all(&self.pool)
         .await
         .context("Failed to fetch information schema")?;
 
         let mut sinks_map: HashMap<String, Vec<String>> = HashMap::new();
-        
+
         for row in rows {
             let table_name: Option<String> = row.try_get("table_name")?;
             let column_name: Option<String> = row.try_get("column_name")?;
@@ -106,7 +106,7 @@ impl DataInspector for PgDataIntrospector {
                     },
                     "JSON" | "JSONB" => {
                         // Handles Apache AGE agtype when casted to ::jsonb in
-                        // the query
+                        // the query.
                         let val: Option<Value> = row.try_get(i)?;
                         val.unwrap_or(Value::Null)
                     },

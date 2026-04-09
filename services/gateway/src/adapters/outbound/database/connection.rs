@@ -16,7 +16,6 @@ pub async fn create_pool(database_url: &str) -> Result<PgPool> {
         .max_connections(10)
         .after_connect(|conn, _meta| {
             Box::pin(async move {
-                // Load Apache AGE extension and set search path for graph operations
                 conn.execute("LOAD 'age'; SET search_path = ag_catalog, \"$user\", public;")
                     .await?;
                 Ok(())

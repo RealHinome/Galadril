@@ -61,7 +61,7 @@ class FaceRecognitionModel(BaseModel):
             tags={
                 "domain": "vision",
                 "backend": "insightface",
-                "model_pack": "buffalo_l",
+                "model_pack": "buffalo_sc",
             },
         )
 
@@ -78,9 +78,9 @@ class FaceRecognitionModel(BaseModel):
 
         try:
             self._app = FaceAnalysis(
-                name="buffalo_l",
+                name="buffalo_sc",
                 root=artifact_path,
-                allowed_modules=["detection"],
+                allowed_modules=["detection", "recognition"],
                 providers=[
                     "CUDAExecutionProvider",
                     "CoreMLExecutionProvider",
@@ -119,28 +119,26 @@ class FaceRecognitionModel(BaseModel):
         image = self._extract_image(request, key="image")
         faces = self._app.get(image)
 
-        detected = [
-            DetectedFace(
-                bbox=face.bbox.tolist(),
-                keypoints=face.kps.tolist() if face.kps is not None else [],
-                confidence=float(face.det_score),
-            )
+        if not faces:
+            return self._build_result({"faces_count": 0, "faces": []}, 0.0)
+
+        results = [
+            {
+                "bbox": face.bbox.tolist(),
+                "keypoints": face.kps.tolist() if face.kps is not None else [],
+                "confidence": float(face.det_score),
+            }
             for face in faces
         ]
 
+        avg_conf = float(np.mean([f.det_score for f in faces]))
+
         return self._build_result(
             prediction={
-                "faces_count": len(detected),
-                "faces": [
-                    {
-                        "bbox": f.bbox,
-                        "keypoints": f.keypoints,
-                        "confidence": f.confidence,
-                    }
-                    for f in detected
-                ],
+                "faces_count": len(results),
+                "faces": results,
             },
-            confidence=self._avg_confidence(detected),
+            confidence=round(avg_conf, 6),
         )
 
     def _predict_embed(self, request: PredictionRequest) -> PredictionResult:
@@ -148,32 +146,29 @@ class FaceRecognitionModel(BaseModel):
         image = self._extract_image(request, key="image")
         faces = self._app.get(image)
 
-        detected = [
-            DetectedFace(
-                bbox=face.bbox.tolist(),
-                keypoints=face.kps.tolist() if face.kps is not None else [],
-                confidence=float(face.det_score),
-                embedding=face.embedding.tolist()
-                if face.embedding is not None
-                else None,
+        if not faces:
+            return self._build_result({"faces_count": 0, "faces": []}, 0.0)
+
+        results = []
+        for face in faces:
+            emb = face.embedding
+            results.append(
+                {
+                    "bbox": face.bbox.tolist(),
+                    "confidence": float(face.det_score),
+                    "embedding": emb.tolist() if emb is not None else None,
+                    "embedding_dim": emb.shape[0] if emb is not None else 0,
+                }
             )
-            for face in faces
-        ]
+
+        avg_conf = float(np.mean([f.det_score for f in faces]))
 
         return self._build_result(
             prediction={
-                "faces_count": len(detected),
-                "faces": [
-                    {
-                        "bbox": f.bbox,
-                        "confidence": f.confidence,
-                        "embedding": f.embedding,
-                        "embedding_dim": len(f.embedding) if f.embedding else 0,
-                    }
-                    for f in detected
-                ],
+                "faces_count": len(results),
+                "faces": results,
             },
-            confidence=self._avg_confidence(detected),
+            confidence=round(avg_conf, 6),
         )
 
     def input_schema(self) -> dict[str, Any]:
@@ -242,7 +237,7 @@ class FaceRecognitionModel(BaseModel):
             )
         try:
             return FaceAction(raw_action)
-        except ValueError as exc:  # <--- On capture l'exception
+        except ValueError as exc:
             raise SchemaValidationError(
                 _MODEL_NAME,
                 [

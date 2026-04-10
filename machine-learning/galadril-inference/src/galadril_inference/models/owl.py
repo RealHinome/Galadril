@@ -95,9 +95,7 @@ class OwlV2Model(BaseModel):
         if not raw_text:
             raise SchemaValidationError(_MODEL_NAME, ["Missing 'text' prompt."])
 
-        labels = [
-            p.strip() for p in raw_text.split(".") if p.strip()
-        ]
+        labels = [p.strip() for p in raw_text.split(".") if p.strip()]
         threshold = request.features.get("threshold", 0.1)
 
         try:
@@ -108,9 +106,9 @@ class OwlV2Model(BaseModel):
             with torch.no_grad():
                 outputs = self._model(**inputs)
 
-            target_sizes = torch.tensor([(pil_image.height, pil_image.width)]).to(
-                self._device
-            )
+            target_sizes = torch.tensor(
+                [(pil_image.height, pil_image.width)]
+            ).to(self._device)
 
             results = self._processor.post_process_grounded_object_detection(
                 outputs=outputs,

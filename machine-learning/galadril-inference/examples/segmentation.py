@@ -30,12 +30,16 @@ COLORS = {
 }
 
 
-def draw_and_save_predictions(image_bgr, result, output_path, model_name) -> None:
+def draw_and_save_predictions(
+    image_bgr, result, output_path, model_name
+) -> None:
     """Helper function to draw bounding boxes/masks and save the image."""
     concepts = result.prediction["concepts"]
     canvas = image_bgr.copy()
 
-    print(f"\n[{model_name}] Total objects found: {result.prediction['total_objects']} (Latency: {result.latency_ms:.1f}ms):")
+    print(
+        f"\n[{model_name}] Total objects found: {result.prediction['total_objects']} (Latency: {result.latency_ms:.1f}ms):"
+    )
 
     for name, data in concepts.items():
         color = COLORS.get(name.lower(), COLORS["default"])
@@ -57,8 +61,13 @@ def draw_and_save_predictions(image_bgr, result, output_path, model_name) -> Non
             (w, h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
             cv2.rectangle(canvas, (x1, y1 - h - 5), (x1 + w, y1), color, -1)
             cv2.putText(
-                canvas, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX,
-                0.5, (255, 255, 255), 1,
+                canvas,
+                label,
+                (x1, y1 - 5),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                (255, 255, 255),
+                1,
             )
 
     cv2.imwrite(str(output_path), canvas)
@@ -81,7 +90,6 @@ def main() -> None:
 
     print(f"\nDetecting '{concepts_to_find}'...")
 
-
     engine.load_model("grounded_sam")
     request_dino = PredictionRequest(
         model_name="grounded_sam",
@@ -97,7 +105,9 @@ def main() -> None:
         },
     )
     result_dino = engine.predict(request_dino)
-    draw_and_save_predictions(image_bgr, result_dino, OUTPUT_PATH_DINO, "Grounded SAM")
+    draw_and_save_predictions(
+        image_bgr, result_dino, OUTPUT_PATH_DINO, "Grounded SAM"
+    )
     engine.unload_model("grounded_sam")
 
     engine.load_model("owlv2")

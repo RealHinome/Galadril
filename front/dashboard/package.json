@@ -14,7 +14,7 @@
     "@heroicons/vue": "^2.2.0",
     "@nuxt/a11y": "1.0.0-alpha.1",
     "@nuxt/eslint": "1.15.2",
-    "@nuxt/hints": "1.0.2",
+    "@nuxt/hints": "1.0.3",
     "@nuxt/image": "2.0.0",
     "@nuxtjs/color-mode": "4.0.0",
     "@nuxtjs/i18n": "10.2.4",
@@ -26,9 +26,9 @@
     "nuxt-echarts": "^1.0.1",
     "nuxt-security": "^2.5.1",
     "pinia": "^3.0.4",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.2",
     "std-env": "^4.0.0",
-    "vue": "^3.5.31",
+    "vue": "^3.5.32",
     "vue-router": "^5.0.4"
   }
 }

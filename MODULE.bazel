@@ -5,9 +5,8 @@ module(
 
 bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "rules_multirun", version = "0.13.0")
-bazel_dep(name = "gazelle", version = "0.47.0")
-
-bazel_dep(name = "rules_rust", version = "0.68.1")
+bazel_dep(name = "gazelle", version = "0.50.0")
+bazel_dep(name = "rules_rust", version = "0.69.0")
 
 rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
 rust.toolchain(
@@ -16,7 +15,7 @@ rust.toolchain(
         "x86_64-unknown-linux-gnu",
         "aarch64-unknown-linux-gnu",
     ],
-    versions = ["1.93.1"],
+    versions = ["1.94.1"],
 )
 
 crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
@@ -27,9 +26,9 @@ crate.from_cargo(
 )
 use_repo(crate, "crates")
 
-bazel_dep(name = "rules_python", version = "1.8.4")
-bazel_dep(name = "rules_python_gazelle_plugin", version = "1.8.4")
-bazel_dep(name = "aspect_rules_py", version = "1.10.0")
+bazel_dep(name = "rules_python", version = "1.9.0")
+bazel_dep(name = "rules_python_gazelle_plugin", version = "1.9.0")
+bazel_dep(name = "aspect_rules_py", version = "1.11.2")
 bazel_dep(name = "rules_uv", version = "0.89.2")
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
@@ -47,7 +46,7 @@ pip.parse(
 )
 use_repo(pip, "pip")
 
-bazel_dep(name = "rules_oci", version = "2.2.7")
+bazel_dep(name = "rules_oci", version = "2.3.0")
 bazel_dep(name = "rules_pkg", version = "1.2.0")
 bazel_dep(name = "aspect_bazel_lib", version = "2.22.5")
 bazel_dep(name = "bazel_lib", version = "3.2.2")

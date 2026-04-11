@@ -1,9 +1,11 @@
 //! Database adapter.
 
 mod connection;
-mod data_pg;
-mod policy_pg;
+mod data_inspector;
+mod entity;
+mod policy;
 
 pub use connection::*;
-pub use data_pg::*;
-pub use policy_pg::*;
+pub use data_inspector::*;
+pub use entity::*;
+pub use policy::*;

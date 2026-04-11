@@ -5,6 +5,7 @@ use serde_json::Value;
 
 use crate::domain::sink::SinkMetadata;
 
+#[async_trait::async_trait]
 pub trait DataInspector: Send + Sync {
     /// Retrieves all available sinks (tables) and their columns.
     async fn get_available_sinks(&self) -> Result<Vec<SinkMetadata>>;

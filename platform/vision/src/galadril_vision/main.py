@@ -16,12 +16,14 @@ from pipeline.runner import VisionPipeline
 async def main() -> None:
     logger = structlog.get_logger("main")
 
-    parser = argparse.ArgumentParser(description="Run the Galadril Vision pipeline.")
+    parser = argparse.ArgumentParser(
+        description="Run the Galadril Vision pipeline."
+    )
     parser.add_argument(
         "--config",
         type=str,
         default=os.getenv("PIPELINE_PATH", "pipeline.yaml"),
-        help="Path to the pipeline configuration YAML file."
+        help="Path to the pipeline configuration YAML file.",
     )
     args = parser.parse_args()
     config_path = args.config

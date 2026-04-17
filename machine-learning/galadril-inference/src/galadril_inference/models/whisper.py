@@ -1,4 +1,4 @@
-"""OpenAI Whisper model with optional Diarization."""
+"""OpenAI Whisper model with optional Diarization and Speaker Embeddings."""
 
 from __future__ import annotations
 
@@ -21,16 +21,17 @@ from galadril_inference.models.base import BaseModel
 logger = structlog.get_logger(__name__)
 
 _MODEL_NAME = "whisper"
-_MODEL_VERSION = "1.1.0"
+_MODEL_VERSION = "1.2.0"
 
 
 class WhisperModel(BaseModel):
-    """OpenAI Whisper optimized via Transformers pipeline + optional Pyannote."""
+    """OpenAI Whisper pipeline with optional Pyannote and embeddings."""
 
     def __init__(self) -> None:
         """Initialize the Whisper model wrapper."""
         self._pipe: Any | None = None
         self._diarization_pipe: Any | None = None
+        self._embedding_inference: Any | None = None
         self._device: str = "cpu"
 
     def meta(self) -> ModelMeta:
@@ -38,7 +39,7 @@ class WhisperModel(BaseModel):
         return ModelMeta(
             name=_MODEL_NAME,
             version=_MODEL_VERSION,
-            description="OpenAI Whisper model with optional Pyannote Diarization.",
+            description="OpenAI Whisper model with optional Pyannote Diarization and Embeddings.",
             tags={
                 "domain": "audio",
                 "backend": "transformers+pyannote",
@@ -47,7 +48,7 @@ class WhisperModel(BaseModel):
         )
 
     def load(self, artifact_path: str) -> None:
-        """Load the Whisper model and optionally the Pyannote pipeline."""
+        """Load the Whisper model and optionally the Pyannote pipelines."""
         try:
             import torch
             from transformers import pipeline
@@ -91,7 +92,7 @@ class WhisperModel(BaseModel):
 
             if os.path.exists(local_diarization_config) or hf_token:
                 try:
-                    from pyannote.audio import Pipeline
+                    from pyannote.audio import Pipeline, Model, Inference
 
                     if os.path.exists(local_diarization_config):
                         self._diarization_pipe = Pipeline.from_pretrained(
@@ -104,6 +105,22 @@ class WhisperModel(BaseModel):
 
                     if self._diarization_pipe and self._device != "cpu":
                         self._diarization_pipe.to(torch.device(self._device))
+
+                    try:
+                        emb_model = Model.from_pretrained(
+                            "pyannote/wespeaker-voxceleb-resnet34-LM",
+                            token=hf_token,
+                        )
+                        self._embedding_inference = Inference(
+                            emb_model,
+                            window="whole",
+                            device=torch.device(self._device),
+                        )
+                    except Exception as emb_exc:
+                        logger.warning(
+                            f"Could not load embedding model: {emb_exc}"
+                        )
+
                 except ImportError:
                     logger.warning(
                         "pyannote.audio not installed, diarization disabled."
@@ -120,6 +137,7 @@ class WhisperModel(BaseModel):
                 dtype=str(dtype),
                 attention=attn_impl,
                 diarization_enabled=self._diarization_pipe is not None,
+                embeddings_enabled=self._embedding_inference is not None,
             )
         except Exception as exc:
             raise ModelLoadError(_MODEL_NAME, str(exc)) from exc
@@ -128,6 +146,7 @@ class WhisperModel(BaseModel):
         """Release models and GPU memory."""
         self._pipe = None
         self._diarization_pipe = None
+        self._embedding_inference = None
         import torch
 
         if torch.cuda.is_available():
@@ -140,7 +159,7 @@ class WhisperModel(BaseModel):
         logger.info("model_cleaned_up", model_name=_MODEL_NAME)
 
     def predict(self, request: PredictionRequest) -> PredictionResult:
-        """Run inference on the audio file, optionally with diarization."""
+        """Run inference on the audio file, optionally with diarization and embeddings."""
         self._ensure_loaded()
 
         audio = request.features.get("audio")
@@ -151,10 +170,18 @@ class WhisperModel(BaseModel):
             )
 
         enable_diarization = request.features.get("enable_diarization", False)
+        enable_embeddings = request.features.get("enable_embeddings", False)
+
         if enable_diarization and not self._diarization_pipe:
             raise SchemaValidationError(
                 _MODEL_NAME,
                 ["Diarization requested but Pyannote pipeline is not loaded."],
+            )
+
+        if enable_embeddings and not self._embedding_inference:
+            raise SchemaValidationError(
+                _MODEL_NAME,
+                ["Embeddings requested but wespeaker model is not loaded."],
             )
 
         task = request.features.get("task", "transcribe")
@@ -168,7 +195,7 @@ class WhisperModel(BaseModel):
 
         inference_kwargs = {
             "chunk_length_s": 30,
-            "batch_size": 24,
+            "batch_size": 1,
             "return_timestamps": True,
         }
         if generate_kwargs:
@@ -176,12 +203,27 @@ class WhisperModel(BaseModel):
 
         try:
             outputs = self._pipe(audio, **inference_kwargs)
-
             chunks = outputs.get("chunks", [])
 
             if enable_diarization:
-                diarization = self._diarization_pipe(audio)
-                chunks = self._align_diarization(chunks, diarization)
+                import torchaudio
+
+                waveform, sample_rate = torchaudio.load(audio)
+
+                if waveform.shape[0] > 1:
+                    waveform = waveform.mean(dim=0, keepdim=True)
+
+                audio_in_memory = {
+                    "waveform": waveform,
+                    "sample_rate": sample_rate,
+                }
+
+                diarization = self._diarization_pipe(audio_in_memory)
+                chunks = self._align_diarization(
+                    chunks,
+                    diarization,
+                    audio_path=audio_in_memory if enable_embeddings else None,
+                )
 
             return PredictionResult(
                 model_name=_MODEL_NAME,
@@ -196,18 +238,39 @@ class WhisperModel(BaseModel):
             raise RuntimeError(f"Whisper inference failed: {exc}") from exc
 
     def _align_diarization(
-        self, chunks: list[dict[str, Any]], diarization: Any
+        self,
+        chunks: list[dict[str, Any]],
+        diarization: Any,
+        audio_path: str | dict[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
-        """Align Whisper chunks with Pyannote speaker segments across versions."""
+        """Align Whisper chunks with Pyannote speaker segments and extract embeddings."""
+        from pyannote.core import Segment
+
+        audio_duration = float("inf")
+        if audio_path is not None:
+            try:
+                if isinstance(audio_path, dict):
+                    audio_duration = (
+                        audio_path["waveform"].shape[1]
+                        / audio_path["sample_rate"]
+                    )
+                else:
+                    import torchaudio
+
+                    info = torchaudio.info(audio_path)
+                    audio_duration = info.num_frames / info.sample_rate
+            except Exception as e:
+                logger.warning(f"Could not read audio duration: {e}")
+
         aligned_chunks = []
         segments = []
 
         if hasattr(diarization, "itertracks"):
             for turn, _, spk in diarization.itertracks(yield_label=True):
-                segments.append((turn.start, turn.end, spk))
+                segments.append((turn, spk))
         elif hasattr(diarization, "speaker_diarization"):
             for turn, spk in diarization.speaker_diarization:
-                segments.append((turn.start, turn.end, spk))
+                segments.append((turn, spk))
         else:
             logger.warning(
                 "Unsupported diarization output format. Skipping alignment."
@@ -221,14 +284,49 @@ class WhisperModel(BaseModel):
 
             midpoint = start + ((end - start) / 2)
             speaker = "UNKNOWN"
+            matched_segment = None
 
-            for s_start, s_end, spk in segments:
-                if s_start <= midpoint <= s_end:
+            for turn, spk in segments:
+                if turn.start <= midpoint <= turn.end:
                     speaker = spk
+                    matched_segment = turn
                     break
 
-            chunk_data = chunk.copy()
-            chunk_data["speaker"] = speaker
+            chunk_data = {
+                "timestamp": chunk["timestamp"],
+                "text": chunk["text"],
+                "speaker": speaker,
+            }
+
+            if audio_path and self._embedding_inference:
+                try:
+                    if matched_segment:
+                        embedding = self._embedding_inference.crop(
+                            audio_path, matched_segment
+                        )
+                    else:
+                        safe_end = min(end, audio_duration)
+                        if start >= safe_end:
+                            safe_end = start + 0.1
+
+                        whisper_segment = Segment(start, safe_end)
+                        embedding = self._embedding_inference.crop(
+                            audio_path, whisper_segment
+                        )
+
+                    if hasattr(embedding, "tolist"):
+                        chunk_data["speaker_embedding"] = embedding.tolist()
+                    else:
+                        chunk_data["speaker_embedding"] = None
+
+                except Exception as e:
+                    logger.warning(
+                        f"Failed to extract embedding for chunk: {e}"
+                    )
+                    chunk_data["speaker_embedding"] = None
+            else:
+                chunk_data["speaker_embedding"] = None
+
             aligned_chunks.append(chunk_data)
 
         return aligned_chunks
@@ -247,6 +345,7 @@ class WhisperModel(BaseModel):
                 },
                 "language": {"type": "string"},
                 "enable_diarization": {"type": "boolean", "default": False},
+                "enable_embeddings": {"type": "boolean", "default": False},
             },
         }
 
@@ -267,6 +366,11 @@ class WhisperModel(BaseModel):
                             },
                             "text": {"type": "string"},
                             "speaker": {"type": "string"},
+                            "speaker_embedding": {
+                                "type": ["array", "null"],
+                                "items": {"type": "number"},
+                                "description": "Speaker voice embedding vector if enabled",
+                            },
                         },
                     },
                 },

@@ -7,6 +7,7 @@
   - [Data Sources & Routing](configuration/sources.md)
   - [Data Parsers](configuration/parsers.md)
   - [Pipeline (Steps)](configuration/pipeline_dag.md)
+  - [Models](configuration/models.md)
 
 - [Studio](studio/overview.md)
   - [Dashboard Builder](studio/dashboard-builder.md)

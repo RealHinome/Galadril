@@ -232,6 +232,8 @@ class WhisperModel(BaseModel):
         valid_embeddings = []
         chunk_indices = []
 
+        chunk_embeddings_map = {i: None for i in range(len(chunks))}
+
         for i, chunk in enumerate(chunks):
             start, end = chunk["timestamp"]
             if end is None:
@@ -241,10 +243,7 @@ class WhisperModel(BaseModel):
             end_sample = int(end * sr)
             chunk_waveform = waveform[start_sample:end_sample]
 
-            if (
-                len(chunk_waveform) > int(0.6 * sr)
-                and self._embedding_inference
-            ):
+            if len(chunk_waveform) > int(2 * sr) and self._embedding_inference:
                 wav_buffer = io.BytesIO()
                 wavfile.write(wav_buffer, sr, chunk_waveform)
                 wav_buffer.seek(0)
@@ -262,6 +261,7 @@ class WhisperModel(BaseModel):
 
                     valid_embeddings.append(emb)
                     chunk_indices.append(i)
+                    chunk_embeddings_map[i] = emb
                 except Exception as e:
                     logger.warning(
                         f"Failed to extract embedding from memory buffer: {e}"
@@ -303,11 +303,17 @@ class WhisperModel(BaseModel):
                 last_known_speaker = speaker_assignments[i]
 
         for i, chunk in enumerate(chunks):
+            emb_list = (
+                chunk_embeddings_map[i].tolist()
+                if chunk_embeddings_map[i] is not None
+                else None
+            )
+
             chunk_data = {
                 "timestamp": chunk["timestamp"],
                 "text": chunk["text"],
                 "speaker": speaker_assignments[i],
-                "speaker_embedding": None,
+                "speaker_embedding": emb_list,
             }
             aligned_chunks.append(chunk_data)
 

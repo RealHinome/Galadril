@@ -11,6 +11,7 @@ manifest:
     PIL: pillow
     accelerate: accelerate
     adbc_driver_duckdb: duckdb
+    aifc: standard_aifc
     aiohappyeyeballs: aiohappyeyeballs
     aiohttp: aiohttp
     aiohttp_cors: aiohttp_cors
@@ -24,7 +25,10 @@ manifest:
     asteroid_filterbanks: asteroid_filterbanks
     attr: attrs
     attrs: attrs
+    audioop: audioop_lts
+    audioread: audioread
     authlib: authlib
+    av: av
     avro: avro
     boto3: boto3
     boto3_stubs: boto3_stubs
@@ -34,6 +38,7 @@ manifest:
     certifi: certifi
     cffi: cffi
     charset_normalizer: charset_normalizer
+    chunk: standard_chunk
     cli: stringzilla
     click: click
     colorful: colorful
@@ -41,17 +46,20 @@ manifest:
     confluent_kafka: confluent_kafka
     contourpy: contourpy
     cryptography: cryptography
+    ctranslate2: ctranslate2
     cv2: opencv_python_headless
     cycler: cycler
     cython: cython
     daft: daft
     dateutil: python_dateutil
+    decorator: decorator
     distlib: distlib
     dotenv: python_dotenv
     duckdb: duckdb
     easydict: easydict
     einops: einops
     fastavro: fastavro
+    faster_whisper: faster_whisper
     fb303: pyiceberg
     filelock: filelock
     flatbuffers: flatbuffers
@@ -150,11 +158,14 @@ manifest:
     jsonschema: jsonschema
     jsonschema_specifications: jsonschema_specifications
     julius: julius
+    kaldiio: kaldiio
     kiwisolver: kiwisolver
     lazy_loader: lazy_loader
+    librosa: librosa
     lightning: lightning
     lightning_fabric: pytorch_lightning
     lightning_utilities: lightning_utilities
+    llvmlite: llvmlite
     mako: mako
     markdown_it: markdown_it_py
     markupsafe: markupsafe
@@ -171,6 +182,7 @@ manifest:
     multidict: multidict
     mypy_boto3_s3: mypy_boto3_s3
     networkx: networkx
+    numba: numba
     numpy: numpy
     onnx: onnx
     onnxruntime: onnxruntime
@@ -208,6 +220,7 @@ manifest:
     pgvector: pgvector
     pkg_resources: setuptools
     platformdirs: platformdirs
+    pooch: pooch
     prettytable: prettytable
     primePy: primePy
     prometheus_client: prometheus_client
@@ -259,15 +272,17 @@ manifest:
     sklearn: scikit_learn
     smart_open: smart_open
     sortedcontainers: sortedcontainers
+    soundfile: soundfile
+    soxr: soxr
     sqlalchemy: sqlalchemy
     strictyaml: strictyaml
     stringzilla: stringzilla
     structlog: structlog
+    sunau: standard_sunau
     sympy: sympy
     tenacity: tenacity
     threadpoolctl: threadpoolctl
     tifffile: tifffile
-    timesfm: timesfm
     tokenizers: tokenizers
     torch: torch
     torch_audiomentations: torch_audiomentations
@@ -288,6 +303,7 @@ manifest:
     virtualenv: virtualenv
     wcwidth: wcwidth
     werkzeug: werkzeug
+    wespeakerruntime: wespeakerruntime
     wrapt: wrapt
     xmltodict: xmltodict
     yaml: pyyaml
@@ -296,4 +312,4 @@ manifest:
     zstandard: zstandard
   pip_repository:
     name: pip
-integrity: e7b1cb021d07b4c9ac1359802b4afcff174faf39c855ba9f8edce8a96e4cf648
+integrity: a47e81558d09af4962b91a243ba498c7d5213e1a70f052c96cf3e8db19c16af3

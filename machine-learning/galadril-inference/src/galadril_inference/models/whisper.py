@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from typing import Any
+import numpy as np
 
 import structlog
 
@@ -21,216 +22,196 @@ from galadril_inference.models.base import BaseModel
 logger = structlog.get_logger(__name__)
 
 _MODEL_NAME = "whisper"
-_MODEL_VERSION = "1.2.0"
+_MODEL_VERSION = "1.1.0"
 
 
 class WhisperModel(BaseModel):
-    """OpenAI Whisper pipeline with optional Pyannote and embeddings."""
+    """Whisper pipeline using faster-whisper, ONNX segmentation, and wespeakerruntime."""
 
     def __init__(self) -> None:
         """Initialize the Whisper model wrapper."""
         self._pipe: Any | None = None
-        self._diarization_pipe: Any | None = None
+        self._segmentation_session: Any | None = None
         self._embedding_inference: Any | None = None
-        self._device: str = "cpu"
 
     def meta(self) -> ModelMeta:
         """Return the immutable identity of this model."""
         return ModelMeta(
             name=_MODEL_NAME,
             version=_MODEL_VERSION,
-            description="OpenAI Whisper model with optional Pyannote Diarization and Embeddings.",
+            description="Whisper model with Pyannote Segmentation (ONNX) and WeSpeaker Embeddings.",
             tags={
                 "domain": "audio",
-                "backend": "transformers+pyannote",
-                "framework": "pytorch",
+                "backend": "faster-whisper+onnx+wespeaker",
+                "framework": "numpy",
             },
         )
 
-    def load(self, artifact_path: str) -> None:
-        """Load the Whisper model and optionally the Pyannote pipelines."""
+    def load(self, artifact_path: str, compute_type: str = "default") -> None:
+        """Load the faster-whisper model and ONNX pipelines. Downloads them to artifact_path if missing."""
         try:
-            import torch
-            from transformers import pipeline
+            from faster_whisper import WhisperModel as FasterWhisper
+            from huggingface_hub import hf_hub_download
         except ImportError as exc:
             raise ModelLoadError(
                 _MODEL_NAME,
-                "transformers or torch is not installed.",
+                "faster-whisper or huggingface_hub is not installed.",
             ) from exc
 
         try:
-            if torch.cuda.is_available():
-                self._device = "cuda"
-                dtype = torch.float16
-                attn_impl = (
-                    "flash_attention_2"
-                    if torch.cuda.get_device_capability()[0] >= 8
-                    else "sdpa"
-                )
-            elif torch.backends.mps.is_available():
-                self._device = "mps"
-                dtype = torch.float16
-                attn_impl = "sdpa"
+            os.makedirs(artifact_path, exist_ok=True)
+
+            if compute_type in ["float16", "fp16"]:
+                seg_file_target = "onnx/model_fp16.onnx"
+            elif compute_type == "int8":
+                seg_file_target = "onnx/model_int8.onnx"
             else:
-                self._device = "cpu"
-                dtype = torch.float32
-                attn_impl = "eager"
+                seg_file_target = "onnx/model.onnx"
 
-            self._pipe = pipeline(
-                "automatic-speech-recognition",
-                model=artifact_path,
-                dtype=dtype,
-                device=self._device,
-                model_kwargs={"attn_implementation": attn_impl},
-                ignore_warning=True,
+            whisper_dir = os.path.join(artifact_path, "whisper")
+            os.makedirs(whisper_dir, exist_ok=True)
+
+            self._pipe = FasterWhisper(
+                model_size_or_path="base",
+                device="auto",
+                compute_type=compute_type,
+                download_root=whisper_dir,
             )
 
-            local_diarization_config = os.path.join(
-                artifact_path, "diarization", "config.yaml"
-            )
-            hf_token = os.environ.get("HF_TOKEN")
+            diarization_dir = os.path.join(artifact_path, "diarization")
+            os.makedirs(diarization_dir, exist_ok=True)
 
-            if os.path.exists(local_diarization_config) or hf_token:
+            def safe_download(repo, target_file, fallback_file):
+                """Download model."""
                 try:
-                    from pyannote.audio import Pipeline, Model, Inference
+                    return hf_hub_download(
+                        repo_id=repo,
+                        filename=target_file,
+                        local_dir=diarization_dir,
+                    )
+                except Exception as e:
+                    logger.info(
+                        f"File {target_file} not found in {repo}, falling back to {fallback_file}..."
+                    )
+                    return hf_hub_download(
+                        repo_id=repo,
+                        filename=fallback_file,
+                        local_dir=diarization_dir,
+                    )
 
-                    if os.path.exists(local_diarization_config):
-                        self._diarization_pipe = Pipeline.from_pretrained(
-                            local_diarization_config
-                        )
-                    else:
-                        self._diarization_pipe = Pipeline.from_pretrained(
-                            "pyannote/speaker-diarization-3.1", token=hf_token
-                        )
+            seg_model_path = safe_download(
+                "onnx-community/pyannote-segmentation-3.0",
+                seg_file_target,
+                "onnx/model.onnx",
+            )
 
-                    if self._diarization_pipe and self._device != "cpu":
-                        self._diarization_pipe.to(torch.device(self._device))
+            if os.path.exists(seg_model_path):
+                try:
+                    import onnxruntime as ort
+                    import wespeakerruntime as wespeaker
 
-                    try:
-                        emb_model = Model.from_pretrained(
-                            "pyannote/wespeaker-voxceleb-resnet34-LM",
-                            token=hf_token,
-                        )
-                        self._embedding_inference = Inference(
-                            emb_model,
-                            window="whole",
-                            device=torch.device(self._device),
-                        )
-                    except Exception as emb_exc:
-                        logger.warning(
-                            f"Could not load embedding model: {emb_exc}"
-                        )
+                    self._segmentation_session = ort.InferenceSession(
+                        seg_model_path,
+                        providers=[
+                            "CUDAExecutionProvider",
+                            "CoreMLExecutionProvider",
+                            "CPUExecutionProvider",
+                        ],
+                    )
+                    self._embedding_inference = wespeaker.Speaker(lang="en")
 
                 except ImportError:
                     logger.warning(
-                        "pyannote.audio not installed, diarization disabled."
+                        "onnxruntime or wespeakerruntime not installed, diarization disabled."
                     )
             else:
-                logger.info(
-                    "No HF_TOKEN or local config found. Diarization disabled."
-                )
+                logger.warning("ONNX files missing. Diarization disabled.")
 
             logger.info(
                 "model_loaded",
                 model_name=_MODEL_NAME,
-                device=self._device,
-                dtype=str(dtype),
-                attention=attn_impl,
-                diarization_enabled=self._diarization_pipe is not None,
+                backend="faster-whisper",
+                diarization_enabled=self._segmentation_session is not None,
                 embeddings_enabled=self._embedding_inference is not None,
             )
         except Exception as exc:
             raise ModelLoadError(_MODEL_NAME, str(exc)) from exc
 
     def cleanup(self) -> None:
-        """Release models and GPU memory."""
+        """Release models and memory."""
         self._pipe = None
-        self._diarization_pipe = None
+        self._segmentation_session = None
         self._embedding_inference = None
-        import torch
-
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-        elif (
-            hasattr(torch.backends, "mps") and torch.backends.mps.is_available()
-        ):
-            torch.mps.empty_cache()
-
         logger.info("model_cleaned_up", model_name=_MODEL_NAME)
 
     def predict(self, request: PredictionRequest) -> PredictionResult:
-        """Run inference on the audio file, optionally with diarization and embeddings."""
+        """Run inference on the raw audio waveform."""
         self._ensure_loaded()
 
-        audio = request.features.get("audio")
-        if not audio or not isinstance(audio, str):
+        audio_data = request.features.get("audio")
+        if (
+            not audio_data
+            or not isinstance(audio_data, dict)
+            or "waveform" not in audio_data
+        ):
             raise SchemaValidationError(
                 _MODEL_NAME,
-                ["Feature 'audio' must be a valid file path string."],
+                [
+                    "Feature 'audio' must be a dict containing 'waveform' (NumPy array) and 'sample_rate' (int)."
+                ],
             )
+
+        raw_waveform = audio_data["waveform"]
+        orig_sr = audio_data.get("sample_rate", 16000)
 
         enable_diarization = request.features.get("enable_diarization", False)
-        enable_embeddings = request.features.get("enable_embeddings", False)
-
-        if enable_diarization and not self._diarization_pipe:
-            raise SchemaValidationError(
-                _MODEL_NAME,
-                ["Diarization requested but Pyannote pipeline is not loaded."],
-            )
-
-        if enable_embeddings and not self._embedding_inference:
-            raise SchemaValidationError(
-                _MODEL_NAME,
-                ["Embeddings requested but wespeaker model is not loaded."],
-            )
-
         task = request.features.get("task", "transcribe")
         language = request.features.get("language")
 
-        generate_kwargs = {}
-        if task != "transcribe":
-            generate_kwargs["task"] = task
-        if language:
-            generate_kwargs["language"] = language
-
-        inference_kwargs = {
-            "chunk_length_s": 30,
-            "batch_size": 1,
-            "return_timestamps": True,
-        }
-        if generate_kwargs:
-            inference_kwargs["generate_kwargs"] = generate_kwargs
-
         try:
-            outputs = self._pipe(audio, **inference_kwargs)
-            chunks = outputs.get("chunks", [])
+            import librosa
 
-            if enable_diarization:
-                import torchaudio
+            if len(raw_waveform.shape) > 1:
+                raw_waveform = raw_waveform.mean(axis=1)
 
-                waveform, sample_rate = torchaudio.load(audio)
-
-                if waveform.shape[0] > 1:
-                    waveform = waveform.mean(dim=0, keepdim=True)
-
-                audio_in_memory = {
-                    "waveform": waveform,
-                    "sample_rate": sample_rate,
-                }
-
-                diarization = self._diarization_pipe(audio_in_memory)
-                chunks = self._align_diarization(
-                    chunks,
-                    diarization,
-                    audio_path=audio_in_memory if enable_embeddings else None,
+            if orig_sr != 16000:
+                waveform_16k = librosa.resample(
+                    y=raw_waveform, orig_sr=orig_sr, target_sr=16000
                 )
+            else:
+                waveform_16k = raw_waveform
+
+            waveform_16k = waveform_16k.astype(np.float32)
+
+            segments_gen, info = self._pipe.transcribe(
+                waveform_16k, task=task, language=language, vad_filter=True
+            )
+
+            chunks = []
+            full_text = ""
+            for segment in segments_gen:
+                chunks.append(
+                    {
+                        "timestamp": [segment.start, segment.end],
+                        "text": segment.text,
+                    }
+                )
+                full_text += segment.text + " "
+
+            full_text = full_text.strip()
+
+            if enable_diarization and chunks:
+                chunks = self._align_diarization(chunks, waveform=waveform_16k)
 
             return PredictionResult(
                 model_name=_MODEL_NAME,
                 model_version=_MODEL_VERSION,
                 prediction={
-                    "text": outputs.get("text", "").strip(),
+                    "text": full_text,
                     "chunks": chunks,
+                    "language": info.language
+                    if hasattr(info, "language")
+                    else language,
                 },
                 confidence=1.0,
             )
@@ -238,146 +219,129 @@ class WhisperModel(BaseModel):
             raise RuntimeError(f"Whisper inference failed: {exc}") from exc
 
     def _align_diarization(
-        self,
-        chunks: list[dict[str, Any]],
-        diarization: Any,
-        audio_path: str | dict[str, Any] | None = None,
+        self, chunks: list[dict[str, Any]], waveform: np.ndarray
     ) -> list[dict[str, Any]]:
-        """Align Whisper chunks with Pyannote speaker segments and extract embeddings."""
-        from pyannote.core import Segment
+        """Align Whisper chunks using Agglomerative Clustering (Pyannote style)."""
+        import io
+        import scipy.io.wavfile as wavfile
+        from sklearn.cluster import AgglomerativeClustering
+        from sklearn.neighbors import kneighbors_graph
 
-        audio_duration = float("inf")
-        if audio_path is not None:
-            try:
-                if isinstance(audio_path, dict):
-                    audio_duration = (
-                        audio_path["waveform"].shape[1]
-                        / audio_path["sample_rate"]
-                    )
-                else:
-                    import torchaudio
-
-                    info = torchaudio.info(audio_path)
-                    audio_duration = info.num_frames / info.sample_rate
-            except Exception as e:
-                logger.warning(f"Could not read audio duration: {e}")
-
+        sr = 16000
         aligned_chunks = []
-        segments = []
+        valid_embeddings = []
+        chunk_indices = []
 
-        if hasattr(diarization, "itertracks"):
-            for turn, _, spk in diarization.itertracks(yield_label=True):
-                segments.append((turn, spk))
-        elif hasattr(diarization, "speaker_diarization"):
-            for turn, spk in diarization.speaker_diarization:
-                segments.append((turn, spk))
-        else:
-            logger.warning(
-                "Unsupported diarization output format. Skipping alignment."
-            )
-            return chunks
-
-        for chunk in chunks:
+        for i, chunk in enumerate(chunks):
             start, end = chunk["timestamp"]
             if end is None:
                 end = start + 1.0
 
-            midpoint = start + ((end - start) / 2)
-            speaker = "UNKNOWN"
-            matched_segment = None
+            start_sample = int(start * sr)
+            end_sample = int(end * sr)
+            chunk_waveform = waveform[start_sample:end_sample]
 
-            for turn, spk in segments:
-                if turn.start <= midpoint <= turn.end:
-                    speaker = spk
-                    matched_segment = turn
-                    break
+            if (
+                len(chunk_waveform) > int(0.6 * sr)
+                and self._embedding_inference
+            ):
+                wav_buffer = io.BytesIO()
+                wavfile.write(wav_buffer, sr, chunk_waveform)
+                wav_buffer.seek(0)
 
+                try:
+                    emb = self._embedding_inference.extract_embedding(
+                        wav_buffer
+                    )
+
+                    if isinstance(emb, list):
+                        emb = np.array(emb)
+
+                    emb = emb.flatten()
+                    emb = emb / (np.linalg.norm(emb) + 1e-8)
+
+                    valid_embeddings.append(emb)
+                    chunk_indices.append(i)
+                except Exception as e:
+                    logger.warning(
+                        f"Failed to extract embedding from memory buffer: {e}"
+                    )
+
+        speaker_assignments = ["UNKNOWN"] * len(chunks)
+
+        if len(valid_embeddings) > 0:
+            X = np.array(valid_embeddings)
+            connectivity = kneighbors_graph(
+                X, n_neighbors=2, include_self=False
+            )
+
+            DISTANCE_THRESHOLD = 0.7
+
+            clusterer = AgglomerativeClustering(
+                n_clusters=None,
+                metric="cosine",
+                linkage="average",
+                distance_threshold=DISTANCE_THRESHOLD,
+                connectivity=connectivity,
+            )
+
+            labels = clusterer.fit_predict(X)
+
+            for emb_idx, chunk_idx in enumerate(chunk_indices):
+                speaker_assignments[chunk_idx] = (
+                    f"SPEAKER_{labels[emb_idx] + 1:02d}"
+                )
+
+        last_known_speaker = "UNKNOWN"
+        for i in range(len(chunks)):
+            if (
+                speaker_assignments[i] == "UNKNOWN"
+                and last_known_speaker != "UNKNOWN"
+            ):
+                speaker_assignments[i] = last_known_speaker
+            elif speaker_assignments[i] != "UNKNOWN":
+                last_known_speaker = speaker_assignments[i]
+
+        for i, chunk in enumerate(chunks):
             chunk_data = {
                 "timestamp": chunk["timestamp"],
                 "text": chunk["text"],
-                "speaker": speaker,
+                "speaker": speaker_assignments[i],
+                "speaker_embedding": None,
             }
-
-            if audio_path and self._embedding_inference:
-                try:
-                    if matched_segment:
-                        embedding = self._embedding_inference.crop(
-                            audio_path, matched_segment
-                        )
-                    else:
-                        safe_end = min(end, audio_duration)
-                        if start >= safe_end:
-                            safe_end = start + 0.1
-
-                        whisper_segment = Segment(start, safe_end)
-                        embedding = self._embedding_inference.crop(
-                            audio_path, whisper_segment
-                        )
-
-                    if hasattr(embedding, "tolist"):
-                        chunk_data["speaker_embedding"] = embedding.tolist()
-                    else:
-                        chunk_data["speaker_embedding"] = None
-
-                except Exception as e:
-                    logger.warning(
-                        f"Failed to extract embedding for chunk: {e}"
-                    )
-                    chunk_data["speaker_embedding"] = None
-            else:
-                chunk_data["speaker_embedding"] = None
-
             aligned_chunks.append(chunk_data)
 
         return aligned_chunks
 
     def input_schema(self) -> dict[str, Any]:
-        """Return a JSON Schema dict describing expected input features."""
         return {
             "type": "object",
             "required": ["audio"],
             "properties": {
-                "audio": {"type": "string"},
-                "task": {
-                    "type": "string",
-                    "enum": ["transcribe", "translate"],
-                    "default": "transcribe",
+                "audio": {
+                    "type": "object",
+                    "properties": {
+                        "waveform": {
+                            "description": "NumPy ndarray of the audio"
+                        },
+                        "sample_rate": {"type": "integer"},
+                    },
                 },
+                "task": {"type": "string"},
                 "language": {"type": "string"},
                 "enable_diarization": {"type": "boolean", "default": False},
-                "enable_embeddings": {"type": "boolean", "default": False},
             },
         }
 
     def output_schema(self) -> dict[str, Any]:
-        """Return a JSON Schema dict describing the prediction output."""
         return {
             "type": "object",
             "properties": {
                 "text": {"type": "string"},
-                "chunks": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "timestamp": {
-                                "type": "array",
-                                "items": {"type": "number"},
-                            },
-                            "text": {"type": "string"},
-                            "speaker": {"type": "string"},
-                            "speaker_embedding": {
-                                "type": ["array", "null"],
-                                "items": {"type": "number"},
-                                "description": "Speaker voice embedding vector if enabled",
-                            },
-                        },
-                    },
-                },
+                "chunks": {"type": "array"},
             },
         }
 
     def _ensure_loaded(self) -> None:
-        """Ensure the base Whisper pipeline is loaded before prediction."""
         if self._pipe is None:
             raise ModelLoadError(_MODEL_NAME, "Model is not loaded.")

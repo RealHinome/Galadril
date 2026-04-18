@@ -9,7 +9,7 @@ from galadril_inference.storage.local import LocalLoader
 
 EXAMPLES_DIR = Path(__file__).parent.resolve()
 ARTIFACTS_DIR = EXAMPLES_DIR / "artifacts"
-MODEL_ARTIFACT_PATH = ARTIFACTS_DIR / "timesfm_forecast" / "1.0.0"
+MODEL_ARTIFACT_PATH = ARTIFACTS_DIR / "timesfm_forecast"
 
 
 def ensure_artifact_dir() -> None:

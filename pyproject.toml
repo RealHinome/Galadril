@@ -25,8 +25,6 @@ dependencies = [
     "orjson>=3.10",
     "pyyaml>=6.0",
     "duckdb>=1.5",
-    "timesfm>=2.0.0",
-    "timesfm[xreg]>=2.0.0; platform_system == 'linux'",
     "huggingface-hub>=0.20.0",
     "torch>=2.0.0",
     "transformers>=5.4.0",

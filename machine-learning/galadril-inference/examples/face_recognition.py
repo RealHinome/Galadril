@@ -9,7 +9,7 @@ from insightface.app import FaceAnalysis
 
 EXAMPLES_DIR = Path(__file__).parent.resolve()
 ARTIFACTS_DIR = EXAMPLES_DIR / "artifacts"
-MODEL_DIR = ARTIFACTS_DIR / "face_recognition" / "1.0.0"
+MODEL_DIR = ARTIFACTS_DIR / "face_recognition"
 IMAGE_PATH = EXAMPLES_DIR / "images" / "security_council.jpg"
 
 

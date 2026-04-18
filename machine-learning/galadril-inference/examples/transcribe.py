@@ -1,7 +1,8 @@
 """Speech recognition with optional Diarization and Speaker Embeddings."""
 
-import os
 from pathlib import Path
+
+import soundfile as sf
 
 from galadril_inference import InferenceEngine, PredictionRequest
 from galadril_inference.loading.loader import ArtifactLoader
@@ -9,7 +10,7 @@ from galadril_inference.loading.loader import ArtifactLoader
 
 class HuggingFaceMockLoader(ArtifactLoader):
     def resolve(self, name: str, version: str) -> str:
-        return "openai/whisper-small.en"
+        return str(Path(__file__).parent.resolve() / "artifacts" / "whisper")
 
     def exists(self, name: str, version: str) -> bool:
         return name == "whisper"
@@ -25,25 +26,17 @@ def main() -> None:
         print(f"No file found at {AUDIO_PATH}.")
         return
 
-    hf_token_available = bool(os.environ.get("HF_TOKEN"))
-
-    if hf_token_available:
-        print("HF_TOKEN detected. Diarization and Embeddings will be enabled.")
-    else:
-        print("No HF_TOKEN detected.")
-
     loader = HuggingFaceMockLoader()
     engine = InferenceEngine(loader=loader)
-
     engine.load_model("whisper")
+    waveform, sr = sf.read(str(AUDIO_PATH))
 
     request = PredictionRequest(
         model_name="whisper",
         features={
-            "audio": str(AUDIO_PATH),
+            "audio": {"waveform": waveform, "sample_rate": sr},
             "task": "transcribe",
-            "enable_diarization": hf_token_available,
-            "enable_embeddings": hf_token_available,
+            "enable_diarization": True,
         },
     )
 
@@ -58,9 +51,8 @@ def main() -> None:
         end_time = f"{ts[1]:.2f}" if ts[1] else "end"
         text = chunk["text"].strip()
 
-        if hf_token_available and "speaker" in chunk:
+        if "speaker" in chunk:
             speaker = chunk.get("speaker", "UNKNOWN")
-
             if (
                 "speaker_embedding" in chunk
                 and chunk["speaker_embedding"] is not None

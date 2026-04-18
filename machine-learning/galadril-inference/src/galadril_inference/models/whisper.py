@@ -221,18 +221,19 @@ class WhisperModel(BaseModel):
     def _align_diarization(
         self, chunks: list[dict[str, Any]], waveform: np.ndarray
     ) -> list[dict[str, Any]]:
-        """Align Whisper chunks using Agglomerative Clustering (Pyannote style)."""
+        """Align Whisper chunks using Anchor Clustering and Energy Trimming."""
         import io
         import scipy.io.wavfile as wavfile
+        import numpy as np
         from sklearn.cluster import AgglomerativeClustering
-        from sklearn.neighbors import kneighbors_graph
+        from scipy.spatial.distance import cdist
 
         sr = 16000
-        aligned_chunks = []
-        valid_embeddings = []
-        chunk_indices = []
+        MIN_ANCHOR_DURATION = 1.5
 
-        chunk_embeddings_map = {i: None for i in range(len(chunks))}
+        chunk_embeddings = {}
+        anchor_indices = []
+        anchor_embeddings = []
 
         for i, chunk in enumerate(chunks):
             start, end = chunk["timestamp"]
@@ -243,7 +244,29 @@ class WhisperModel(BaseModel):
             end_sample = int(end * sr)
             chunk_waveform = waveform[start_sample:end_sample]
 
-            if len(chunk_waveform) > int(2 * sr) and self._embedding_inference:
+            if len(chunk_waveform) > 0:
+                frame_length = int(0.1 * sr)
+                energies = np.array(
+                    [
+                        np.sum(chunk_waveform[j : j + frame_length] ** 2)
+                        for j in range(0, len(chunk_waveform), frame_length)
+                    ]
+                )
+                if len(energies) > 0:
+                    threshold = np.max(energies) * 0.1
+                    valid_frames = np.where(energies > threshold)[0]
+
+                    if len(valid_frames) > 0:
+                        trim_start = valid_frames[0] * frame_length
+                        trim_end = (valid_frames[-1] + 1) * frame_length
+                        chunk_waveform = chunk_waveform[trim_start:trim_end]
+
+            duration = len(chunk_waveform) / sr
+
+            if duration < 0.4:
+                continue
+
+            if self._embedding_inference:
                 wav_buffer = io.BytesIO()
                 wavfile.write(wav_buffer, sr, chunk_waveform)
                 wav_buffer.seek(0)
@@ -252,68 +275,97 @@ class WhisperModel(BaseModel):
                     emb = self._embedding_inference.extract_embedding(
                         wav_buffer
                     )
-
                     if isinstance(emb, list):
                         emb = np.array(emb)
 
                     emb = emb.flatten()
                     emb = emb / (np.linalg.norm(emb) + 1e-8)
 
-                    valid_embeddings.append(emb)
-                    chunk_indices.append(i)
-                    chunk_embeddings_map[i] = emb
+                    chunk_embeddings[i] = emb
+
+                    if duration >= MIN_ANCHOR_DURATION:
+                        anchor_indices.append(i)
+                        anchor_embeddings.append(emb)
+
                 except Exception as e:
-                    logger.warning(
-                        f"Failed to extract embedding from memory buffer: {e}"
-                    )
+                    logger.warning(f"Failed to extract embedding: {e}")
 
-        speaker_assignments = ["UNKNOWN"] * len(chunks)
+        if not anchor_embeddings and chunk_embeddings:
+            anchor_indices = list(chunk_embeddings.keys())
+            anchor_embeddings = list(chunk_embeddings.values())
 
-        if len(valid_embeddings) > 0:
-            X = np.array(valid_embeddings)
-            connectivity = kneighbors_graph(
-                X, n_neighbors=2, include_self=False
-            )
+        if not anchor_embeddings:
+            for chunk in chunks:
+                chunk.update({"speaker": "UNKNOWN", "speaker_embedding": None})
+            return chunks
 
-            DISTANCE_THRESHOLD = 0.7
+        X = np.array(anchor_embeddings)
+        DISTANCE_THRESHOLD = 0.75
 
-            clusterer = AgglomerativeClustering(
-                n_clusters=None,
-                metric="cosine",
-                linkage="average",
-                distance_threshold=DISTANCE_THRESHOLD,
-                connectivity=connectivity,
-            )
+        clusterer = AgglomerativeClustering(
+            n_clusters=None,
+            metric="cosine",
+            linkage="average",
+            distance_threshold=DISTANCE_THRESHOLD,
+        )
+        labels = clusterer.fit_predict(X)
 
-            labels = clusterer.fit_predict(X)
+        speaker_embs_groups = {}
+        anchor_assignments = {}
 
-            for emb_idx, chunk_idx in enumerate(chunk_indices):
-                speaker_assignments[chunk_idx] = (
-                    f"SPEAKER_{labels[emb_idx] + 1:02d}"
-                )
+        for idx, label in enumerate(labels):
+            spk = f"SPEAKER_{label + 1:02d}"
+            original_chunk_idx = anchor_indices[idx]
+            anchor_assignments[original_chunk_idx] = spk
 
+            if spk not in speaker_embs_groups:
+                speaker_embs_groups[spk] = []
+            speaker_embs_groups[spk].append(anchor_embeddings[idx])
+
+        speaker_centroids = {}
+        centroid_matrix = []
+        speaker_names = []
+
+        for spk, embs in speaker_embs_groups.items():
+            mean_emb = np.mean(embs, axis=0)
+            centroid = mean_emb / (np.linalg.norm(mean_emb) + 1e-8)
+            speaker_centroids[spk] = centroid
+            centroid_matrix.append(centroid)
+            speaker_names.append(spk)
+
+        centroid_matrix = np.array(centroid_matrix)
+
+        aligned_chunks = []
         last_known_speaker = "UNKNOWN"
-        for i in range(len(chunks)):
-            if (
-                speaker_assignments[i] == "UNKNOWN"
-                and last_known_speaker != "UNKNOWN"
-            ):
-                speaker_assignments[i] = last_known_speaker
-            elif speaker_assignments[i] != "UNKNOWN":
-                last_known_speaker = speaker_assignments[i]
 
         for i, chunk in enumerate(chunks):
-            emb_list = (
-                chunk_embeddings_map[i].tolist()
-                if chunk_embeddings_map[i] is not None
+            if i in anchor_assignments:
+                assigned_spk = anchor_assignments[i]
+            elif i in chunk_embeddings:
+                emb = chunk_embeddings[i].reshape(1, -1)
+                distances = cdist(emb, centroid_matrix, metric="cosine")[0]
+                closest_idx = np.argmin(distances)
+
+                if distances[closest_idx] < 0.80:
+                    assigned_spk = speaker_names[closest_idx]
+                else:
+                    assigned_spk = last_known_speaker
+            else:
+                assigned_spk = last_known_speaker
+
+            last_known_speaker = assigned_spk
+
+            final_emb_list = (
+                speaker_centroids[assigned_spk].tolist()
+                if assigned_spk in speaker_centroids
                 else None
             )
 
             chunk_data = {
                 "timestamp": chunk["timestamp"],
                 "text": chunk["text"],
-                "speaker": speaker_assignments[i],
-                "speaker_embedding": emb_list,
+                "speaker": assigned_spk,
+                "speaker_embedding": final_emb_list,
             }
             aligned_chunks.append(chunk_data)
 

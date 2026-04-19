@@ -1,7 +1,7 @@
 //! Galadril domain models.
 
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct PipelineConfig {
@@ -54,4 +54,77 @@ pub struct FileEvent {
     pub key: String,
     pub size: i64,
     pub received_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BoundingBox {
+    pub top_left_lat: f64,
+    pub top_left_lon: f64,
+    pub bottom_right_lat: f64,
+    pub bottom_right_lon: f64,
+}
+
+/// Generic image payload.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ImagePayload {
+    pub id: String,
+    pub timestamp: i64,
+    pub ingested_at: i64,
+    pub storage_path: Option<String>,
+    pub source: String,
+    pub mime_type: Option<String>,
+    pub geometry: Option<BoundingBox>,
+}
+
+/// Generic audio payload.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AudioPayload {
+    pub id: String,
+    pub timestamp: i64,
+    pub ingested_at: i64,
+    pub storage_path: Option<String>,
+    pub source: String,
+    pub duration_seconds: Option<i32>,
+    pub language: Option<String>,
+}
+
+/// Generic document payload.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DocumentPayload {
+    pub id: String,
+    pub timestamp: i64,
+    pub ingested_at: i64,
+    pub storage_path: Option<String>,
+    pub source: String,
+    pub original_filename: Option<String>,
+    pub mime_type: Option<String>,
+    pub file_hash: Option<String>,
+}
+
+/// Generic text payload.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TextPayload {
+    pub id: String,
+    pub timestamp: i64,
+    pub ingested_at: i64,
+    pub storage_path: Option<String>,
+    pub source: String,
+    pub content: String,
+    pub url: Option<String>,
+    pub author: Option<String>,
+}
+
+/// Generic transaction/state-transition payload.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TransactionPayload {
+    pub id: String,
+    pub timestamp: i64,
+    pub ingested_at: i64,
+    pub storage_path: Option<String>,
+    pub source: String,
+    pub sender_account: Option<String>,
+    pub receiver_account: Option<String>,
+    pub amount: Option<f64>,
+    pub currency: Option<String>,
+    pub transaction_type: Option<String>,
 }

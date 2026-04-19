@@ -1,21 +1,25 @@
-"""Kafka message schemas."""
+"""Kafka message schemas and ESKG normalization."""
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import StrEnum, unique
+from typing import Any
 
 from pydantic import BaseModel, Field
+
+from common.types import EventType
 
 
 @unique
 class InputType(StrEnum):
-    """Supported input types for the vision pipeline."""
+    """Supported homogeneous input types from Kafka."""
 
-    SATELLITE_IMAGE = "satellite_image"
+    IMAGE = "image"
+    AUDIO = "audio"
     DOCUMENT = "document"
-    OSINT_ARTICLE = "osint_article"
-    FINANCIAL_TRANSACTION = "financial_transaction"
+    TEXT = "text"
+    TRANSACTION = "transaction"
 
 
 class BoundingBox(BaseModel):
@@ -27,189 +31,112 @@ class BoundingBox(BaseModel):
     bottom_right_lon: float
 
 
-class SatelliteImageMessage(BaseModel):
-    """Schema for satellite image metadata from Kafka.
+class BaseEventMessage(BaseModel):
+    """Common fields guaranteed by all Galadril Avro schemas."""
 
-    Aligned with: schemas/avro/satellite.avsc
-    """
-
-    image_id: str = Field(
-        ..., description="Unique identifier for the image asset."
+    id: str = Field(..., description="Global UUID.")
+    timestamp: int = Field(
+        ..., description="Unix timestamp millis of occurrence."
     )
-    storage_path: str = Field(
-        ..., description="S3/MinIO URI where the GeoTIFF/image is stored."
+    ingested_at: int = Field(
+        ..., description="Unix timestamp millis of ingestion."
     )
-    acquisition_date: datetime = Field(
-        ..., description="When the image was acquired."
-    )
-    provider: str = Field(..., description="e.g., ESA_Sentinel, Maxar, Planet.")
-    geometry: BoundingBox = Field(
-        ..., description="Geospatial coverage of the image."
-    )
-    resolution_meters: float | None = Field(
-        default=None, description="Pixel resolution in meters."
-    )
-    cloud_cover_percentage: float | None = Field(default=None)
-
-    def to_input_type(self) -> InputType:
-        return InputType.SATELLITE_IMAGE
-
-
-class DocumentMessage(BaseModel):
-    """Schema for document metadata from Kafka.
-
-    Aligned with: schemas/avro/document.avsc
-    """
-
-    document_id: str = Field(..., description="Internal UUID.")
-    original_filename: str
-    storage_path: str = Field(
-        ..., description="S3/MinIO path where the binary file is stored."
-    )
-    mime_type: str = Field(
-        ..., description="e.g., 'application/pdf', 'image/jpeg'."
-    )
-    file_hash: str = Field(..., description="SHA-256 hash for deduplication.")
-    file_size_bytes: int
-    ingested_at: datetime
-    source_context: str | None = Field(
-        default=None,
-        description="e.g., 'Leaked Panama Papers', 'Internal Audit 2024'.",
-    )
-    metadata_tags: dict[str, str] = Field(default_factory=dict)
-
-    def to_input_type(self) -> InputType:
-        return InputType.DOCUMENT
-
-
-class OsintArticleMessage(BaseModel):
-    """Schema for OSINT article metadata from Kafka.
-
-    Aligned with: schemas/avro/osint.avsc
-    """
-
-    article_id: str
-    url: str = Field(..., description="Source URL of the content.")
-    source_domain: str = Field(
-        ..., description="e.g., 'reuters.com', 'twitter.com'."
-    )
-    published_at: datetime | None = Field(default=None)
-    collected_at: datetime
-    title: str | None = Field(default=None)
-    content_raw: str = Field(..., description="Full text content or HTML body.")
-    author: str | None = Field(default=None)
-    language: str | None = Field(
-        default=None, description="ISO 639-1 language code."
-    )
-
-    def to_input_type(self) -> InputType:
-        return InputType.OSINT_ARTICLE
-
-
-class FinancialTransactionMessage(BaseModel):
-    """Schema for financial transaction from Kafka.
-
-    Aligned with: schemas/avro/finance.avsc
-    """
-
-    event_id: str = Field(
-        ..., description="Unique UUID for this event in Galadril."
-    )
-    transaction_id: str = Field(..., description="ID from the source system.")
-    timestamp: datetime = Field(
-        ..., description="Time when the transaction occurred."
-    )
-    sender_account: str
-    receiver_account: str
-    amount: float
-    currency: str = Field(
-        ..., description="ISO 4217 currency code (e.g., USD, EUR, BTC)."
-    )
-    transaction_type: str | None = Field(
-        default=None,
-        description="e.g., TRANSFER, WITHDRAWAL, DEPOSIT.",
-    )
-    source_system: str = Field(..., description="Name of the bank or exchange.")
-
-    def to_input_type(self) -> InputType:
-        return InputType.FINANCIAL_TRANSACTION
-
-
-class UnifiedInputRecord(BaseModel):
-    """Unified wrapper for all input types in the pipeline."""
-
-    input_type: InputType
-    record_id: str = Field(..., description="Unique ID across all input types.")
-    storage_path: str | None = Field(
-        default=None,
-        description="S3 path for binary content (images, documents).",
-    )
-    timestamp: datetime = Field(
-        ..., description="Event or acquisition timestamp."
-    )
+    storage_path: str | None = Field(default=None, description="S3/MinIO URI.")
     source: str = Field(..., description="Origin of the data.")
 
-    satellite: SatelliteImageMessage | None = None
-    document: DocumentMessage | None = None
-    osint: OsintArticleMessage | None = None
-    financial: FinancialTransactionMessage | None = None
 
-    @classmethod
-    def from_satellite(cls, msg: SatelliteImageMessage) -> "UnifiedInputRecord":
-        return cls(
-            input_type=InputType.SATELLITE_IMAGE,
-            record_id=msg.image_id,
-            storage_path=msg.storage_path,
-            timestamp=msg.acquisition_date,
-            source=msg.provider,
-            satellite=msg,
-        )
+class ImageMessage(BaseEventMessage):
+    mime_type: str | None = None
+    geometry: BoundingBox | None = None
 
-    @classmethod
-    def from_document(cls, msg: DocumentMessage) -> "UnifiedInputRecord":
-        return cls(
-            input_type=InputType.DOCUMENT,
-            record_id=msg.document_id,
-            storage_path=msg.storage_path,
-            timestamp=msg.ingested_at,
-            source=msg.source_context or "unknown",
-            document=msg,
-        )
 
-    @classmethod
-    def from_osint(cls, msg: OsintArticleMessage) -> "UnifiedInputRecord":
-        return cls(
-            input_type=InputType.OSINT_ARTICLE,
-            record_id=msg.article_id,
-            storage_path=None,
-            timestamp=msg.collected_at,
-            source=msg.source_domain,
-            osint=msg,
-        )
+class AudioMessage(BaseEventMessage):
+    duration_seconds: int | None = None
+    language: str | None = None
 
-    @classmethod
-    def from_financial(
-        cls, msg: FinancialTransactionMessage
-    ) -> "UnifiedInputRecord":
-        return cls(
-            input_type=InputType.FINANCIAL_TRANSACTION,
-            record_id=msg.event_id,
-            storage_path=None,
-            timestamp=msg.timestamp,
-            source=msg.source_system,
-            financial=msg,
-        )
 
-    @property
-    def has_binary_content(self) -> bool:
-        """Check if this record has associated binary content to download."""
-        return self.storage_path is not None
+class DocumentMessage(BaseEventMessage):
+    original_filename: str | None = None
+    mime_type: str | None = None
+    file_hash: str | None = None
 
-    @property
-    def is_image(self) -> bool:
-        """Check if this record contains image data."""
-        if self.input_type == InputType.SATELLITE_IMAGE:
-            return True
-        if self.input_type == InputType.DOCUMENT and self.document:
-            return self.document.mime_type.startswith("image/")
-        return False
+
+class TextMessage(BaseEventMessage):
+    content: str
+    url: str | None = None
+    author: str | None = None
+
+
+class TransactionMessage(BaseEventMessage):
+    sender_account: str | None = None
+    receiver_account: str | None = None
+    amount: float | None = None
+    currency: str | None = None
+    transaction_type: str | None = None
+
+
+class EventNormalizer:
+    """Normalizes homogeneous Avro schemas into a unified ESKG context."""
+
+    @staticmethod
+    def normalize(payload: dict[str, Any]) -> dict[str, Any]:
+        """
+        Extracts the common base fields and maps specific fields to the ESKG Event semantics.
+        """
+
+        context = {
+            "record_id": payload.get("id"),
+            "timestamp": EventNormalizer._parse_timestamp(
+                payload.get("timestamp")
+            ),
+            "ingested_at": EventNormalizer._parse_timestamp(
+                payload.get("ingested_at")
+            ),
+            "storage_path": payload.get("storage_path"),
+            "source": payload.get("source", "unknown"),
+            "raw_payload": payload,
+            "location_coords": None,
+            "event_type": EventType.OBSERVATION,  # Default
+        }
+
+        if "geometry" in payload:
+            context["location_coords"] = (
+                EventNormalizer._extract_center_from_bbox(payload["geometry"])
+            )
+            context["event_type"] = EventType.OBSERVATION
+
+        elif "duration_seconds" in payload:
+            context["event_type"] = EventType.COMMUNICATION
+
+        elif "content" in payload:
+            context["event_type"] = EventType.DOCUMENT_PUBLISHED
+
+        elif "amount" in payload and "sender_account" in payload:
+            context["event_type"] = EventType.TRANSACTION
+
+        return context
+
+    @staticmethod
+    def _parse_timestamp(ts_millis: int | None) -> datetime:
+        """Convert Avro timestamp-millis to timezone-aware datetime."""
+        if not ts_millis:
+            return datetime.now(timezone.utc)
+        return datetime.fromtimestamp(ts_millis / 1000.0, tz=timezone.utc)
+
+    @staticmethod
+    def _extract_center_from_bbox(
+        geometry: dict[str, float] | None,
+    ) -> list[float] | None:
+        """Approximates center [lat, lon] from bounding box for PostGIS point."""
+        if not geometry:
+            return None
+        try:
+            lat = (
+                geometry["top_left_lat"] + geometry["bottom_right_lat"]
+            ) / 2.0
+            lon = (
+                geometry["top_left_lon"] + geometry["bottom_right_lon"]
+            ) / 2.0
+            return [lat, lon]
+        except KeyError:
+            return None

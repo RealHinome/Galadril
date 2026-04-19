@@ -9,7 +9,7 @@ from pgvector.psycopg import register_vector_async
 from psycopg import sql
 
 from common.exceptions import VectorSearchError
-from common.types import DetectedFaceRecord
+from common.types import EntityEmbedding, EmbeddingModality
 
 if TYPE_CHECKING:
     from common.config import PostgresConfig
@@ -18,9 +18,10 @@ if TYPE_CHECKING:
 logger = structlog.get_logger(__name__)
 
 _TABLE_INIT_SQL = """
-CREATE TABLE IF NOT EXISTS face_embeddings (
+CREATE TABLE IF NOT EXISTS entity_embeddings (
     id TEXT,
-    person_id TEXT NOT NULL,
+    entity_id TEXT NOT NULL,
+    modality TEXT NOT NULL,
     embedding vector({dimensions}),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     metadata JSONB DEFAULT '{{}}'::jsonb,
@@ -28,129 +29,125 @@ CREATE TABLE IF NOT EXISTS face_embeddings (
 );
 
 SELECT create_hypertable(
-    'face_embeddings',
+    'entity_embeddings',
     'created_at',
     if_not_exists => TRUE,
     migrate_data => TRUE
 );
 
-CREATE INDEX IF NOT EXISTS idx_face_embeddings
-ON face_embeddings
-USING diskann (embedding)
-WITH (storage_layout = 'memory_optimized');
+ALTER TABLE entity_embeddings SET (
+    timescaledb.compress,
+    timescaledb.compress_segmentby = 'modality, entity_id',
+    timescaledb.compress_orderby = 'created_at DESC'
+);
+
+SELECT add_compression_policy('entity_embeddings', INTERVAL '30 days', if_not_exists => TRUE);
+
+CREATE INDEX IF NOT EXISTS idx_entity_embeddings
+ON entity_embeddings
+USING diskann (embedding);
 """
 
 
 class VectorStore:
-    """Face embedding storage and similarity search using pgvectorscale."""
+    """Unified embedding storage and similarity search using pgvectorscale."""
 
     def __init__(self, client: PostgresClient, config: PostgresConfig) -> None:
         self._client = client
         self._config = config
 
     async def initialize(self) -> None:
-        """Create the embeddings table and index."""
+        """Create the multimodal embeddings table and index."""
         async with self._client.connection() as conn:
             await register_vector_async(conn)
             query = sql.SQL(_TABLE_INIT_SQL).format(
                 dimensions=sql.Literal(self._config.vector_dimensions)
             )
             await conn.execute(query)
-        logger.info("vector_store_initialized")
+        logger.info(
+            "vector_store_initialized",
+            dimensions=self._config.vector_dimensions,
+        )
 
     async def find_similar(
         self,
         embedding: list[float],
+        modality: EmbeddingModality,
         top_k: int = 5,
     ) -> list[tuple[str, float]]:
-        """Find the most similar face embeddings."""
+        """Find similar embeddings using vectorscale."""
         async with self._client.connection() as conn:
             await register_vector_async(conn)
 
             query = sql.SQL("""
-                SELECT person_id, similarity
+                SELECT entity_id, similarity
                 FROM (
                     SELECT
-                        person_id,
+                        entity_id,
                         1 - (embedding <=> $1::vector) AS similarity,
                         embedding <=> $1::vector AS distance
-                    FROM face_embeddings
+                    FROM entity_embeddings
+                    WHERE modality = $2
                     ORDER BY distance
-                    LIMIT $3
+                    LIMIT $4
                 ) AS sub
-                WHERE similarity >= $2;
+                WHERE similarity >= $3;
             """)
 
             result = await conn.execute(
                 query,
-                (embedding, self._config.similarity_threshold, top_k),
+                (
+                    embedding,
+                    modality.value,
+                    self._config.similarity_threshold,
+                    top_k,
+                ),
             )
 
             rows = await result.fetchall()
             return [(str(row[0]), float(row[1])) for row in rows]
 
-    async def identify_face(
-        self,
-        face: DetectedFaceRecord,
-    ) -> DetectedFaceRecord:
-        """Attempt to identify a face by finding similar embeddings."""
-        if not face.embedding:
-            return face
-
+    async def resolve_entity(self, record: EntityEmbedding) -> EntityEmbedding:
+        if not record.vector:
+            return record
         try:
-            matches = await self.find_similar(face.embedding, top_k=1)
-
+            matches = await self.find_similar(
+                record.vector, record.modality, top_k=1
+            )
             if matches:
-                person_id, confidence = matches[0]
-                face.identified_person_id = person_id
-                face.identification_confidence = confidence
-                face.is_unknown = False
-
+                entity_id, confidence = matches[0]
+                record.entity_id = entity_id
+                record.confidence = confidence
+                record.is_unknown = False
                 logger.debug(
-                    "face_identified",
-                    face_id=face.face_id,
-                    person_id=person_id,
-                    confidence=confidence,
+                    "entity_resolved",
+                    modality=record.modality,
+                    entity_id=entity_id,
                 )
             else:
-                face.is_unknown = True
-
+                record.is_unknown = True
         except Exception as exc:
-            raise VectorSearchError(f"Identification failed: {exc}") from exc
-
-        return face
+            raise VectorSearchError(f"Entity resolution failed: {exc}") from exc
+        return record
 
     async def store_embedding(
-        self,
-        face: DetectedFaceRecord,
-        person_id: str,
+        self, record: EntityEmbedding, entity_id: str
     ) -> None:
-        """Store a new face embedding for future identification."""
         async with self._client.connection() as conn:
             await register_vector_async(conn)
-
             query = sql.SQL("""
-                INSERT INTO face_embeddings (id, person_id, embedding, metadata, created_at)
-                VALUES ($1, $2, $3::vector, $4, $5)
+                INSERT INTO entity_embeddings (id, entity_id, modality, embedding, metadata, created_at)
+                VALUES ($1, $2, $3, $4::vector, $5, $6)
             """)
-
-            metadata_json = orjson.dumps(
-                {"image_id": face.image_id, "bbox": face.bbox}
-            ).decode()
-
+            metadata_json = orjson.dumps(record.metadata).decode()
             await conn.execute(
                 query,
                 (
-                    face.face_id,
-                    person_id,
-                    face.embedding,
+                    record.embedding_id,
+                    entity_id,
+                    record.modality.value,
+                    record.vector,
                     metadata_json,
                     datetime.now(timezone.utc),
                 ),
             )
-
-        logger.info(
-            "embedding_stored",
-            face_id=face.face_id,
-            person_id=person_id,
-        )

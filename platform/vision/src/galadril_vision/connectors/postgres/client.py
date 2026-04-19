@@ -42,13 +42,25 @@ class PostgresClient:
         )
 
     async def _init_extensions(self, conn: AsyncConnection) -> None:
-        """Ensure required PostgreSQL extensions are loaded."""
-        await conn.execute("CREATE EXTENSION IF NOT EXISTS vector;")
-        await conn.execute("CREATE EXTENSION IF NOT EXISTS age;")
-        await conn.execute("CREATE EXTENSION IF NOT EXISTS timescaledb;")
+        """Ensure required PostgreSQL extensions are loaded and optimized."""
+        await conn.execute(
+            "CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"
+        )
+        await conn.execute("CREATE EXTENSION IF NOT EXISTS vector CASCADE;")
+        await conn.execute(
+            "CREATE EXTENSION IF NOT EXISTS vectorscale CASCADE;"
+        )
+        await conn.execute("CREATE EXTENSION IF NOT EXISTS age CASCADE;")
+        await conn.execute("CREATE EXTENSION IF NOT EXISTS postgis CASCADE;")
+        await conn.execute("CREATE EXTENSION IF NOT EXISTS plpython3u CASCADE;")
+        await conn.execute(
+            "CREATE EXTENSION IF NOT EXISTS pg_stat_statements CASCADE;"
+        )
+        await conn.execute(
+            "CREATE EXTENSION IF NOT EXISTS pg_wait_sampling CASCADE;"
+        )
+        await conn.execute("CREATE EXTENSION IF NOT EXISTS pg_repack CASCADE;")
 
-        # Load AGE extension.
-        # This is already done on galadril-database.
         await conn.execute("LOAD 'age';")
         await conn.execute("SET search_path = ag_catalog, public, '$user';")
 

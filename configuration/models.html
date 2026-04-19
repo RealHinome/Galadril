@@ -35,7 +35,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "light";
-            window.path_to_searchindex_js = "../searchindex-1a0dab2a.js";
+            window.path_to_searchindex_js = "../searchindex-84412a7b.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-e19ba8aa.js"></script>
@@ -190,12 +190,14 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </thead>
 <tbody>
 <tr><td style="text-align: left"><strong>face_recognition</strong></td><td style="text-align: left">Face analysis and identification via InsightFace (Buffalo).</td><td style="text-align: left"></td></tr>
+<tr><td style="text-align: left"><strong>gliner2</strong></td><td style="text-align: left">Joint entity and relation extraction via GLiNER2.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2507.18546">Arxiv</a></td></tr>
 <tr><td style="text-align: left"><strong>got_ocr</strong></td><td style="text-align: left">Unified visual text processing with GOT-OCR 2.0.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2409.01704">Arxiv</a></td></tr>
 <tr><td style="text-align: left"><strong>grounded_sam</strong></td><td style="text-align: left">Zero-shot object detection and segmentation (Grounded-SAM).</td><td style="text-align: left"><a href="https://arxiv.org/abs/2401.14159">Arxiv</a></td></tr>
+<tr><td style="text-align: left"><strong>nuextract</strong></td><td style="text-align: left">Template-based structured JSON information extraction.</td><td style="text-align: left"><a href="https://huggingface.co/numind/NuExtract-2.0-2B">HF</a></td></tr>
 <tr><td style="text-align: left"><strong>owlv2</strong></td><td style="text-align: left">Open-world object detection and localization.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2306.09683">Arxiv</a></td></tr>
 <tr><td style="text-align: left"><strong>siglip2</strong></td><td style="text-align: left">Advanced vision-language model for image-text understanding.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2502.14786">Arxiv</a></td></tr>
 <tr><td style="text-align: left"><strong>timesfm_forecast</strong></td><td style="text-align: left">Time-series foundation model for versatile forecasting.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2310.10688">Arxiv</a></td></tr>
-<tr><td style="text-align: left"><strong>whisper</strong></td><td style="text-align: left">State-of-the-art multilingual speech-to-text.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2212.04356">Arxiv</a></td></tr>
+<tr><td style="text-align: left"><strong>whisper</strong></td><td style="text-align: left">Multilingual speech-to-text with diarization and embeddings.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2212.04356">Arxiv</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -217,7 +219,24 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="2-got-ocr-got_ocr"><a class="header" href="#2-got-ocr-got_ocr">2. GOT OCR (<code>got_ocr</code>)</a></h3>
+<h3 id="2-gliner2-gliner2"><a class="header" href="#2-gliner2-gliner2">2. GLiNER2 (<code>gliner2</code>)</a></h3>
+<p>Zero-shot model for joint entity and relation extraction from text.</p>
+<ul>
+<li><strong>Inputs:</strong>
+<ul>
+<li><code>text</code> (Required): The input string for extraction.</li>
+<li><code>entities</code>: Dictionary mapping entity types to descriptions.</li>
+<li><code>relations</code>: Dictionary mapping relation types to descriptions.</li>
+</ul>
+</li>
+<li><strong>Outputs:</strong>
+<ul>
+<li><code>entities</code>: Grouped list of extracted spans per entity type.</li>
+<li><code>relations</code>: List of objects with <code>source</code>, <code>target</code>, and <code>relation_type</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-got-ocr-got_ocr"><a class="header" href="#3-got-ocr-got_ocr">3. GOT OCR (<code>got_ocr</code>)</a></h3>
 <p>General Object Role-playing OCR for high-quality text extraction.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -234,7 +253,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="3-grounded-sam-grounded_sam"><a class="header" href="#3-grounded-sam-grounded_sam">3. Grounded SAM (<code>grounded_sam</code>)</a></h3>
+<h3 id="4-grounded-sam-grounded_sam"><a class="header" href="#4-grounded-sam-grounded_sam">4. Grounded SAM (<code>grounded_sam</code>)</a></h3>
 <p>Combines language understanding with precise image segmentation.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -252,7 +271,22 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="4-owlv2-owlv2"><a class="header" href="#4-owlv2-owlv2">4. OWLv2 (<code>owlv2</code>)</a></h3>
+<h3 id="5-nuextract-nuextract"><a class="header" href="#5-nuextract-nuextract">5. NuExtract (<code>nuextract</code>)</a></h3>
+<p>Multimodal structured information extraction using a JSON template.</p>
+<ul>
+<li><strong>Inputs:</strong>
+<ul>
+<li><code>text</code> or <code>image</code> (Required): The source content to extract from.</li>
+<li><code>template</code>: A JSON structure or string defining the desired output schema.</li>
+</ul>
+</li>
+<li><strong>Outputs:</strong>
+<ul>
+<li><code>prediction</code>: A structured JSON object following the provided template.</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-owlv2-owlv2"><a class="header" href="#6-owlv2-owlv2">6. OWLv2 (<code>owlv2</code>)</a></h3>
 <p>Open-world localized vocabulary object detection.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -267,7 +301,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="5-siglip-2-siglip2"><a class="header" href="#5-siglip-2-siglip2">5. SigLIP 2 (<code>siglip2</code>)</a></h3>
+<h3 id="7-siglip-2-siglip2"><a class="header" href="#7-siglip-2-siglip2">7. SigLIP 2 (<code>siglip2</code>)</a></h3>
 <p>State-of-the-art vision-language model for creating shared embeddings.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -284,7 +318,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="6-timesfm-forecast-timesfm_forecast"><a class="header" href="#6-timesfm-forecast-timesfm_forecast">6. TimesFM Forecast (<code>timesfm_forecast</code>)</a></h3>
+<h3 id="8-timesfm-forecast-timesfm_forecast"><a class="header" href="#8-timesfm-forecast-timesfm_forecast">8. TimesFM Forecast (<code>timesfm_forecast</code>)</a></h3>
 <p>Foundation model for time-series forecasting with external covariates.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -301,20 +335,22 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="7-whisper-whisper"><a class="header" href="#7-whisper-whisper">7. Whisper (<code>whisper</code>)</a></h3>
-<p>Multilingual automatic speech recognition (ASR).</p>
+<h3 id="9-whisper-whisper"><a class="header" href="#9-whisper-whisper">9. Whisper (<code>whisper</code>)</a></h3>
+<p>Multilingual speech-to-text with advanced speaker diarization.</p>
 <ul>
 <li><strong>Inputs:</strong>
 <ul>
-<li><code>audio</code> (Required): String path or base64 encoded audio.</li>
-<li><code>task</code>: <code>transcribe</code> or <code>translate</code>.</li>
-<li><code>enable_diarization</code>: Identify different speakers.</li>
+<li><code>audio</code> (Required): Dict containing <code>waveform</code> (ndarray) and <code>sample_rate</code>.</li>
+<li><code>task</code>: <code>transcribe</code> or <code>translate</code> (default <code>transcribe</code>).</li>
+<li><code>language</code>: Optional ISO language code.</li>
+<li><code>enable_diarization</code>: Boolean to trigger speaker clustering and embeddings.</li>
 </ul>
 </li>
 <li><strong>Outputs:</strong>
 <ul>
-<li><code>text</code>: Full transcript.</li>
-<li><code>chunks</code>: Segmented text with <code>timestamp</code>, <code>speaker</code>, and optional <code>speaker_embedding</code>.</li>
+<li><code>text</code>: Full transcript string.</li>
+<li><code>chunks</code>: Segments with <code>timestamp</code>, <code>text</code>, <code>speaker</code>, and <code>speaker_embedding</code>.</li>
+<li><code>language</code>: Detected or used language.</li>
 </ul>
 </li>
 </ul>

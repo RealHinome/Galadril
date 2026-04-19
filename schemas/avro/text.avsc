@@ -1,0 +1,17 @@
+{
+  "namespace": "com.galadril.raw",
+  "type": "record",
+  "name": "Text",
+  "doc": "Pure text data (Articles, Tweets, Transcripts).",
+  "fields": [
+    {"name": "id", "type": "string"},
+    {"name": "timestamp", "type": {"type": "long", "logicalType": "timestamp-millis"}},
+    {"name": "ingested_at", "type": {"type": "long", "logicalType": "timestamp-millis"}},
+    {"name": "storage_path", "type": ["null", "string"], "default": null, "doc": "Usually null for raw text"},
+    {"name": "source", "type": "string"},
+
+    {"name": "content", "type": "string", "doc": "The actual text/HTML payload"},
+    {"name": "url", "type": ["null", "string"], "default": null},
+    {"name": "author", "type": ["null", "string"], "default": null}
+  ]
+}

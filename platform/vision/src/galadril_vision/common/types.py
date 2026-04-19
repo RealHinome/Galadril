@@ -18,11 +18,7 @@ class ProcessingStatus(StrEnum):
     """Status of record processing in the pipeline."""
 
     PENDING = "pending"
-    DOWNLOADED = "downloaded"
     PROCESSED = "processed"
-    IDENTIFIED = "identified"
-    STORED = "stored"
-    SKIPPED = "skipped"
     FAILED = "failed"
 
 
@@ -36,56 +32,65 @@ class EntityType(StrEnum):
     ACCOUNT = "Account"  # Financial account.
     DOCUMENT = "Document"
     VEHICLE = "Vehicle"
-    BUILDING = "Building"
+    BUILD = "Building"
+    CONCEPT = "Concept"
+    WEAPON = "Weapon"
     UNKNOWN = "Unknown"
 
 
+@unique
+class EventType(StrEnum):
+    """Types of events (E) in the ESKG."""
+
+    OBSERVATION = "Observation"
+    TRANSACTION = "Transaction"
+    COMMUNICATION = "Communication"
+    DOCUMENT_PUBLISHED = "DocumentPublished"
+
+
+@unique
+class EmbeddingModality(StrEnum):
+    """Supported modalities for pgvectorscale."""
+
+    FACE = "face"
+    VOICE = "voice"
+    IMAGE = "image"
+    TEXT = "text"
+
+
 @dataclass(slots=True)
-class DetectedFaceRecord:
-    """A face detected in an image with identification status."""
+class EntityEmbedding:
+    """A generic embedding record for the unified vector store."""
 
-    face_id: str = field(default_factory=_generate_id)
-    image_id: str = ""
-    bbox: list[float] = field(default_factory=list)
+    embedding_id: str = field(default_factory=_generate_id)
+    entity_id: str | None = None
+    modality: EmbeddingModality = EmbeddingModality.FACE
+    vector: list[float] = field(default_factory=list)
     confidence: float = 0.0
-    embedding: list[float] = field(default_factory=list)
-
-    identified_person_id: str | None = None
-    identification_confidence: float = 0.0
+    metadata: dict[str, Any] = field(default_factory=dict)
     is_unknown: bool = True
 
 
 @dataclass(slots=True)
-class ExtractedEntity:
-    """An entity extracted from any input type."""
+class EventRecord:
+    """An Event (E) node in the ESKG."""
 
-    entity_id: str = field(default_factory=_generate_id)
-    entity_type: EntityType = EntityType.UNKNOWN
-    source_record_id: str = ""  # Links back to the input record.
-
-    name: str | None = None
-    embedding: list[float] = field(default_factory=list)
+    event_id: str = field(default_factory=_generate_id)
+    event_type: EventType = EventType.OBSERVATION
+    timestamp: datetime = field(default_factory=datetime.now)
+    location_coords: list[float] | None = None
     properties: dict[str, Any] = field(default_factory=dict)
-
-    resolved_id: str | None = None  # Linked to known entity in graph.
-    resolution_confidence: float = 0.0
-    is_resolved: bool = False
 
 
 @dataclass(slots=True)
-class ProcessedRecord:
-    """Result of processing any input type through the pipeline."""
+class EntityStateRecord:
+    """A State (S) record stored in TimescaleDB."""
 
-    record_id: str
-    input_type: str
-    status: ProcessingStatus = ProcessingStatus.PENDING
-
-    faces: list[DetectedFaceRecord] = field(default_factory=list)
-    entities: list[ExtractedEntity] = field(default_factory=list)
-
-    processing_time_ms: float = 0.0
-    error: str | None = None
-    timestamp: datetime = field(default_factory=datetime.now)
+    entity_id: str
+    event_id: str
+    state_type: str
+    state_value: dict[str, Any]
+    event_time: datetime
 
 
 @dataclass(frozen=True, slots=True)
@@ -93,7 +98,7 @@ class GraphVertex:
     """A vertex to create/update in Apache AGE."""
 
     vertex_id: str
-    label: EntityType
+    label: str
     properties: dict[str, Any] = field(default_factory=dict)
 
 
@@ -104,17 +109,4 @@ class GraphEdge:
     source_vertex_id: str
     target_vertex_id: str
     edge_type: str
-    properties: dict[str, Any] = field(default_factory=dict)
-
-
-@dataclass(slots=True)
-class DetectedObject:
-    """An object detected in satellite imagery."""
-
-    object_id: str = field(default_factory=_generate_id)
-    image_id: str = ""
-    object_type: str = ""
-    bbox: list[float] = field(default_factory=list)
-    geo_coords: list[float] = field(default_factory=list)
-    confidence: float = 0.0
     properties: dict[str, Any] = field(default_factory=dict)

@@ -67,6 +67,8 @@ manifest:
     frozenlist: frozenlist
     fsspec: fsspec
     functorch: torch
+    gliner: gliner
+    gliner2: gliner2
     google.api.annotations_pb2: googleapis_common_protos
     google.api.auth_pb2: googleapis_common_protos
     google.api.backend_pb2: googleapis_common_protos
@@ -254,6 +256,7 @@ manifest:
     pytorch_lightning: pytorch_lightning
     pytorch_metric_learning: pytorch_metric_learning
     pyximport: cython
+    qwen_vl_utils: qwen_vl_utils
     ray: ray
     referencing: referencing
     regex: regex
@@ -264,6 +267,7 @@ manifest:
     s3transfer: s3transfer
     safetensors: safetensors
     scipy: scipy
+    sentencepiece: sentencepiece
     setuptools: setuptools
     shellingham: shellingham
     simsimd: simsimd
@@ -312,4 +316,4 @@ manifest:
     zstandard: zstandard
   pip_repository:
     name: pip
-integrity: a47e81558d09af4962b91a243ba498c7d5213e1a70f052c96cf3e8db19c16af3
+integrity: 1f2605a84412579a9ba33844d1c3f448c3be45c69c2c1d6ebd32e8eda285ebb9

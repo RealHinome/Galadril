@@ -164,7 +164,6 @@ class ESKGPipelineExecutor:
                         role="APPEARS_IN",
                     )
 
-                    # 2. Update TimescaleDB States
                     state = EntityStateRecord(
                         entity_id=entity_id,
                         event_id=event.event_id,
@@ -177,7 +176,6 @@ class ESKGPipelineExecutor:
                     )
                     await self._graph_store.insert_entity_state(state)
 
-                    # 3. Store new Embedding vector
                     if item.get("embedding"):
                         emb_record = EntityEmbedding(
                             modality=EmbeddingModality(modality),

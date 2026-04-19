@@ -11,7 +11,7 @@ dependencies = [
     "moto[s3]>=5.0",
     "huggingface-hub>=0.20.0",
     "torch>=2.0.0",
-    "transformers>=5.4.0",
+    "transformers>=5.5.4",
     "accelerate>=1.13.0",
     "torchvision>=0.26.0",
     "pyannote-audio>=4.0.4",
@@ -20,6 +20,8 @@ dependencies = [
     "librosa>=0.11.0",
     "scipy>=1.9.0",
     "scikit-learn>=1.0.0",
+    "gliner2>=1.3.0",
+    "qwen-vl-utils>=0.0.14",
 ]
 
 [tool.uv.sources]

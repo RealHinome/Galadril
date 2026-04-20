@@ -16,3 +16,4 @@
   - [Intake Service](architecture/intake_service.md)
   - [Vision Service](architecture/vision_service.md)
   - [Data Sinks](architecture/data_sinks.md)
+  - [Eru](architecture/eru.md)

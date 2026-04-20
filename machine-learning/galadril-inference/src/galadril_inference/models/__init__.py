@@ -8,6 +8,7 @@ from galadril_inference.models.owl import OwlV2Model
 from galadril_inference.models.siglip import SigLIPModel
 from galadril_inference.models.time_series import TimesFMModel
 from galadril_inference.models.whisper import WhisperModel
+from galadril_inference.models.eru import EruExtractorModel
 
 __all__ = [
     "BaseModel",
@@ -18,4 +19,5 @@ __all__ = [
     "SigLIPModel",
     "TimesFMModel",
     "WhisperModel",
+    "EruExtractorModel",
 ]

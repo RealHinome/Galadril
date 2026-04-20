@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "light";
-            window.path_to_searchindex_js = "searchindex-84412a7b.js";
+            window.path_to_searchindex_js = "searchindex-d62f6843.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-e19ba8aa.js"></script>
+        <script src="toc-c92b1cca.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -416,10 +416,8 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </thead>
 <tbody>
 <tr><td style="text-align: left"><strong>face_recognition</strong></td><td style="text-align: left">Face analysis and identification via InsightFace (Buffalo).</td><td style="text-align: left"></td></tr>
-<tr><td style="text-align: left"><strong>gliner2</strong></td><td style="text-align: left">Joint entity and relation extraction via GLiNER2.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2507.18546">Arxiv</a></td></tr>
 <tr><td style="text-align: left"><strong>got_ocr</strong></td><td style="text-align: left">Unified visual text processing with GOT-OCR 2.0.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2409.01704">Arxiv</a></td></tr>
 <tr><td style="text-align: left"><strong>grounded_sam</strong></td><td style="text-align: left">Zero-shot object detection and segmentation (Grounded-SAM).</td><td style="text-align: left"><a href="https://arxiv.org/abs/2401.14159">Arxiv</a></td></tr>
-<tr><td style="text-align: left"><strong>nuextract</strong></td><td style="text-align: left">Template-based structured JSON information extraction.</td><td style="text-align: left"><a href="https://huggingface.co/numind/NuExtract-2.0-2B">HF</a></td></tr>
 <tr><td style="text-align: left"><strong>owlv2</strong></td><td style="text-align: left">Open-world object detection and localization.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2306.09683">Arxiv</a></td></tr>
 <tr><td style="text-align: left"><strong>siglip2</strong></td><td style="text-align: left">Advanced vision-language model for image-text understanding.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2502.14786">Arxiv</a></td></tr>
 <tr><td style="text-align: left"><strong>timesfm_forecast</strong></td><td style="text-align: left">Time-series foundation model for versatile forecasting.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2310.10688">Arxiv</a></td></tr>
@@ -445,24 +443,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="2-gliner2-gliner2"><a class="header" href="#2-gliner2-gliner2">2. GLiNER2 (<code>gliner2</code>)</a></h3>
-<p>Zero-shot model for joint entity and relation extraction from text.</p>
-<ul>
-<li><strong>Inputs:</strong>
-<ul>
-<li><code>text</code> (Required): The input string for extraction.</li>
-<li><code>entities</code>: Dictionary mapping entity types to descriptions.</li>
-<li><code>relations</code>: Dictionary mapping relation types to descriptions.</li>
-</ul>
-</li>
-<li><strong>Outputs:</strong>
-<ul>
-<li><code>entities</code>: Grouped list of extracted spans per entity type.</li>
-<li><code>relations</code>: List of objects with <code>source</code>, <code>target</code>, and <code>relation_type</code>.</li>
-</ul>
-</li>
-</ul>
-<h3 id="3-got-ocr-got_ocr"><a class="header" href="#3-got-ocr-got_ocr">3. GOT OCR (<code>got_ocr</code>)</a></h3>
+<h3 id="2-got-ocr-got_ocr"><a class="header" href="#2-got-ocr-got_ocr">2. GOT OCR (<code>got_ocr</code>)</a></h3>
 <p>General Object Role-playing OCR for high-quality text extraction.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -479,7 +460,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="4-grounded-sam-grounded_sam"><a class="header" href="#4-grounded-sam-grounded_sam">4. Grounded SAM (<code>grounded_sam</code>)</a></h3>
+<h3 id="3-grounded-sam-grounded_sam"><a class="header" href="#3-grounded-sam-grounded_sam">3. Grounded SAM (<code>grounded_sam</code>)</a></h3>
 <p>Combines language understanding with precise image segmentation.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -497,22 +478,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="5-nuextract-nuextract"><a class="header" href="#5-nuextract-nuextract">5. NuExtract (<code>nuextract</code>)</a></h3>
-<p>Multimodal structured information extraction using a JSON template.</p>
-<ul>
-<li><strong>Inputs:</strong>
-<ul>
-<li><code>text</code> or <code>image</code> (Required): The source content to extract from.</li>
-<li><code>template</code>: A JSON structure or string defining the desired output schema.</li>
-</ul>
-</li>
-<li><strong>Outputs:</strong>
-<ul>
-<li><code>prediction</code>: A structured JSON object following the provided template.</li>
-</ul>
-</li>
-</ul>
-<h3 id="6-owlv2-owlv2"><a class="header" href="#6-owlv2-owlv2">6. OWLv2 (<code>owlv2</code>)</a></h3>
+<h3 id="4-owlv2-owlv2"><a class="header" href="#4-owlv2-owlv2">4. OWLv2 (<code>owlv2</code>)</a></h3>
 <p>Open-world localized vocabulary object detection.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -527,7 +493,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="7-siglip-2-siglip2"><a class="header" href="#7-siglip-2-siglip2">7. SigLIP 2 (<code>siglip2</code>)</a></h3>
+<h3 id="5-siglip-2-siglip2"><a class="header" href="#5-siglip-2-siglip2">5. SigLIP 2 (<code>siglip2</code>)</a></h3>
 <p>State-of-the-art vision-language model for creating shared embeddings.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -544,7 +510,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="8-timesfm-forecast-timesfm_forecast"><a class="header" href="#8-timesfm-forecast-timesfm_forecast">8. TimesFM Forecast (<code>timesfm_forecast</code>)</a></h3>
+<h3 id="6-timesfm-forecast-timesfm_forecast"><a class="header" href="#6-timesfm-forecast-timesfm_forecast">6. TimesFM Forecast (<code>timesfm_forecast</code>)</a></h3>
 <p>Foundation model for time-series forecasting with external covariates.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -561,7 +527,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="9-whisper-whisper"><a class="header" href="#9-whisper-whisper">9. Whisper (<code>whisper</code>)</a></h3>
+<h3 id="7-whisper-whisper"><a class="header" href="#7-whisper-whisper">7. Whisper (<code>whisper</code>)</a></h3>
 <p>Multilingual speech-to-text with advanced speaker diarization.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -714,6 +680,140 @@ Galadril uses two extensions to handle AI outputs.</p>
 We use pgvectorscale to store these arrays and perform blazing-fast similarity
 searches (e.g., finding the closest known face to an unknown detected face
 using <code>ORDER BY embedding &lt;=&gt; query_vector</code>).</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="eru--eskg-extraction"><a class="header" href="#eru--eskg-extraction">Eru – ESKG Extraction</a></h1>
+<p><code>eru</code> is a production-ready, agnostic pipeline designed to extract highly
+structured Knowledge Graphs (Nodes and Edges) from unstructured text.</p>
+<h2 id="why-does-it-exist"><a class="header" href="#why-does-it-exist">Why does it exist?</a></h2>
+<p>Extracting knowledge graphs using LLMs alone is flawed: they hallucinate
+entities, fail to strictly follow JSON schemas, and consume massive amounts of
+tokens (which is slow and expensive). Conversely, traditional NER (Named Entity
+Recognition) models extract entities perfectly but cannot understand complex
+relationships or implicit intents.</p>
+<p>Eru bridges this gap. It forces small, fast LLMs to act <em>only</em> as logical
+routers between physically extracted entities, guaranteeing deterministic,
+hallucination-free graph extraction.</p>
+<h2 id="the-3-layer-architecture"><a class="header" href="#the-3-layer-architecture">The 3-Layer Architecture</a></h2>
+<p>Eru processes text through a strict, three-step pipeline:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Extraction</strong></td><td>Uses a Bi-encoder (GLiNER) to find physical entities in the text (e.g., Persons, Locations). It automatically deduplicates identical entities.</td></tr>
+<tr><td><strong>Reasoning</strong></td><td>Uses a SLM constrained by <code>outlines</code>. The LLM is forbidden from inventing physical entities; it can <strong>only</strong> draw relationships using the IDs from Layer 1, or generate implicit conceptual nodes.</td></tr>
+<tr><td><strong>Validation</strong></td><td>A logical gate that prunes mathematically impossible relationships (e.g., a “Car” cannot “Authorize” a “Person”) before the graph is saved to your database.</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<p>Here is a minimal example of how to use Eru to extract a graph from a simple
+sentence, allowing the model to deduce the implicit <em>intent</em> behind the action.</p>
+<pre><code class="language-python">import json
+from typing import Literal
+from pydantic import BaseModel, Field
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import outlines
+
+from eru.engine import EskgEngine
+from eru.extractor.gliner import GlinerExtractor
+from eru.reasoner.outlines import OutlinesReasoner
+from eru.logic.eskg import EskgLogicValidator
+from eru.types import RelationDef
+
+# 1. Define your Graph Schema
+class Node(BaseModel):
+    id: str
+    text: str
+    type: str
+
+class Edge(BaseModel):
+    source_id: str
+    target_id: str
+    relation_type: Literal["buys", "has_intent"]
+
+class DailyGraph(BaseModel):
+    entities: list[Node]
+    relations: list[Edge]
+
+def main():
+    text = "Alice purchased a Macbook today because she wants to learn coding."
+
+    # Layer 1: Extract explicit physical entities
+    extractor = GlinerExtractor(
+        labels=["PERSON", "PRODUCT", "TIME"], 
+        threshold=0.3,
+    )
+
+    # Define relationship rules for the LLM
+    rules = [
+        RelationDef(
+            name="buys",
+            description="When a person purchases an item.",
+            allowed_sources=["PERSON"],
+            allowed_targets=["PRODUCT"],
+        ),
+        RelationDef(
+            name="has_intent",
+            description="The implicit reason or goal behind the action.",
+        )
+    ]
+
+    # Layer 2: Setup the SLM Reasoner
+    model_name = "Qwen/Qwen2.5-0.5B-Instruct"
+    hf_model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto")
+    hf_tokenizer = AutoTokenizer.from_pretrained(model_name)
+    llm = outlines.from_transformers(hf_model, hf_tokenizer)
+    
+    reasoner = OutlinesReasoner(
+        model=llm, 
+        relation_defs=rules,
+        open_entity_types=["INTENT"] # Allow LLM to invent concepts like 'learning to code'
+    )
+
+    # Layer 3: Setup the Logic Validator
+    validator = EskgLogicValidator(
+        get_entities=lambda g: g.entities,
+        get_relations=lambda g: g.relations
+    )
+
+    # Run the Engine
+    engine = EskgEngine(
+        schema=DailyGraph, 
+        extractor=extractor, 
+        reasoner=reasoner, 
+        validator=validator
+    )
+    graph = engine.process(text)
+
+    print(json.dumps(graph.model_dump(), indent=2))
+
+if __name__ == "__main__":
+    main()
+</code></pre>
+<h3 id="expected-output"><a class="header" href="#expected-output">Expected Output</a></h3>
+<p>The engine cleanly separates the physically extracted nodes (Alice, Macbook)
+from the inferred conceptual node (learning to code).</p>
+<pre><code class="language-json">{
+  "entities": [
+    {"id": "ent_0", "text": "Alice", "type": "PERSON"},
+    {"id": "ent_1", "text": "Macbook", "type": "PRODUCT"}
+  ],
+  "relations": [
+    {
+      "source_id": "ent_0",
+      "target_id": "ent_1",
+      "relation_type": "buys"
+    },
+    {
+      "source_id": "ent_0",
+      "target_id": "to learn coding",
+      "relation_type": "has_intent"
+    }
+  ]
+}
+</code></pre>
 
                     </main>
 

@@ -6,7 +6,6 @@ py_library(
         "__init__.py",
         "base.py",
         "face_recognition.py",
-        "gliner.py",
         "got_ocr.py",
         "grounded_sam.py",
         "owl.py",
@@ -19,7 +18,6 @@ py_library(
     deps = [
         "//machine-learning/galadril-inference/src/galadril_inference/common",
         "@pip//faster_whisper",
-        "@pip//gliner2",
         "@pip//huggingface_hub",
         "@pip//insightface",
         "@pip//librosa",

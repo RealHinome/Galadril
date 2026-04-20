@@ -1,0 +1,14 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
+py_library(
+    name = "eru",
+    srcs = [
+        "__init__.py",
+        "engine.py",
+        "exceptions.py",
+        "types.py",
+    ],
+    imports = [".."],
+    visibility = ["//visibility:public"],
+    deps = ["@pip//pydantic"],
+)

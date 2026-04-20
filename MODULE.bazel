@@ -17,6 +17,9 @@ rust.toolchain(
     ],
     versions = ["1.94.1"],
 )
+use_repo(rust, "rust_toolchains")
+
+register_toolchains("@rust_toolchains//:all")
 
 crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
 crate.from_cargo(

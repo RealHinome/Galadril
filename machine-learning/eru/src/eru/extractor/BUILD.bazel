@@ -1,0 +1,15 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
+py_library(
+    name = "extractor",
+    srcs = [
+        "__init__.py",
+        "gliner.py",
+    ],
+    imports = ["../.."],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//machine-learning/eru/src/eru",
+        "@pip//gliner",
+    ],
+)

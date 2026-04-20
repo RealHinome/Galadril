@@ -41,6 +41,7 @@ manifest:
     chunk: standard_chunk
     cli: stringzilla
     click: click
+    cloudpickle: cloudpickle
     colorful: colorful
     colorlog: colorlog
     confluent_kafka: confluent_kafka
@@ -53,7 +54,10 @@ manifest:
     daft: daft
     dateutil: python_dateutil
     decorator: decorator
+    diskcache: diskcache
     distlib: distlib
+    distro: distro
+    docstring_parser: docstring_parser
     dotenv: python_dotenv
     duckdb: duckdb
     easydict: easydict
@@ -67,6 +71,7 @@ manifest:
     frozenlist: frozenlist
     fsspec: fsspec
     functorch: torch
+    genson: genson
     gliner: gliner
     gliner2: gliner2
     google.api.annotations_pb2: googleapis_common_protos
@@ -153,10 +158,13 @@ manifest:
     imageio: imageio
     importlib_metadata: importlib_metadata
     insightface: insightface
+    instructor: instructor
     isympy: sympy
     jinja2: jinja2
+    jiter: jiter
     jmespath: jmespath
     joblib: joblib
+    jsonpath_ng: jsonpath_ng
     jsonschema: jsonschema
     jsonschema_specifications: jsonschema_specifications
     julius: julius
@@ -188,6 +196,7 @@ manifest:
     numpy: numpy
     onnx: onnx
     onnxruntime: onnxruntime
+    openai: openai
     opencensus: opencensus_context
     opentelemetry.attributes: opentelemetry_api
     opentelemetry.baggage: opentelemetry_api
@@ -217,6 +226,8 @@ manifest:
     opentelemetry.version: opentelemetry_api
     optuna: optuna
     orjson: orjson
+    outlines: outlines
+    outlines_core: outlines_core
     packaging: packaging
     pandas: pandas
     pgvector: pgvector
@@ -256,7 +267,6 @@ manifest:
     pytorch_lightning: pytorch_lightning
     pytorch_metric_learning: pytorch_metric_learning
     pyximport: cython
-    qwen_vl_utils: qwen_vl_utils
     ray: ray
     referencing: referencing
     regex: regex
@@ -275,6 +285,7 @@ manifest:
     skimage: scikit_image
     sklearn: scikit_learn
     smart_open: smart_open
+    sniffio: sniffio
     sortedcontainers: sortedcontainers
     soundfile: soundfile
     soxr: soxr
@@ -316,4 +327,4 @@ manifest:
     zstandard: zstandard
   pip_repository:
     name: pip
-integrity: 1f2605a84412579a9ba33844d1c3f448c3be45c69c2c1d6ebd32e8eda285ebb9
+integrity: cfa2aa809fc50ef90d9dc5cfd1c8655abb75a880747782f796ae54781cc09bed

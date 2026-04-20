@@ -1,0 +1,29 @@
+[project]
+name = "eru"
+version = "0.1.0"
+description = "Agnostic ESKG extraction and validation engine."
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic>=2.13.2",
+    "instructor>=1.15.1",
+    "networkx>=3.6.1",
+    "outlines>=1.2.12",
+    "transformers>=5.5.4",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+managed = true
+package = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]

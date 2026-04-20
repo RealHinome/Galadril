@@ -41,7 +41,7 @@ class GlinerModel(BaseModel):
             },
         )
 
-    def load(self, artifact_path: str = "fastino/gliner2-multi-v1") -> None:
+    def load(self, artifact_path: str = "fastino/gliner2-large-v1") -> None:
         try:
             from gliner2 import GLiNER2
         except ImportError as exc:
@@ -77,24 +77,27 @@ class GlinerModel(BaseModel):
             )
 
         default_entities = {
-            "Event": "Action, incident, or discrete occurrence",
-            "State": "Condition, status, or qualitative result",
-            "Property": "Numerical value or percentage metric",
-            "Location": "Geographical place or facility",
-            "Time": "Specific date, time, or period",
-            "Person": "Individual human being",
-            "Organization": "Group, army, company, or institution",
-            "Weapon": "Military equipment or armament used",
-            "Target": "Physical object or system receiving the action",
+            "event": "Action, incident, or discrete occurrence. Must be an active verb-based concept (e.g., 'Attack', 'Movement'). Cannot be a static object.",
+            "condition_status": "Condition, status, or qualitative result. Must describe 'how' something is after.",
+            "metric_value": "Numerical value, percentage metric, or specific attribute. Must be quantifiable.",
+            "location": "Geographical place, facility, or spatial point. Specific names or coordinates. If it's a building being hit, it's a Target; if it's the city around it, it's a Location.",
+            "time": "Specific date, time, or period.",
+            "person": "Individual human being. Named individuals or specific ranks/roles.",
+            "actor_entity": "Group, army, company, or institution. Collective entities acting as agents.",
+            "weapon": "Military equipment or armament used.",
+            "target": "Physical object or system receiving the action. Can be infrastructure or abstract systems.",
         }
+
         default_relations = {
-            "TRIGGERS": "Causal relationship where an event initiates a new state",
-            "LEADS_TO": "Sequential relationship where one event causes another",
-            "EVOLVES_TO": "Progression relationship where one state leads to another",
-            "INFLUENCES": "Impact relationship where an entity modifies a property",
-            "OCCURS_AT": "Spatio-temporal anchoring of an event",
-            "INVOLVES": "Participation relationship between event and target, person, or weapon",
-            "CONTAIN": "Hierarchical inclusion of an entity within another",
+            "initiates_status": "Causal relationship where an event initiates a new state",
+            "results_in_event": "Sequential relationship where one event causes another",
+            "progresses_to": "Progression relationship where one state leads to another",
+            "modifies_metric": "Impact relationship where an entity modifies a property",
+            "located_at": "Spatio-temporal anchoring of an event",
+            "utilizes_weapon": "Instrumental relationship: Specifies the armament, equipment, or tool used to carry out the event.",
+            "targets_object": "Objective relationship: Identifies the physical infrastructure, system, or entity that is the intended victim of the event.",
+            "executed_by": "Agentic relationship: Links the event to the specific actor entity, group, or person responsible for carrying it out.",
+            "is_part_of": "Hierarchical inclusion of an entity within another",
         }
 
         entity_types = request.features.get("entities", default_entities)

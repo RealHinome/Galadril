@@ -35,7 +35,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "light";
-            window.path_to_searchindex_js = "../searchindex-d62f6843.js";
+            window.path_to_searchindex_js = "../searchindex-e49698c8.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-c92b1cca.js"></script>
@@ -189,6 +189,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 <tr><th style="text-align: left">Model Name</th><th style="text-align: left">Description</th><th style="text-align: left">Research Paper</th></tr>
 </thead>
 <tbody>
+<tr><td style="text-align: left"><strong>bge_m3</strong></td><td style="text-align: left">Embedding for semantic and multi-vector search.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2402.03216">Arxiv</a></td></tr>
 <tr><td style="text-align: left"><strong>face_recognition</strong></td><td style="text-align: left">Face analysis and identification via InsightFace (Buffalo).</td><td style="text-align: left"></td></tr>
 <tr><td style="text-align: left"><strong>got_ocr</strong></td><td style="text-align: left">Unified visual text processing with GOT-OCR 2.0.</td><td style="text-align: left"><a href="https://arxiv.org/abs/2409.01704">Arxiv</a></td></tr>
 <tr><td style="text-align: left"><strong>grounded_sam</strong></td><td style="text-align: left">Zero-shot object detection and segmentation (Grounded-SAM).</td><td style="text-align: left"><a href="https://arxiv.org/abs/2401.14159">Arxiv</a></td></tr>
@@ -201,7 +202,26 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </div>
 <hr>
 <h2 id="model-details"><a class="header" href="#model-details">Model Details</a></h2>
-<h3 id="1-face-recognition-face_recognition"><a class="header" href="#1-face-recognition-face_recognition">1. Face Recognition (<code>face_recognition</code>)</a></h3>
+<h3 id="1-bge-m3-bge_m3"><a class="header" href="#1-bge-m3-bge_m3">1. BGE-M3 (<code>bge_m3</code>)</a></h3>
+<p>Versatile embedding model that supports multi-functionality, multi-linguality,
+and multi-granularity. It performs simultaneous dense, sparse (lexical), and
+multi-vector (ColBERT) retrieval.</p>
+<ul>
+<li><strong>Inputs:</strong>
+<ul>
+<li><code>text</code> (Required): The string content to be embedded.</li>
+</ul>
+</li>
+<li><strong>Outputs:</strong>
+<ul>
+<li><code>dense</code>: A high-dimensional vector for semantic similarity.</li>
+<li><code>sparse</code>: A dictionary of token weights for lexical/keyword matching.</li>
+<li><code>colbert</code>: A multi-vector representation for fine-grained late
+interaction scoring.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-face-recognition-face_recognition"><a class="header" href="#2-face-recognition-face_recognition">2. Face Recognition (<code>face_recognition</code>)</a></h3>
 <p>Performs facial detection, alignment, and embedding extraction.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -217,7 +237,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="2-got-ocr-got_ocr"><a class="header" href="#2-got-ocr-got_ocr">2. GOT OCR (<code>got_ocr</code>)</a></h3>
+<h3 id="3-got-ocr-got_ocr"><a class="header" href="#3-got-ocr-got_ocr">3. GOT OCR (<code>got_ocr</code>)</a></h3>
 <p>General Object Role-playing OCR for high-quality text extraction.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -234,7 +254,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="3-grounded-sam-grounded_sam"><a class="header" href="#3-grounded-sam-grounded_sam">3. Grounded SAM (<code>grounded_sam</code>)</a></h3>
+<h3 id="4-grounded-sam-grounded_sam"><a class="header" href="#4-grounded-sam-grounded_sam">4. Grounded SAM (<code>grounded_sam</code>)</a></h3>
 <p>Combines language understanding with precise image segmentation.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -252,7 +272,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="4-owlv2-owlv2"><a class="header" href="#4-owlv2-owlv2">4. OWLv2 (<code>owlv2</code>)</a></h3>
+<h3 id="5-owlv2-owlv2"><a class="header" href="#5-owlv2-owlv2">5. OWLv2 (<code>owlv2</code>)</a></h3>
 <p>Open-world localized vocabulary object detection.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -267,7 +287,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="5-siglip-2-siglip2"><a class="header" href="#5-siglip-2-siglip2">5. SigLIP 2 (<code>siglip2</code>)</a></h3>
+<h3 id="6-siglip-2-siglip2"><a class="header" href="#6-siglip-2-siglip2">6. SigLIP 2 (<code>siglip2</code>)</a></h3>
 <p>State-of-the-art vision-language model for creating shared embeddings.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -284,7 +304,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="6-timesfm-forecast-timesfm_forecast"><a class="header" href="#6-timesfm-forecast-timesfm_forecast">6. TimesFM Forecast (<code>timesfm_forecast</code>)</a></h3>
+<h3 id="7-timesfm-forecast-timesfm_forecast"><a class="header" href="#7-timesfm-forecast-timesfm_forecast">7. TimesFM Forecast (<code>timesfm_forecast</code>)</a></h3>
 <p>Foundation model for time-series forecasting with external covariates.</p>
 <ul>
 <li><strong>Inputs:</strong>
@@ -301,7 +321,7 @@ referenced using their respective <code>_MODEL_NAME</code> identifiers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="7-whisper-whisper"><a class="header" href="#7-whisper-whisper">7. Whisper (<code>whisper</code>)</a></h3>
+<h3 id="8-whisper-whisper"><a class="header" href="#8-whisper-whisper">8. Whisper (<code>whisper</code>)</a></h3>
 <p>Multilingual speech-to-text with advanced speaker diarization.</p>
 <ul>
 <li><strong>Inputs:</strong>

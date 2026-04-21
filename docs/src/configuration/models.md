@@ -5,6 +5,7 @@ referenced using their respective `_MODEL_NAME` identifiers.
 
 | Model Name | Description | Research Paper |
 | :--- | :--- | :--- |
+| **bge_m3** | Embedding for semantic and multi-vector search. | [Arxiv](https://arxiv.org/abs/2402.03216) |
 | **face_recognition** | Face analysis and identification via InsightFace (Buffalo). |  |
 | **got_ocr** | Unified visual text processing with GOT-OCR 2.0. | [Arxiv](https://arxiv.org/abs/2409.01704) |
 | **grounded_sam** | Zero-shot object detection and segmentation (Grounded-SAM). | [Arxiv](https://arxiv.org/abs/2401.14159) |
@@ -17,7 +18,20 @@ referenced using their respective `_MODEL_NAME` identifiers.
 
 ## Model Details
 
-### 1. Face Recognition (`face_recognition`)
+### 1. BGE-M3 (`bge_m3`)
+Versatile embedding model that supports multi-functionality, multi-linguality,
+and multi-granularity. It performs simultaneous dense, sparse (lexical), and
+multi-vector (ColBERT) retrieval.
+
+* **Inputs:**
+    * `text` (Required): The string content to be embedded.
+* **Outputs:**
+    * `dense`: A high-dimensional vector for semantic similarity.
+    * `sparse`: A dictionary of token weights for lexical/keyword matching.
+    * `colbert`: A multi-vector representation for fine-grained late
+        interaction scoring.
+
+### 2. Face Recognition (`face_recognition`)
 Performs facial detection, alignment, and embedding extraction.
 
 * **Inputs:**
@@ -27,7 +41,7 @@ Performs facial detection, alignment, and embedding extraction.
     * `faces_count`: Number of detected faces.
     * `faces`: List of objects containing `bbox`, `keypoints`, `confidence`, and the 512-d `embedding`.
 
-### 2. GOT OCR (`got_ocr`)
+### 3. GOT OCR (`got_ocr`)
 General Object Role-playing OCR for high-quality text extraction.
 
 * **Inputs:**
@@ -38,7 +52,7 @@ General Object Role-playing OCR for high-quality text extraction.
 * **Outputs:**
     * `text`: The extracted string content.
 
-### 3. Grounded SAM (`grounded_sam`)
+### 4. Grounded SAM (`grounded_sam`)
 Combines language understanding with precise image segmentation.
 
 * **Inputs:**
@@ -50,7 +64,7 @@ Combines language understanding with precise image segmentation.
     * `total_objects`: Count of all detected instances.
     * `concepts`: Dictionary mapped by label containing `box`, `score`, and optionally `mask`.
 
-### 4. OWLv2 (`owlv2`)
+### 5. OWLv2 (`owlv2`)
 Open-world localized vocabulary object detection.
 
 * **Inputs:**
@@ -59,7 +73,7 @@ Open-world localized vocabulary object detection.
 * **Outputs:**
     * `concepts`: Detailed instances per label with `box` and `score`.
 
-### 5. SigLIP 2 (`siglip2`)
+### 6. SigLIP 2 (`siglip2`)
 State-of-the-art vision-language model for creating shared embeddings.
 
 * **Inputs:**
@@ -70,7 +84,7 @@ State-of-the-art vision-language model for creating shared embeddings.
     * `embedding`: Vector representation.
     * `embedding_dim`: Size of the vector.
 
-### 6. TimesFM Forecast (`timesfm_forecast`)
+### 7. TimesFM Forecast (`timesfm_forecast`)
 Foundation model for time-series forecasting with external covariates.
 
 * **Inputs:**
@@ -81,7 +95,7 @@ Foundation model for time-series forecasting with external covariates.
     * `point_forecast`: The predicted mean values.
     * `quantiles`: Deciles (0.1 to 0.9) for uncertainty estimation.
 
-### 7. Whisper (`whisper`)
+### 8. Whisper (`whisper`)
 Multilingual speech-to-text with advanced speaker diarization.
 
 * **Inputs:**

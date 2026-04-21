@@ -5,6 +5,7 @@ py_library(
     srcs = [
         "__init__.py",
         "base.py",
+        "bgem3.py",
         "eru.py",
         "face_recognition.py",
         "got_ocr.py",

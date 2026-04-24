@@ -1,4 +1,4 @@
-//! Authorization use cases using Cedar and AGE graphs with TTL caching.
+//! FGAC use cases using Cedar and AGE graphs with TTL caching.
 
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
@@ -10,31 +10,35 @@ use cedar_policy::{
     Authorizer, Context as CedarContext, Entities, Entity, EntityId,
     EntityTypeName, EntityUid, PolicyId, PolicySet, Request,
 };
+use serde_json::json;
 use tokio::sync::RwLock;
 
 use crate::application::ports::entity_provider::EntityGraphProvider;
 use crate::application::ports::policy_store::PolicyStore;
 
+/// Dynamic context representing fine-grained request parameters (Row-Level
+/// Security equivalents).
+#[derive(Debug, Default, Clone)]
+pub struct QueryContext {
+    pub entity_id: Option<String>,
+    pub modality: Option<String>,
+    pub state_type: Option<String>,
+    pub gis_zone: Option<String>,
+}
+
 /// Action types mapped to Cedar actions.
 pub enum Action {
-    ReadSink,
-    DiscoverSinks,
+    ReadTable,
+    DiscoverTables,
 }
 
 impl Action {
-    fn as_str(&self) -> &'static str {
-        match self {
-            Action::ReadSink => "Read",
-            Action::DiscoverSinks => "Discover",
-        }
-    }
-
     fn action_uid(&self) -> Result<EntityUid> {
         match self {
-            Action::ReadSink => {
+            Action::ReadTable => {
                 EntityUid::from_str("Action::\"Read\"").map_err(Into::into)
             },
-            Action::DiscoverSinks => {
+            Action::DiscoverTables => {
                 EntityUid::from_str("Action::\"Discover\"").map_err(Into::into)
             },
         }
@@ -81,7 +85,6 @@ impl AuthService {
     async fn get_cedar_environment(
         &self,
     ) -> Result<(Arc<PolicySet>, Arc<Entities>)> {
-        // Fast path: check cache with a read lock.
         {
             let cache_guard = self.cache.read().await;
             if let Some(cache) = &*cache_guard &&
@@ -146,12 +149,13 @@ impl AuthService {
     }
 
     /// Evaluates if a user (principal) can perform an action on a specific
-    /// resource.
+    /// resource (table) given a specific fine-grained context.
     pub async fn is_authorized(
         &self,
         user_id: &str,
         action: Action,
-        resource_name: &str,
+        table_name: &str,
+        query_context: Option<&QueryContext>,
     ) -> Result<bool> {
         let (policy_set, entities) = self.get_cedar_environment().await?;
 
@@ -162,16 +166,36 @@ impl AuthService {
 
         let action_uid = action.action_uid()?;
 
-        let sink_type = EntityTypeName::from_str("Sink")?;
-        let sink_entity_id = EntityId::from_str(resource_name)?;
+        let table_type = EntityTypeName::from_str("Table")?;
+        let table_entity_id = EntityId::from_str(table_name)?;
         let resource =
-            EntityUid::from_type_name_and_id(sink_type, sink_entity_id);
+            EntityUid::from_type_name_and_id(table_type, table_entity_id);
+
+        let mut ctx_map = serde_json::Map::new();
+        if let Some(ctx) = query_context {
+            if let Some(eid) = &ctx.entity_id {
+                ctx_map.insert("entity_id".to_string(), json!(eid));
+            }
+            if let Some(m) = &ctx.modality {
+                ctx_map.insert("modality".to_string(), json!(m));
+            }
+            if let Some(s) = &ctx.state_type {
+                ctx_map.insert("state_type".to_string(), json!(s));
+            }
+            if let Some(z) = &ctx.gis_zone {
+                ctx_map.insert("gis_zone".to_string(), json!(z));
+            }
+        }
+
+        let cedar_context =
+            CedarContext::from_json_value(json!(ctx_map), None)
+                .context("Failed to construct Cedar context JSON")?;
 
         let request = Request::new(
             principal,
             action_uid,
             resource,
-            CedarContext::empty(),
+            cedar_context,
             None,
         )?;
 
@@ -183,12 +207,13 @@ impl AuthService {
             cedar_policy::Decision::Allow)
     }
 
-    /// Evaluates authorization for multiple resources in bulk.
+    /// Evaluates authorization for multiple tables without specific context
+    /// (for discovery).
     pub async fn filter_authorized_resources(
         &self,
         user_id: &str,
         action: Action,
-        resource_names: &[String],
+        table_names: &[String],
     ) -> Result<HashSet<String>> {
         let (policy_set, entities) = self.get_cedar_environment().await?;
 
@@ -198,17 +223,16 @@ impl AuthService {
             EntityUid::from_type_name_and_id(user_type, user_entity_id);
 
         let action_uid = action.action_uid()?;
-        let sink_type = EntityTypeName::from_str("Sink")?;
+        let table_type = EntityTypeName::from_str("Table")?;
 
         let authorizer = Authorizer::new();
-        let mut allowed_resources =
-            HashSet::with_capacity(resource_names.len());
+        let mut allowed_tables = HashSet::with_capacity(table_names.len());
 
-        for name in resource_names {
-            let sink_entity_id = EntityId::from_str(name)?;
+        for name in table_names {
+            let table_entity_id = EntityId::from_str(name)?;
             let resource = EntityUid::from_type_name_and_id(
-                sink_type.clone(),
-                sink_entity_id,
+                table_type.clone(),
+                table_entity_id,
             );
 
             let request = Request::new(
@@ -224,10 +248,10 @@ impl AuthService {
                 .decision() ==
                 cedar_policy::Decision::Allow
             {
-                allowed_resources.insert(name.clone());
+                allowed_tables.insert(name.clone());
             }
         }
 
-        Ok(allowed_resources)
+        Ok(allowed_tables)
     }
 }

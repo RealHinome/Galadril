@@ -31,5 +31,43 @@
 	"expand": {
 		"deployed_everywhere": "Deployed everywhere,",
 		"secure": "secure by design."
+	},
+
+	"ringil": {
+		"hero": {
+			"project": "Project Ringil",
+			"title_p1": "The Autonomous",
+			"title_p2": "Swarm",
+			"description": "Independent drones, united by a collective consciousness. Resilience through numbers.",
+			"discover": "Discover the technology"
+		},
+		"bento": {
+			"agility": {
+				"title": "Adaptive Agility",
+				"desc": "Fluid navigation through dense forests or complex industrial sites for emergency response."
+			},
+			"intelligence": {
+				"title": "Embedded Instinct",
+				"desc": "Edge computing deployed directly on the device. Real-time decision-making to identify signs of life or crop anomalies at the speed of instinct."
+			},
+			"scale": {
+				"title": "Designed for Ecosystems",
+				"desc": "Bit-by-bit reproducibility of behavior. Deploy the same perfect monitoring system across 10 units or 1000 for massive agricultural coverage."
+			}
+		},
+		"mesh": {
+			"title": "Unbreakable mesh network",
+			"desc": "If one drone falls, the swarm continues. They form a dynamic P2P network, adjusting their positions to relay critical messages without a single point of failure."
+		},
+		"track": {
+			"title": "Precision Life-Tracking",
+			"desc": "The system detects and identifies individuals with absolute precision. No more need for GPS, allowing for deep-desert rescue missions where signals are non-existent."
+		},
+		"galadril": {
+			"title": "The Strength of the Collective",
+			"desc_p1": "Every environmental insight is continuously reported to Galadril via the high-performance",
+			"desc_p2": "protocol. The swarm learns from topographical challenges, adapting its rescue strategy at the speed of data.",
+			"explore": "Explore Galadril"
+		}
 	}
 }

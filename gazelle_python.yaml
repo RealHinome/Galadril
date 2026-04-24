@@ -31,9 +31,7 @@ manifest:
     av: av
     avro: avro
     boto3: boto3
-    boto3_stubs: boto3_stubs
     botocore: botocore
-    botocore_stubs: botocore_stubs
     cachetools: cachetools
     certifi: certifi
     cffi: cffi
@@ -164,6 +162,7 @@ manifest:
     jiter: jiter
     jmespath: jmespath
     joblib: joblib
+    joserfc: joserfc
     jsonpath_ng: jsonpath_ng
     jsonschema: jsonschema
     jsonschema_specifications: jsonschema_specifications
@@ -310,8 +309,6 @@ manifest:
     tqdm: tqdm
     transformers: transformers
     typer: typer
-    types_awscrt: types_awscrt
-    types_s3transfer: types_s3transfer
     typing_extensions: typing_extensions
     typing_inspection: typing_inspection
     urllib3: urllib3
@@ -327,4 +324,4 @@ manifest:
     zstandard: zstandard
   pip_repository:
     name: pip
-integrity: cfa2aa809fc50ef90d9dc5cfd1c8655abb75a880747782f796ae54781cc09bed
+integrity: b1dd75e6466cbb5c6db045eccf7614ab4baeb0b63713ffad9264dd9b07a33706

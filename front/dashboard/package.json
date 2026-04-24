@@ -21,14 +21,14 @@
     "@nuxtjs/tailwindcss": "6.14.0",
     "@pinia/nuxt": "^0.11.3",
     "grid-layout-plus": "^1.1.1",
-    "gsap": "^3.14.2",
+    "gsap": "^3.15.0",
     "nuxt": "^4.4.2",
     "nuxt-echarts": "^1.0.1",
     "nuxt-security": "^2.5.1",
     "pinia": "^3.0.4",
-    "prettier": "^3.8.2",
-    "std-env": "^4.0.0",
-    "vue": "^3.5.32",
-    "vue-router": "^5.0.4"
+    "prettier": "^3.8.3",
+    "std-env": "^4.1.0",
+    "vue": "^3.5.33",
+    "vue-router": "^5.0.6"
   }
 }

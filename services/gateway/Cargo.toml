@@ -6,7 +6,7 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-cedar-policy = "4.9"
+cedar-policy = "4.10"
 axum = "0.8"
 juniper = "0.17"
 juniper_axum = "0.3"

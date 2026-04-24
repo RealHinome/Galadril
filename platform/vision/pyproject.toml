@@ -18,6 +18,8 @@ dependencies = [
     "structlog>=24.0",
     "orjson>=3.10",
     "duckdb>=1.5",
+    "psycopg-pool>=3.3",
+    "mypy-boto3-s3>=1.42",
 ]
 
 [project.optional-dependencies]

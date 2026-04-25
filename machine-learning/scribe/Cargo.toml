@@ -7,24 +7,30 @@ license.workspace = true
 repository.workspace = true
 
 [[example]]
-name = "economy"
+name = "report"
+required-features = ["latex"]
+
+[features]
+default = []
+latex = ["dep:tectonic", "dep:tera", "dep:chrono"]
 
 [dependencies]
 mistralrs = { version = "0.8", features = ["accelerate", "metal"] }
 lazy_static = "1"
 arc-swap = "1.9"
 meval = "0.2"
-chrono = "0.4"
 schemars = "1.2"
 url = "2.5"
-tectonic = { version = "0.15", features = ["external-harfbuzz"] }
-tera = "1.20"
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 anyhow = "1"
 tracing = "0.1"
+
+tectonic = { version = "0.15", features = ["external-harfbuzz"], optional = true }
+tera = { version = "1.20", optional = true }
+chrono = { version = "0.4", optional = true }
 
 [dev-dependencies]
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

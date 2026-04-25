@@ -1,4 +1,5 @@
-use scribe::engine::{Scribe, ScribeConfig};
+use scribe::ScribeReport;
+use scribe::engine::ScribeConfig;
 use scribe::tools::database::NoOpProvider;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
@@ -23,7 +24,7 @@ async fn main() {
 
     // We pass NoOpProvider here, but you can swap this with a real DB
     // implementation.
-    let engine = Scribe::new(config, NoOpProvider)
+    let engine = ScribeReport::new(config, NoOpProvider)
         .await
         .expect("cannot initialize mistralrs engine");
 

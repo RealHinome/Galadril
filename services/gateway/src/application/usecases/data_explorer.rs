@@ -52,8 +52,8 @@ impl DataExplorerService {
     async fn get_allowed_tables(&self) -> Result<Arc<Vec<SinkMetadata>>> {
         {
             let cache_guard = self.cache.read().await;
-            if let Some(cache) = &*cache_guard &&
-                cache.expires_at > Instant::now()
+            if let Some(cache) = &*cache_guard
+                && cache.expires_at > Instant::now()
             {
                 return Ok(Arc::clone(&cache.tables));
             }
@@ -141,26 +141,26 @@ impl DataExplorerService {
                 if !is_safe_identifier(&eid) {
                     bail!("Invalid entity_id format");
                 }
-                conditions.push(format!("entity_id = '{}'", eid));
+                conditions.push(format!("entity_id = '{eid}'"));
             }
             if let Some(modality) = ctx.modality {
                 if !is_safe_identifier(&modality) {
                     bail!("Invalid modality format");
                 }
-                conditions.push(format!("modality = '{}'", modality));
+                conditions.push(format!("modality = '{modality}'"));
             }
             if let Some(st) = ctx.state_type {
                 if !is_safe_identifier(&st) {
                     bail!("Invalid state_type format");
                 }
-                conditions.push(format!("state_type = '{}'", st));
+                conditions.push(format!("state_type = '{st}'"));
             }
             if let Some(zone) = ctx.gis_zone {
                 // TODO: PostGIS integration.
                 if !is_safe_identifier(&zone) {
                     bail!("Invalid gis_zone format");
                 }
-                conditions.push(format!("metadata->>'zone' = '{}'", zone));
+                conditions.push(format!("metadata->>'zone' = '{zone}'"));
             }
         }
 

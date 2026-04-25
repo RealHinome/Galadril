@@ -87,8 +87,8 @@ impl AuthService {
     ) -> Result<(Arc<PolicySet>, Arc<Entities>)> {
         {
             let cache_guard = self.cache.read().await;
-            if let Some(cache) = &*cache_guard &&
-                cache.expires_at > Instant::now()
+            if let Some(cache) = &*cache_guard
+                && cache.expires_at > Instant::now()
             {
                 return Ok((
                     Arc::clone(&cache.policy_set),
@@ -203,8 +203,8 @@ impl AuthService {
 
         Ok(authorizer
             .is_authorized(&request, &policy_set, &entities)
-            .decision() ==
-            cedar_policy::Decision::Allow)
+            .decision()
+            == cedar_policy::Decision::Allow)
     }
 
     /// Evaluates authorization for multiple tables without specific context
@@ -245,8 +245,8 @@ impl AuthService {
 
             if authorizer
                 .is_authorized(&request, &policy_set, &entities)
-                .decision() ==
-                cedar_policy::Decision::Allow
+                .decision()
+                == cedar_policy::Decision::Allow
             {
                 allowed_tables.insert(name.clone());
             }

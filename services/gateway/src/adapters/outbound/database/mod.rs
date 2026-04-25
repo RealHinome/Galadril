@@ -1,6 +1,6 @@
 //! Database adapter.
 
-mod connection;
-mod data_inspector;
-mod entity;
-mod policy;
+pub mod connection;
+pub mod data_inspector;
+pub mod entity;
+pub mod policy;

@@ -9,11 +9,17 @@ repository.workspace = true
 cedar-policy = "4.10"
 axum = "0.8"
 juniper = "0.17"
-juniper_axum = "0.3"
+juniper_axum = { version = "0.3", features = ["subscriptions"] }
+juniper_graphql_ws = "0.5"
 tokio = { workspace = true, features = ["macros", "net", "rt-multi-thread"] }
 sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "chrono"] }
 pgvector = { version = "0.4", features = ["sqlx"] }
+jsonwebtoken = { version = "10", features = ["aws_lc_rs"] }
 serde = { workspace = true, features = ["derive"] }
 serde_json = "1"
 anyhow = "1"
 async-trait = "0.1"
+futures = "0.3"
+async-stream = "0.3"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing = "0.1"

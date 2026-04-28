@@ -21,41 +21,6 @@ onMounted(() => {
 				scrub: 1,
 			},
 		});
-
-		const horizontalWrap = document.querySelector(".horizontal-wrap");
-		const getScrollAmount = () =>
-			-(
-				horizontalWrap.scrollWidth -
-				window.innerWidth +
-				window.innerWidth * 0.1
-			);
-
-		gsap.to(".horizontal-wrap", {
-			x: getScrollAmount,
-			ease: "none",
-			scrollTrigger: {
-				trigger: ".horizontal-section",
-				start: "top top",
-				end: () => `+=${Math.abs(getScrollAmount())}`,
-				pin: true,
-				scrub: 1,
-				invalidateOnRefresh: true,
-			},
-		});
-
-		gsap.to(".expand-image", {
-			width: "100vw",
-			height: "100vh",
-			borderRadius: "0px",
-			ease: "power1.inOut",
-			scrollTrigger: {
-				trigger: ".image-section",
-				start: "center center",
-				end: "+=100%",
-				pin: true,
-				scrub: 1,
-			},
-		});
 	});
 });
 
@@ -72,7 +37,8 @@ onUnmounted(() => {
 		<DefaultNavbar />
 		<HeroSection />
 		<ExampleStudio />
-		<ExampleWrap />
-		<ExampleExpand />
+		<ExampleESKG />
+		<ExampleMosaic />
+		<ExampleDrone />
 	</div>
 </template>

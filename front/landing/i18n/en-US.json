@@ -69,5 +69,87 @@
 			"desc_p2": "protocol. The swarm learns from topographical challenges, adapting its rescue strategy at the speed of data.",
 			"explore": "Explore Galadril"
 		}
+	},
+
+	"cases": {
+		"energie": {
+			"title": "Energy sector disruption",
+			"tags": ["Energy"],
+			"description": "Simulation of the impact of a major disruption on production and sector resilience."
+		},
+		"industrie": {
+			"title": "Automotive industry",
+			"tags": ["Industry", "Logistics"],
+			"description": "Rationalization of reactions to a major supply chain rupture in the automotive sector."
+		},
+		"renseignement": {
+			"title": "Multi-source intelligence",
+			"tags": ["OSINT", "Sensitivity"],
+			"description": "Automated reconciliation of open-source intelligence and incident alerts."
+		},
+		"supply": {
+			"title": "Supply chain operations",
+			"tags": ["SupplyChain"],
+			"description": "Dynamic management of priorities in a global chain during a geopolitical event."
+		}
+	},
+
+	"graph_section": {
+		"title": "Behind the scene...",
+		"subtitle": "Everything is causal, nothing is correlated.",
+		"labels": {
+			"causal_map": "Causal_Logic_Map",
+			"simulation_panel": "Simulation_Panel",
+			"decision_trigger": "Decision Trigger",
+			"predicted_shifts": "Predicted Operational Shifts"
+		},
+		"options": {
+			"e1": "Approve Reallocation (Detroit Factory)",
+			"e3": "Inject Supply Chain Resilience Protocol"
+		},
+		"nodes": {
+			"e1": {
+				"label": "Hormuz Blockade",
+				"desc": "Strait closed by asymmetric mining."
+			},
+			"s1": { "label": "Interrupted Flows", "desc": "Oil and Gas blocked." },
+			"e2": { "label": "Barrel Surge", "desc": "Price > $140." },
+			"e3": {
+				"label": "Cyber Strike",
+				"desc": "Attack on software infrastructures."
+			},
+			"s2": {
+				"label": "Logistics Chaos",
+				"desc": "Supply chain breakdown."
+			}
+		},
+		"impacts": {
+			"e1": [
+				"Reallocation approved for Tier 1 Supplier.",
+				"Logistics delay reduced by 14.2h.",
+				"Inventory levels stabilizing in Detroit Sector."
+			],
+			"e3": [
+				"Systemic resilience patch deployed.",
+				"Cyber-threat mitigation active across EMEA nodes.",
+				"Risk score lowered to 12.4%."
+			]
+		}
+	},
+
+	"ringil_intro": {
+		"title": "Galadril has a brain,",
+		"title_highlight": "but also arms.",
+		"p1": "Galadril's intelligence does not remain locked in servers. It extends to the final meter of the field via the {project}.",
+		"p2": "Where our models process causal chains, the swarm becomes the sensory organ: it identifies structural flaws and tracks movement flows to feed your operational strategy.",
+		"cta": "Explore swarm autonomy",
+		"terminal": {
+			"feed_label": "Zenoh Collective Feed",
+			"anomaly_forward": "Forwarding to Galadril Causal Engine...",
+			"analysis_status": "Confidence: {value} | Root_Cause: Identified",
+			"swarm_sync": "Swarm Sync",
+			"edge_latency": "Edge Latency",
+			"units": "{count} Units"
+		}
 	}
 }
